@@ -2142,6 +2142,18 @@ function qPreset(type){
 }
 
 function fltRun(){
+  // If no domains loaded yet, wait for Supabase then retry
+  if (DOMAINS.length === 0) {
+    const rs = document.getElementById('results-section');
+    if (rs) {
+      rs.style.display = 'block';
+      document.getElementById('resultsBody').innerHTML = '<div style="padding:40px;text-align:center;color:var(--ink3);font-size:14px">' + (lang==='ar'?'جار التحميل...':'Loading...') + '</div>';
+    }
+    fetchDomainsFromSupabase().then(() => {
+      if (DOMAINS.length > 0) fltRun();
+    });
+    return;
+  }
   const kc=(document.getElementById('toolInput').value||'').toLowerCase();
   const tfMin=+document.getElementById('fr-tf').value;
   const daMin=+document.getElementById('fr-da').value;
@@ -2239,6 +2251,67 @@ autoLang();
 renderCompare();
 renderFAQ();
 updatePricing();
+
+/* ── SUPABASE LIVE DATA ─────────────────────────── */
+const SUPABASE_URL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_jhKq2BwYuaMzYPZBVzOwHw_V28SLwFy';
+
+async function fetchDomainsFromSupabase() {
+  try {
+    const resp = await fetch(
+      SUPABASE_URL + '/rest/v1/dropped_domains?select=id,domain,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn&order=meor_score.desc.nullslast&limit=500',
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        }
+      }
+    );
+    if (!resp.ok) throw new Error('Supabase error: ' + resp.status);
+    const rows = await resp.json();
+    if (!rows || rows.length === 0) {
+      console.log('No domains in database yet');
+      return;
+    }
+
+    // Map Supabase rows to DOMAINS format
+    const live = rows.map((r, i) => ({
+      id:     r.id || i,
+      name:   r.domain || '',
+      tld:    r.tld || '.com',
+      year:   r.first_seen_year || 2015,
+      bl:     r.backlinks || 0,
+      da:     r.moz_da || 0,
+      tf:     r.majestic_tf || 0,
+      wb:     r.wayback_snaps || 0,
+      status: r.status === 'dropped' ? 'drop' : (r.status || 'drop'),
+      score:  r.meor_score || 0,
+      spam:   r.spam_score || 0,
+      ar:     r.ai_verdict || 'لا يوجد تحليل بعد.',
+      en:     r.ai_verdict_en || 'No analysis yet.',
+      idn:    r.is_arabic_idn || false
+    }));
+
+    // Replace DOMAINS with live data
+    DOMAINS.length = 0;
+    live.forEach(d => DOMAINS.push(d));
+
+    // Load dynamic TLD chips
+    if (typeof fltLoadLiveTLDs === 'function') fltLoadLiveTLDs();
+
+    console.log('Loaded ' + live.length + ' domains from Supabase');
+    
+    // If results section already visible, refresh it
+    const rs = document.getElementById('results-section');
+    if (rs && rs.style.display !== 'none') fltRun();
+
+  } catch (e) {
+    console.log('Supabase fetch failed:', e.message);
+  }
+}
+
 fetchDomainsFromSupabase();
 </script>
 </body>
