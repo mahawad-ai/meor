@@ -1842,32 +1842,7 @@ let billing = 'm';
 let selId = 0;
 
 /* DOMAIN DATA */
-const DOMAINS = [
-  {id:0,name:'travelinsider.com',tld:'.com',year:2008,bl:4820,da:34,tf:42,wb:418,status:'drop',score:87,spam:2,
-   ar:'دومين سفر نظيف عمره 15 سنة. 94% من الباك لينكات من مواقع سفر ذات صلة. لا سبام ولا PBN.',
-   en:'Clean 15-year travel domain. 94% relevant backlinks. No spam, no PBN.'},
-  {id:1,name:'luxurytravel.org',tld:'.org',year:2006,bl:7300,da:61,tf:58,wb:640,status:'expiring',score:93,spam:1,
-   ar:'دومين سفر فاخر استثنائي عمره 18 سنة. روابط من Forbes وCNTraveler وNYT. صفر سبام.',
-   en:'Exceptional 18-year luxury travel domain. Links from Forbes, CNTraveler, NYT. Zero spam.'},
-  {id:2,name:'budgettravel.net',tld:'.net',year:2010,bl:2100,da:28,tf:31,wb:220,status:'drop',score:74,spam:6,
-   ar:'دومين سفر اقتصادي جيد. معظم الروابط من مواقع عروض — جودة متوسطة.',
-   en:'Solid budget travel domain. Most links from deals sites — average quality.'},
-  {id:3,name:'عقارات.السعودية',tld:'.السعودية',year:2013,bl:1840,da:29,tf:33,wb:185,status:'drop',score:78,spam:4,
-   ar:'دومين IDN عربي نادر في نيش العقارات السعودية. تاريخ نظيف وباك لينكات موثوقة.',
-   en:'Rare Arabic IDN in Saudi real estate. Clean history, trusted backlinks.'},
-  {id:4,name:'مطاعم-دبي.ae',tld:'.ae',year:2016,bl:620,da:21,tf:25,wb:72,status:'pending',score:69,spam:8,
-   ar:'دومين عربي في نيش مطاعم دبي. روابط ذات صلة وتاريخ نظيف.',
-   en:'Arabic domain in Dubai restaurants niche. Relevant links, clean history.'},
-  {id:5,name:'سياحة.مصر',tld:'.مصر',year:2015,bl:890,da:19,tf:24,wb:110,status:'drop',score:65,spam:9,
-   ar:'دومين IDN مصري في نيش السياحة. لا عقوبات ولا تاريخ PBN.',
-   en:'Egyptian IDN in tourism niche. No penalties, no PBN history.'},
-  {id:6,name:'travel-hacks.com',tld:'.com',year:2014,bl:980,da:18,tf:22,wb:95,status:'drop',score:61,spam:11,
-   ar:'جودة متوسطة. الهايفن يحد من قيمة العلامة التجارية. أنكر تكست مشبوه.',
-   en:'Moderate quality. Hyphen limits brand value. Suspicious anchor text.'},
-  {id:7,name:'traveldeals24.com',tld:'.com',year:2019,bl:340,da:12,tf:8,wb:28,status:'drop',score:32,spam:68,
-   ar:'خطر سبام عالي جداً. 68% كازينو وصيدلة. استُخدم في PBN. تجنب تماماً.',
-   en:'Very high spam risk. 68% casino/pharma. Used in PBN. Avoid completely.'},
-];
+const DOMAINS = [];
 
 const COMPARE_DATA = [
   {ar:'النتائج اليومية',en:'Daily results',f:'50',p:'∞',m:'∞'},
@@ -2261,10 +2236,10 @@ function fltLoadLiveTLDs(){
 
 /* INIT */
 autoLang();
-renderResults(DOMAINS);
 renderCompare();
 renderFAQ();
 updatePricing();
+fetchDomainsFromSupabase();
 </script>
 </body>
 </html>
