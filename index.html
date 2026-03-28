@@ -1,10 +1,1810 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=meor-glass.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مِيور | Meor — قبل أن يختطفه أحد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — Apple Light Glass System
+═══════════════════════════════════════════ */
+:root {
+  --bg:          #F2F2F7;          /* Apple systemGroupedBackground */
+  --bg2:         #FFFFFF;
+  --surface:     rgba(255,255,255,0.72);
+  --surface2:    rgba(255,255,255,0.55);
+  --surface3:    rgba(255,255,255,0.40);
+  --surface-hi:  rgba(255,255,255,0.90);
+
+  --border:      rgba(0,0,0,0.07);
+  --border2:     rgba(0,0,0,0.11);
+  --border3:     rgba(0,0,0,0.16);
+
+  --ink:         #000000;
+  --ink2:        rgba(0,0,0,0.75);
+  --ink3:        rgba(0,0,0,0.50);
+  --ink4:        rgba(0,0,0,0.30);
+  --ink5:        rgba(0,0,0,0.15);
+
+  --blur-sm:     blur(12px) saturate(180%);
+  --blur-md:     blur(24px) saturate(200%);
+  --blur-lg:     blur(40px) saturate(220%);
+
+  --shadow-xs:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md:   0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-lg:   0 8px 40px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-xl:   0 20px 60px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.07);
+
+  --r-sm:        10px;
+  --r-md:        16px;
+  --r-lg:        22px;
+  --r-xl:        28px;
+  --r-pill:      100px;
+
+  --font:        'Cairo', sans-serif;
+  --max:         1120px;
+  --ease:        cubic-bezier(0.4,0,0.2,1);
+  --spring:      cubic-bezier(0.34,1.56,0.64,1);
+
+  /* Status — soft, Apple-style */
+  --green:       #34C759;
+  --green-bg:    rgba(52,199,89,0.10);
+  --amber:       #FF9500;
+  --amber-bg:    rgba(255,149,0,0.10);
+  --red:         #FF3B30;
+  --red-bg:      rgba(255,59,48,0.10);
+  --blue:        #007AFF;
+  --blue-bg:     rgba(0,122,255,0.08);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:var(--font)}
+
+/* Subtle background pattern — Apple-style light mesh */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(120,180,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(180,120,255,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 60% 30%, rgba(100,220,180,0.04) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE SYSTEM
+═══════════════════════════════════════════ */
+.page{display:none;position:relative;z-index:1}
+.page.active{display:block;animation:pageIn .28s var(--ease)}
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
+
+/* ═══════════════════════════════════════════
+   GLASS CARD SYSTEM
+═══════════════════════════════════════════ */
+.glass{
+  background:var(--surface);
+  backdrop-filter:var(--blur-md);
+  -webkit-backdrop-filter:var(--blur-md);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+.glass-hi{
+  background:var(--surface-hi);
+  backdrop-filter:var(--blur-lg);
+  -webkit-backdrop-filter:var(--blur-lg);
+  border:1px solid var(--border2);
+  box-shadow:var(--shadow-md);
+}
+.glass-lo{
+  background:var(--surface2);
+  backdrop-filter:var(--blur-sm);
+  -webkit-backdrop-filter:var(--blur-sm);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-xs);
+}
+
+/* ═══════════════════════════════════════════
+   NAV — frosted Apple-style bar
+═══════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(242,242,247,0.82);
+  backdrop-filter:blur(30px) saturate(200%);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);
+  border-bottom:1px solid var(--border);
+  height:52px;
+}
+.nav-inner{
+  max-width:var(--max);margin:0 auto;
+  padding:0 24px;height:100%;
+  display:flex;align-items:center;gap:4px;
+}
+.nav-logo{
+  font-size:18px;font-weight:900;
+  letter-spacing:-.05em;color:var(--ink);
+  cursor:pointer;margin-left:auto;
+  transition:opacity .15s;
+}
+[dir=ltr] .nav-logo{margin-left:0;margin-right:auto}
+.nav-logo:hover{opacity:.7}
+.nav-links{display:flex;gap:1px}
+.nav-link{
+  font-size:12px;font-weight:500;
+  color:var(--ink3);
+  padding:6px 13px;border-radius:var(--r-pill);
+  cursor:pointer;transition:all .15s;
+  letter-spacing:.01em;
+}
+.nav-link:hover{color:var(--ink);background:rgba(0,0,0,0.05)}
+.nav-link.active{color:var(--ink);font-weight:600}
+.nav-cta{
+  background:var(--ink);color:#fff;
+  font-size:12px;font-weight:700;
+  padding:7px 16px;border-radius:var(--r-pill);
+  letter-spacing:.01em;
+  transition:all .18s var(--spring);
+  margin-right:8px;
+}
+[dir=ltr] .nav-cta{margin-right:0;margin-left:8px}
+.nav-cta:hover{transform:scale(1.03);opacity:.85}
+.lang-btn{
+  font-size:11px;font-weight:700;
+  color:var(--ink3);
+  padding:5px 11px;border-radius:var(--r-pill);
+  border:1px solid var(--border2);
+  background:var(--surface);
+  letter-spacing:.05em;
+  transition:all .15s;
+}
+.lang-btn:hover{border-color:var(--border3);color:var(--ink)}
+
+/* ═══════════════════════════════════════════
+   WRAP
+═══════════════════════════════════════════ */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 1 — HOMEPAGE
+═══════════════════════════════════════════════════════ */
+
+/* HERO */
+.hero{
+  padding:96px 0 64px;
+  text-align:center;
+  position:relative;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:600;
+  color:var(--ink3);
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  backdrop-filter:var(--blur-sm);
+  padding:5px 14px 5px 10px;
+  border-radius:var(--r-pill);
+  margin-bottom:24px;
+  letter-spacing:.05em;
+  box-shadow:var(--shadow-xs);
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 0 rgba(52,199,89,0.4);
+  animation:livePulse 2s infinite;
+}
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(52,199,89,0.4)}
+  70%{box-shadow:0 0 0 6px rgba(52,199,89,0)}
+  100%{box-shadow:0 0 0 0 rgba(52,199,89,0)}
+}
+
+.hero-title{
+  font-size:clamp(40px,6.5vw,76px);
+  font-weight:900;
+  line-height:1.08;
+  letter-spacing:-.04em;
+  color:var(--ink);
+  margin-bottom:6px;
+}
+.hero-title-sub{
+  font-size:clamp(28px,4vw,52px);
+  font-weight:300;
+  letter-spacing:-.03em;
+  color:var(--ink3);
+  margin-bottom:28px;
+  line-height:1.2;
+}
+.hero-desc{
+  font-size:clamp(14px,1.8vw,17px);
+  color:var(--ink3);
+  max-width:480px;
+  margin:0 auto 40px;
+  font-weight:400;
+  line-height:1.7;
+}
+
+/* HERO SEARCH — Apple-style pill */
+.hero-search{
+  max-width:560px;
+  margin:0 auto 14px;
+  display:flex;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-pill);
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:var(--blur-lg);
+  overflow:hidden;
+  transition:box-shadow .2s,border-color .2s;
+}
+.hero-search:focus-within{
+  border-color:var(--border3);
+  box-shadow:var(--shadow-xl), 0 0 0 3px rgba(0,0,0,0.06);
+}
+.hero-search input{
+  flex:1;border:none;outline:none;
+  padding:16px 22px;
+  font-size:15px;font-weight:500;
+  background:transparent;color:var(--ink);
+}
+.hero-search input::placeholder{color:var(--ink4)}
+.hero-search-btn{
+  background:var(--ink);color:#fff;
+  font-size:13px;font-weight:700;
+  padding:0 24px;margin:5px;
+  border-radius:var(--r-pill);
+  border:none;cursor:pointer;
+  transition:all .18s var(--spring);
+  white-space:nowrap;
+}
+.hero-search-btn:hover{transform:scale(1.03);opacity:.85}
+.hero-hint{
+  font-size:12px;color:var(--ink4);
+  margin-bottom:56px;
+  letter-spacing:.01em;
+}
+.hint-tag{
+  display:inline-block;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-pill);
+  padding:2px 10px;
+  margin:0 2px;
+  font-size:11px;font-weight:600;
+  color:var(--ink3);cursor:pointer;
+  transition:all .15s;
+  box-shadow:var(--shadow-xs);
+}
+.hint-tag:hover{background:var(--ink);color:#fff;border-color:transparent}
+
+/* STATS — glass cards row */
+.stats-row{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:80px;
+}
+.stat-card{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:20px 28px;
+  text-align:center;
+  box-shadow:var(--shadow-sm);
+  backdrop-filter:var(--blur-md);
+  min-width:130px;
+  transition:transform .2s var(--spring),box-shadow .2s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-num{
+  font-size:26px;font-weight:800;
+  color:var(--ink);letter-spacing:-.03em;
+  line-height:1.1;margin-bottom:3px;
+}
+.stat-label{font-size:11px;color:var(--ink4);font-weight:500;letter-spacing:.02em}
+
+/* SECTION */
+.section{padding:72px 0}
+.section-eyebrow{
+  font-size:11px;font-weight:700;
+  color:var(--ink4);letter-spacing:.1em;
+  margin-bottom:10px;
+}
+.section-title{
+  font-size:clamp(24px,3.5vw,40px);
+  font-weight:800;letter-spacing:-.03em;
+  line-height:1.15;color:var(--ink);
+  margin-bottom:10px;
+}
+.section-sub{
+  font-size:15px;color:var(--ink3);
+  max-width:440px;margin-bottom:44px;
+  line-height:1.7;
+}
+
+/* STEPS — glass panels */
+.steps-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+@media(max-width:860px){.steps-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.steps-grid{grid-template-columns:1fr}}
+
+.step-card{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:24px 22px;
+  box-shadow:var(--shadow-sm);
+  backdrop-filter:var(--blur-md);
+  transition:transform .2s var(--spring),box-shadow .2s;
+  position:relative;
+  overflow:hidden;
+}
+.step-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.step-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);
+}
+.step-num{
+  font-size:10px;font-weight:700;
+  color:var(--ink4);letter-spacing:.1em;
+  margin-bottom:12px;
+}
+.step-icon{
+  width:38px;height:38px;
+  background:rgba(0,0,0,0.05);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:14px;
+  border:1px solid var(--border);
+}
+.step-card h3{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:7px}
+.step-card p{font-size:12px;color:var(--ink3);line-height:1.65}
+
+/* FEATURES */
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+@media(max-width:760px){.features-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.features-grid{grid-template-columns:1fr}}
+
+.feature-card{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:22px 20px;
+  box-shadow:var(--shadow-sm);
+  backdrop-filter:var(--blur-md);
+  transition:all .2s var(--spring);
+}
+.feature-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border2)}
+.feature-icon{
+  font-size:22px;margin-bottom:12px;
+  display:block;
+}
+.feature-card h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.feature-card p{font-size:12px;color:var(--ink3);line-height:1.65}
+
+/* CTA SECTION */
+.cta-wrap{
+  background:var(--ink);
+  border-radius:var(--r-xl);
+  padding:60px 48px;
+  text-align:center;
+  margin-bottom:80px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow-xl);
+}
+.cta-wrap::before{
+  content:'';
+  position:absolute;top:-40%;left:30%;
+  width:300px;height:300px;
+  background:radial-gradient(circle,rgba(255,255,255,0.08),transparent 65%);
+  pointer-events:none;
+}
+.cta-wrap::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:var(--r-xl);
+  border:1px solid rgba(255,255,255,0.08);
+  pointer-events:none;
+}
+.cta-wrap h2{
+  font-size:clamp(22px,4vw,40px);
+  font-weight:800;color:#fff;
+  letter-spacing:-.03em;margin-bottom:12px;
+}
+.cta-wrap p{
+  font-size:15px;color:rgba(255,255,255,0.55);
+  margin-bottom:28px;max-width:400px;
+  margin-left:auto;margin-right:auto;
+}
+.btn-white{
+  display:inline-flex;align-items:center;gap:7px;
+  background:#fff;color:var(--ink);
+  font-size:13px;font-weight:700;
+  padding:12px 24px;border-radius:var(--r-pill);
+  border:none;cursor:pointer;
+  transition:all .18s var(--spring);
+  letter-spacing:.01em;
+}
+.btn-white:hover{transform:scale(1.03);opacity:.9}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.10);
+  color:rgba(255,255,255,0.75);
+  font-size:13px;font-weight:600;
+  padding:11px 22px;border-radius:var(--r-pill);
+  border:1px solid rgba(255,255,255,0.15);
+  cursor:pointer;
+  transition:all .18s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,0.15);color:#fff}
+.btn-dark{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--ink);color:#fff;
+  font-size:13px;font-weight:700;
+  padding:12px 24px;border-radius:var(--r-pill);
+  border:none;cursor:pointer;
+  transition:all .18s var(--spring);
+}
+.btn-dark:hover{transform:scale(1.03);opacity:.85}
+.btn-outline-dark{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:var(--ink2);
+  font-size:13px;font-weight:600;
+  padding:11px 22px;border-radius:var(--r-pill);
+  border:1px solid var(--border2);
+  cursor:pointer;transition:all .15s;
+}
+.btn-outline-dark:hover{border-color:var(--border3);color:var(--ink)}
+
+/* FOOTER */
+.footer{
+  background:rgba(0,0,0,0.03);
+  border-top:1px solid var(--border);
+  padding:48px 0 32px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:32px;margin-bottom:40px;
+}
+@media(max-width:680px){.footer-grid{grid-template-columns:1fr 1fr}}
+.footer-brand{
+  font-size:20px;font-weight:900;
+  color:var(--ink);letter-spacing:-.04em;
+  margin-bottom:8px;
+}
+.footer-tagline{font-size:12px;color:var(--ink4);line-height:1.6}
+.footer-col-title{
+  font-size:10px;font-weight:700;
+  color:var(--ink4);letter-spacing:.1em;
+  margin-bottom:12px;
+}
+.footer-link{
+  display:block;font-size:13px;
+  color:var(--ink3);margin-bottom:8px;cursor:pointer;
+  transition:color .15s;
+}
+.footer-link:hover{color:var(--ink)}
+.footer-bottom{
+  border-top:1px solid var(--border);
+  padding-top:20px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--ink4);flex-wrap:wrap;gap:8px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 2 — SEARCH TOOL
+═══════════════════════════════════════════════════════ */
+.tool-bar{
+  background:rgba(242,242,247,0.88);
+  backdrop-filter:blur(30px) saturate(200%);
+  border-bottom:1px solid var(--border);
+  padding:12px 0;
+  position:sticky;top:52px;z-index:100;
+}
+.tool-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tool-search-wrap{
+  flex:1;min-width:200px;
+  display:flex;align-items:center;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-pill);
+  box-shadow:var(--shadow-xs);
+  overflow:hidden;
+  transition:box-shadow .2s,border-color .2s;
+}
+.tool-search-wrap:focus-within{
+  border-color:var(--border3);
+  box-shadow:var(--shadow-sm), 0 0 0 3px rgba(0,0,0,0.05);
+}
+.tool-search-wrap input{
+  flex:1;border:none;outline:none;
+  padding:9px 16px;
+  font-size:13px;font-weight:500;
+  background:transparent;color:var(--ink);
+}
+.tool-search-wrap input::placeholder{color:var(--ink4)}
+.tool-btn{
+  background:var(--ink);color:#fff;
+  font-size:12px;font-weight:700;
+  padding:8px 18px;border-radius:var(--r-pill);
+  transition:all .15s var(--spring);white-space:nowrap;
+}
+.tool-btn:hover{transform:scale(1.03);opacity:.85}
+.tool-select{
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-pill);
+  padding:9px 14px;
+  font-size:12px;font-weight:600;
+  color:var(--ink2);cursor:pointer;
+  box-shadow:var(--shadow-xs);
+  white-space:nowrap;
+}
+
+/* FILTER CHIPS */
+.filter-bar{
+  background:rgba(242,242,247,0.80);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:8px 0;
+}
+.filter-inner{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{
+  font-size:11px;font-weight:600;
+  padding:5px 13px;border-radius:var(--r-pill);
+  border:1px solid var(--border2);
+  background:var(--surface-hi);
+  color:var(--ink3);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+  box-shadow:var(--shadow-xs);
+}
+.chip:hover{border-color:var(--border3);color:var(--ink)}
+.chip.on{
+  background:var(--ink);color:#fff;
+  border-color:transparent;
+  box-shadow:var(--shadow-sm);
+}
+.filter-spacer{flex:1}
+.live-badge{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;color:var(--ink3);
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-pill);
+  padding:4px 12px;
+  box-shadow:var(--shadow-xs);
+}
+
+/* TOOL BODY */
+.tool-body{display:flex;min-height:calc(100vh - 170px)}
+.results-col{flex:1;min-width:0}
+.detail-col{
+  width:290px;flex-shrink:0;
+  border-right:1px solid var(--border);
+  background:rgba(255,255,255,0.60);
+  backdrop-filter:var(--blur-md);
+  position:sticky;top:130px;
+  height:calc(100vh - 130px);
+  overflow-y:auto;
+}
+[dir=ltr] .detail-col{border-right:none;border-left:1px solid var(--border)}
+
+/* TABLE */
+.tbl-head{
+  display:grid;
+  grid-template-columns:2fr 52px 80px 76px 52px 84px 64px;
+  padding:8px 20px;
+  border-bottom:1px solid var(--border);
+  background:rgba(242,242,247,0.70);
+  backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:5;
+}
+.tbl-th{
+  font-size:10px;font-weight:700;
+  color:var(--ink4);letter-spacing:.06em;
+  cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:3px;
+  transition:color .15s;
+}
+.tbl-th:hover{color:var(--ink2)}
+.tbl-row{
+  display:grid;
+  grid-template-columns:2fr 52px 80px 76px 52px 84px 64px;
+  padding:11px 20px;
+  border-bottom:1px solid var(--border);
+  align-items:center;cursor:pointer;
+  transition:background .12s;
+  background:transparent;
+}
+.tbl-row:hover{background:rgba(0,0,0,0.02)}
+.tbl-row.sel{
+  background:rgba(0,0,0,0.04);
+  border-right:2px solid var(--ink);
+}
+[dir=ltr] .tbl-row.sel{border-right:none;border-left:2px solid var(--ink)}
+.d-name{
+  font-size:13px;font-weight:700;
+  color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.d-meta{font-size:10px;color:var(--ink4);margin-top:1px}
+.tbl-val{
+  font-size:12px;font-weight:600;
+  color:var(--ink2);
+  font-variant-numeric:tabular-nums;
+}
+.score-pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:20px;border-radius:6px;
+  font-size:11px;font-weight:800;
+}
+.s-hi{background:var(--green-bg);color:var(--green)}
+.s-md{background:var(--amber-bg);color:var(--amber)}
+.s-lo{background:var(--red-bg);color:var(--red)}
+.status-tag{
+  font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:20px;
+}
+.tag-drop{background:var(--green-bg);color:var(--green)}
+.tag-pending{background:var(--amber-bg);color:var(--amber)}
+.tag-expiring{background:var(--red-bg);color:var(--red)}
+
+/* DETAIL PANEL */
+.dp-head{
+  padding:12px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dp-label{font-size:10px;font-weight:700;color:var(--ink4);letter-spacing:.08em}
+.dp-close{
+  width:22px;height:22px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--ink3);cursor:pointer;
+  transition:background .15s;
+}
+.dp-close:hover{background:rgba(0,0,0,0.12);color:var(--ink)}
+.dp-domain-block{padding:14px 14px 10px}
+.dp-dname{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:3px;word-break:break-all}
+.dp-dmeta{font-size:11px;color:var(--ink4)}
+.dp-score-block{
+  margin:0 14px 0;
+  background:rgba(0,0,0,0.03);
+  border-radius:var(--r-md);
+  border:1px solid var(--border);
+  padding:12px 14px;
+  margin-bottom:0;
+}
+.dp-score-row{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.dp-score-num{
+  font-size:34px;font-weight:900;
+  line-height:1;letter-spacing:-.04em;
+}
+.dp-score-good{color:var(--green)}
+.dp-score-mid{color:var(--amber)}
+.dp-score-bad{color:var(--red)}
+.dp-bar{height:4px;background:var(--border2);border-radius:4px;overflow:hidden;margin-bottom:5px}
+.dp-bar-fill{height:100%;border-radius:4px;transition:width .5s var(--ease)}
+.dp-verdict{font-size:11px;font-weight:700}
+.dp-section{padding:12px 14px;border-top:1px solid var(--border)}
+.dp-section-label{font-size:10px;font-weight:700;color:var(--ink4);letter-spacing:.08em;margin-bottom:8px}
+.dp-ai{font-size:12px;color:var(--ink2);line-height:1.65}
+.dp-metric{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.dp-metric:last-child{border-bottom:none}
+.dp-mk{color:var(--ink3)}
+.dp-mv{font-weight:700;color:var(--ink)}
+.dp-actions{padding:12px 14px;border-top:1px solid var(--border)}
+.dp-btn{
+  width:100%;padding:10px;border-radius:var(--r-pill);
+  font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .15s;border:none;margin-bottom:7px;
+  letter-spacing:.01em;
+}
+.dp-btn:last-child{margin-bottom:0}
+.dp-btn-primary{background:var(--ink);color:#fff}
+.dp-btn-primary:hover{opacity:.82;transform:scale(1.02)}
+.dp-btn-sec{
+  background:rgba(0,0,0,0.05);color:var(--ink2);
+  border:1px solid var(--border2);
+}
+.dp-btn-sec:hover{background:rgba(0,0,0,0.08)}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 3 — DOMAIN DETAIL
+═══════════════════════════════════════════════════════ */
+.dd-hero-bar{
+  background:rgba(242,242,247,0.88);
+  backdrop-filter:blur(30px) saturate(200%);
+  border-bottom:1px solid var(--border);
+  padding:20px 0 24px;
+}
+.dd-crumb{
+  font-size:12px;color:var(--ink4);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+.dd-crumb a{color:var(--blue);cursor:pointer}
+.dd-name-row{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.dd-name{
+  font-size:clamp(20px,4vw,38px);
+  font-weight:900;color:var(--ink);
+  letter-spacing:-.035em;margin-bottom:10px;
+}
+.dd-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.dd-tag{
+  font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:var(--r-pill);
+}
+.dd-score-badge{
+  text-align:center;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-lg);
+  padding:14px 20px;min-width:86px;
+  box-shadow:var(--shadow-sm);
+  flex-shrink:0;
+}
+.dd-score-n{
+  font-size:34px;font-weight:900;
+  letter-spacing:-.04em;line-height:1;margin-bottom:2px;
+}
+.dd-score-l{font-size:10px;font-weight:700;color:var(--ink4);letter-spacing:.06em}
+.dd-actions-col{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+
+/* DD GRID */
+.dd-grid{
+  display:grid;grid-template-columns:1fr 320px;
+  gap:20px;padding:24px 0;
+}
+@media(max-width:768px){.dd-grid{grid-template-columns:1fr}}
+.dd-card{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm);
+  overflow:hidden;margin-bottom:14px;
+}
+.dd-card-head{
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,0,0,0.015);
+}
+.dd-card-title{font-size:13px;font-weight:700;color:var(--ink)}
+.dd-card-body{padding:18px}
+.metrics-2x{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+  border-radius:var(--r-md);overflow:hidden;
+}
+.metric-box{background:var(--bg2);padding:14px 16px}
+.metric-box-label{font-size:11px;color:var(--ink4);font-weight:600;margin-bottom:4px}
+.metric-box-val{
+  font-size:22px;font-weight:800;
+  color:var(--ink);letter-spacing:-.02em;
+}
+.metric-box-val.g{color:var(--green)}
+.metric-box-val.a{color:var(--amber)}
+.metric-box-val.r{color:var(--red)}
+.dd-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.dd-row:last-child{border-bottom:none}
+.dd-rk{color:var(--ink3)}
+.dd-rv{font-weight:700;color:var(--ink)}
+.ai-box{
+  background:rgba(0,0,0,0.03);
+  border:1px solid var(--border2);
+  border-radius:var(--r-md);
+  padding:16px;font-size:13px;
+  color:var(--ink2);line-height:1.7;
+  margin-bottom:16px;
+}
+.ai-box-head{
+  display:flex;align-items:center;gap:7px;
+  font-size:10px;font-weight:700;
+  color:var(--ink4);letter-spacing:.08em;
+  margin-bottom:10px;
+}
+.ai-chip{
+  width:16px;height:16px;
+  background:var(--ink);color:#fff;
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;
+}
+.bl-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.bl-item:last-child{border-bottom:none}
+.bl-domain{font-weight:700;color:var(--ink);flex:1}
+.bl-tf{
+  font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:20px;
+  background:var(--green-bg);color:var(--green);
+}
+.hist-row{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.hist-row:last-child{border-bottom:none}
+.hist-yr{font-size:12px;font-weight:700;color:var(--ink3);min-width:36px}
+.hist-desc{color:var(--ink2);line-height:1.5}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE 4 — PRICING
+═══════════════════════════════════════════════════════ */
+.pricing-hero{padding:72px 0 48px;text-align:center}
+.pricing-hero h1{
+  font-size:clamp(28px,5vw,52px);
+  font-weight:900;letter-spacing:-.04em;
+  color:var(--ink);margin-bottom:12px;
+}
+.pricing-hero p{
+  font-size:16px;color:var(--ink3);
+  max-width:420px;margin:0 auto 28px;
+}
+.billing-toggle{
+  display:inline-flex;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-pill);
+  padding:4px;gap:2px;
+  box-shadow:var(--shadow-xs);
+}
+.bill-opt{
+  font-size:12px;font-weight:600;
+  padding:7px 18px;border-radius:var(--r-pill);
+  cursor:pointer;color:var(--ink3);transition:all .15s;
+}
+.bill-opt.on{background:var(--ink);color:#fff;box-shadow:var(--shadow-sm)}
+.save-tag{
+  display:inline-block;
+  background:var(--green-bg);color:var(--green);
+  font-size:9px;font-weight:800;
+  padding:2px 6px;border-radius:20px;
+  margin-right:5px;letter-spacing:.04em;
+}
+[dir=ltr] .save-tag{margin-right:0;margin-left:5px}
+
+/* PLAN CARDS */
+.plans-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;margin:40px 0 60px;
+}
+@media(max-width:760px){.plans-grid{grid-template-columns:1fr}}
+.plan-card{
+  background:var(--surface-hi);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-xl);
+  padding:28px 24px;
+  box-shadow:var(--shadow-sm);
+  backdrop-filter:var(--blur-md);
+  position:relative;
+  transition:all .2s var(--spring);
+}
+.plan-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.plan-card.featured{
+  border-color:var(--ink);
+  box-shadow:var(--shadow-lg);
+}
+.plan-badge-row{
+  position:absolute;top:-12px;
+  right:50%;transform:translateX(50%);
+}
+[dir=ltr] .plan-badge-row{right:auto;left:50%}
+.plan-badge{
+  background:var(--ink);color:#fff;
+  font-size:9px;font-weight:800;
+  padding:3px 12px;border-radius:var(--r-pill);
+  letter-spacing:.08em;white-space:nowrap;
+}
+.plan-name{
+  font-size:11px;font-weight:700;
+  color:var(--ink4);letter-spacing:.08em;margin-bottom:8px;
+}
+.plan-price{
+  font-size:44px;font-weight:900;
+  color:var(--ink);letter-spacing:-.04em;
+  line-height:1;margin-bottom:3px;
+}
+.plan-price sup{font-size:18px;font-weight:600;vertical-align:super;letter-spacing:0}
+.plan-price-note{font-size:12px;color:var(--ink4);margin-bottom:18px}
+.plan-desc{font-size:12px;color:var(--ink3);margin-bottom:18px;line-height:1.6}
+.plan-div{height:1px;background:var(--border);margin-bottom:18px}
+.plan-feat{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:12px;color:var(--ink2);
+  margin-bottom:10px;line-height:1.5;
+}
+.plan-feat:last-child{margin-bottom:0}
+.feat-check{
+  width:16px;height:16px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:900;margin-top:1px;
+}
+.fc-yes{background:var(--green-bg);color:var(--green)}
+.fc-no{background:rgba(0,0,0,0.05);color:var(--ink4)}
+.plan-btn{
+  width:100%;padding:12px;border-radius:var(--r-pill);
+  font-size:13px;font-weight:700;cursor:pointer;
+  transition:all .18s var(--spring);border:none;
+  margin-top:20px;letter-spacing:.01em;
+}
+.plan-btn-dark{background:var(--ink);color:#fff}
+.plan-btn-dark:hover{transform:scale(1.02);opacity:.85}
+.plan-btn-light{
+  background:transparent;color:var(--ink2);
+  border:1.5px solid var(--border2);
+}
+.plan-btn-light:hover{border-color:var(--border3);background:rgba(0,0,0,0.04)}
+
+/* COMPARE TABLE */
+.compare-table{
+  width:100%;border-collapse:collapse;
+  font-size:13px;margin:28px 0;
+}
+.compare-table th{
+  padding:12px 16px;text-align:right;
+  font-weight:700;color:var(--ink3);
+  border-bottom:2px solid var(--border2);
+  font-size:11px;letter-spacing:.04em;
+  background:rgba(0,0,0,0.02);
+}
+[dir=ltr] .compare-table th{text-align:left}
+.compare-table td{
+  padding:11px 16px;
+  border-bottom:1px solid var(--border);
+  color:var(--ink2);vertical-align:middle;
+}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .cc{text-align:center}
+.compare-table .feat-col{background:rgba(0,0,0,0.02)}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--border);cursor:pointer}
+.faq-q{
+  font-size:14px;font-weight:700;color:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:18px 0;
+}
+.faq-icon{
+  font-size:20px;color:var(--ink4);
+  transition:transform .2s var(--ease);flex-shrink:0;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--ink)}
+.faq-a{
+  font-size:13px;color:var(--ink3);
+  line-height:1.7;padding-bottom:16px;display:none;
+}
+.faq-item.open .faq-a{display:block}
+
+/* MISC */
+.section-link{font-size:12px;color:var(--ink3);font-weight:600;cursor:pointer;transition:color .15s}
+.section-link:hover{color:var(--ink)}
+@media(max-width:860px){
+  .tbl-head,.tbl-row{grid-template-columns:2fr 50px 72px 70px 56px}
+  .tbl-head>*:nth-child(6),.tbl-head>*:nth-child(7),
+  .tbl-row>*:nth-child(6),.tbl-row>*:nth-child(7){display:none}
+  .detail-col{display:none}
+}
+@media(max-width:580px){
+  .nav-links{display:none}
+  .hero{padding:60px 0 40px}
+  .steps-grid,.features-grid{grid-template-columns:1fr}
+  .cta-wrap{padding:40px 24px}
+  .footer-grid{grid-template-columns:1fr}
+  .plans-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-<a href="meor-glass.html">Click here if not redirected</a>
+
+<!-- ═══ NAV ══════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="go('home')">مِيور</div>
+    <div class="nav-links">
+      <div class="nav-link active" id="nl-home" onclick="go('home')" data-ar="الرئيسية" data-en="Home">الرئيسية</div>
+      <div class="nav-link" id="nl-tool" onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</div>
+      <div class="nav-link" id="nl-pricing" onclick="go('pricing')" data-ar="الأسعار" data-en="Pricing">الأسعار</div>
+    </div>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+    <button class="nav-cta" onclick="go('pricing')" data-ar="ابدأ مجاناً" data-en="Start Free">ابدأ مجاناً</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1 — HOME
+═══════════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-eyebrow">
+        <span class="live-dot"></span>
+        <span data-ar="الأول عربياً — محرك الدومينات المنتهية" data-en="First in Arabic — Expired Domain Search Engine">الأول عربياً — محرك الدومينات المنتهية</span>
+      </div>
+
+      <h1 class="hero-title" data-ar="قبل أن يختطفه" data-en="Before someone">قبل أن يختطفه</h1>
+      <div class="hero-title-sub" data-ar="أحد غيرك." data-en="else does.">أحد غيرك.</div>
+
+      <p class="hero-desc" data-ar="دومينات منتهية بباك لينكات قوية وتاريخ نظيف. نقاط ذكاء اصطناعي فورية وتنبيهات واتساب." data-en="Expired domains with powerful backlinks and clean history. Instant AI scoring and WhatsApp alerts.">
+        دومينات منتهية بباك لينكات قوية وتاريخ نظيف. نقاط ذكاء اصطناعي فورية وتنبيهات واتساب.
+      </p>
+
+      <div class="hero-search">
+        <input type="text" id="heroInput"
+          data-ar-placeholder="ابحث عن دومين أو كلمة مفتاحية..."
+          data-en-placeholder="Search domain or keyword..."
+          placeholder="ابحث عن دومين أو كلمة مفتاحية...">
+        <button class="hero-search-btn" onclick="go('tool')" data-ar="ابحث" data-en="Search">ابحث</button>
+      </div>
+
+      <p class="hero-hint">
+        <span data-ar="جرب:" data-en="Try:">جرب:</span>
+        <span class="hint-tag" onclick="qs('travel')">travel</span>
+        <span class="hint-tag" onclick="qs('عقارات')">عقارات</span>
+        <span class="hint-tag" onclick="qs('.ae')">.ae</span>
+        <span class="hint-tag" onclick="qs('tech')">tech</span>
+      </p>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num">2.1M<span style="font-size:16px;font-weight:500;color:var(--ink4)">+</span></div>
+          <div class="stat-label" data-ar="دومين مُفهرَس" data-en="Domains indexed">دومين مُفهرَس</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">223</div>
+          <div class="stat-label" data-ar="سقطوا اليوم" data-en="Dropped today">سقطوا اليوم</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">677</div>
+          <div class="stat-label" data-ar="امتداد مدعوم" data-en="TLDs tracked">امتداد مدعوم</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label" data-ar="مراقبة مستمرة" data-en="Live monitoring">مراقبة مستمرة</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-eyebrow" data-ar="كيف يعمل" data-en="HOW IT WORKS">كيف يعمل</div>
+      <h2 class="section-title" data-ar="أربع خطوات للدومين المثالي" data-en="Four steps to the perfect domain">أربع خطوات للدومين المثالي</h2>
+      <p class="section-sub" data-ar="من البحث إلى التسجيل في دقائق — قبل أن يراه أحد غيرك" data-en="From search to registration in minutes — before anyone else sees it">من البحث إلى التسجيل في دقائق — قبل أن يراه أحد غيرك</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num" data-ar="الخطوة ١" data-en="STEP 1">الخطوة ١</div>
+          <div class="step-icon">🔍</div>
+          <h3 data-ar="راقب" data-en="Monitor">راقب</h3>
+          <p data-ar="ضع معاييرك: الكلمة المفتاحية، الامتداد، الحد الأدنى من DA وTF. ميور يراقب لك على مدار الساعة." data-en="Set your criteria: keyword, TLD, minimum DA and TF. Meor monitors 24/7 for you.">ضع معاييرك: الكلمة المفتاحية، الامتداد، الحد الأدنى من DA وTF. ميور يراقب لك على مدار الساعة.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num" data-ar="الخطوة ٢" data-en="STEP 2">الخطوة ٢</div>
+          <div class="step-icon">⏳</div>
+          <h3 data-ar="انتهى" data-en="Expires">انتهى</h3>
+          <p data-ar="نقارن ملفات المنطقة يومياً. لحظة انتهاء الدومين هي الفرصة — نكتشفها قبل الجميع." data-en="We diff zone files daily. The moment a domain expires is the opportunity — we catch it first.">نقارن ملفات المنطقة يومياً. لحظة انتهاء الدومين هي الفرصة — نكتشفها قبل الجميع.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num" data-ar="الخطوة ٣" data-en="STEP 3">الخطوة ٣</div>
+          <div class="step-icon">🎯</div>
+          <h3 data-ar="امتلك الفرصة" data-en="Own it">امتلك الفرصة</h3>
+          <p data-ar="تنبيه واتساب فوري. نقاط الذكاء الاصطناعي تجيبك: هل يستحق؟ كل شيء في ثوانٍ." data-en="Instant WhatsApp alert. AI score answers: is it worth it? Everything in seconds.">تنبيه واتساب فوري. نقاط الذكاء الاصطناعي تجيبك: هل يستحق؟ كل شيء في ثوانٍ.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num" data-ar="الخطوة ٤" data-en="STEP 4">الخطوة ٤</div>
+          <div class="step-icon">✅</div>
+          <h3 data-ar="سجّل" data-en="Register">سجّل</h3>
+          <p data-ar="اضغط تسجيل مباشرة من ميور إلى شركاء التسجيل. لا تخسر الدومين بسبب بطء الأدوات الأخرى." data-en="Register directly from Meor to our registrar partners. Don't lose it to a slow tool.">اضغط تسجيل مباشرة من ميور إلى شركاء التسجيل. لا تخسر الدومين بسبب بطء الأدوات الأخرى.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" style="background:rgba(255,255,255,0.50);backdrop-filter:blur(20px);padding:64px 0">
+    <div class="wrap">
+      <div class="section-eyebrow" data-ar="المميزات" data-en="FEATURES">المميزات</div>
+      <h2 class="section-title" data-ar="كل ما تحتاجه، لا شيء زائد" data-en="Everything you need, nothing you don't">كل ما تحتاجه، لا شيء زائد</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🤖</span>
+          <h3 data-ar="نقاط ذكاء اصطناعي" data-en="AI Domain Scoring">نقاط ذكاء اصطناعي</h3>
+          <p data-ar="درجة 0-100 تجمع TF وDA ونظافة الباك لينكات والسبام. قرارك في ثانية." data-en="0–100 score combining TF, DA, backlink quality, spam. Your decision in one second.">درجة 0-100 تجمع TF وDA ونظافة الباك لينكات والسبام. قرارك في ثانية.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💬</span>
+          <h3 data-ar="تنبيهات واتساب" data-en="WhatsApp Alerts">تنبيهات واتساب</h3>
+          <p data-ar="الأول في المنطقة. رسالة واتساب فورية لحظة سقوط دومين يطابق معاييرك." data-en="First in MENA. Instant WhatsApp message the moment a matching domain drops.">الأول في المنطقة. رسالة واتساب فورية لحظة سقوط دومين يطابق معاييرك.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🌍</span>
+          <h3 data-ar="دعم عربي IDN" data-en="Arabic IDN Support">دعم عربي IDN</h3>
+          <p data-ar="الوحيد الذي يتتبع .مصر و.السعودية و.امارات. واجهة عربية بالكامل." data-en="The only tool tracking .مصر .السعودية .امارات with a fully Arabic interface.">الوحيد الذي يتتبع .مصر و.السعودية و.امارات. واجهة عربية بالكامل.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🛡️</span>
+          <h3 data-ar="كشف السبام" data-en="Spam Detection">كشف السبام</h3>
+          <p data-ar="كشف تلقائي للباك لينكات السامة وتاريخ PBN ونسب الأنكر تكست المشبوهة." data-en="Auto-detect toxic backlinks, PBN history, and suspicious anchor text ratios.">كشف تلقائي للباك لينكات السامة وتاريخ PBN ونسب الأنكر تكست المشبوهة.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <h3 data-ar="677 امتداد" data-en="677 TLDs">677 امتداد</h3>
+          <p data-ar="من .com إلى .ae و.sa و.eg و.ma والامتدادات العربية — أشمل تغطية للمنطقة." data-en="From .com to .ae .sa .eg .ma and Arabic extensions — widest MENA coverage.">من .com إلى .ae و.sa و.eg و.ma والامتدادات العربية — أشمل تغطية للمنطقة.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3 data-ar="CSV وAPI" data-en="CSV & API">CSV وAPI</h3>
+          <p data-ar="صدّر قوائمك واستخدم API مع 100 طلب يومياً في الخطة المميزة." data-en="Export lists and use the API with 100 daily calls on the Premium plan.">صدّر قوائمك واستخدم API مع 100 طلب يومياً في الخطة المميزة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-wrap">
+        <h2 data-ar="الدومين الذهبي ينتظرك" data-en="Your golden domain is waiting">الدومين الذهبي ينتظرك</h2>
+        <p data-ar="آلاف من متخصصي السيو ومستثمري الدومينات في MENA يستخدمون ميور. انضم إليهم." data-en="Thousands of SEO pros and domain investors in MENA use Meor. Join them.">آلاف من متخصصي السيو ومستثمري الدومينات في MENA يستخدمون ميور. انضم إليهم.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn-white" onclick="go('tool')" data-ar="ابدأ البحث مجاناً" data-en="Start searching free">ابدأ البحث مجاناً</button>
+          <button class="btn-ghost" onclick="go('pricing')" data-ar="عرض الأسعار" data-en="View pricing">عرض الأسعار</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">مِيور</div>
+          <div class="footer-tagline" data-ar="قبل أن يختطفه أحد —<br>محرك البحث العربي للدومينات المنتهية" data-en="Before someone else does —<br>The Arabic expired domain search engine">قبل أن يختطفه أحد —<br>محرك البحث العربي للدومينات المنتهية</div>
+        </div>
+        <div>
+          <div class="footer-col-title" data-ar="الأداة" data-en="PRODUCT">الأداة</div>
+          <div class="footer-link" onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</div>
+          <div class="footer-link" onclick="go('pricing')" data-ar="الأسعار" data-en="Pricing">الأسعار</div>
+        </div>
+        <div>
+          <div class="footer-col-title" data-ar="الامتدادات" data-en="TLDS">الامتدادات</div>
+          <div class="footer-link">.ae .امارات</div>
+          <div class="footer-link">.sa .السعودية</div>
+          <div class="footer-link">.eg .مصر</div>
+        </div>
+        <div>
+          <div class="footer-col-title" data-ar="الشركة" data-en="COMPANY">الشركة</div>
+          <div class="footer-link" data-ar="من نحن" data-en="About">من نحن</div>
+          <div class="footer-link" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span data-ar="© 2025 مِيور" data-en="© 2025 Meor">© 2025 مِيور</span>
+        <div style="display:flex;gap:16px">
+          <span class="footer-link" data-ar="الخصوصية" data-en="Privacy">الخصوصية</span>
+          <span class="footer-link" data-ar="الشروط" data-en="Terms">الشروط</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2 — SEARCH TOOL
+═══════════════════════════════════════════════════════ -->
+<div id="page-tool" class="page">
+  <div class="tool-bar">
+    <div class="wrap">
+      <div class="tool-row">
+        <div class="tool-search-wrap">
+          <input type="text" id="toolInput"
+            data-ar-placeholder="كلمة مفتاحية أو دومين..."
+            data-en-placeholder="Keyword or domain..."
+            placeholder="كلمة مفتاحية أو دومين..."
+            oninput="filterDomains(this.value)">
+        </div>
+        <select class="tool-select" id="tldFilter" onchange="filterDomains(document.getElementById('toolInput').value)">
+          <option value="all" data-ar="كل الامتدادات" data-en="All TLDs">كل الامتدادات</option>
+          <option>.com</option><option>.ae</option><option>.sa</option>
+          <option>.eg</option><option>.net</option><option>.org</option>
+        </select>
+        <button class="tool-btn" onclick="filterDomains(document.getElementById('toolInput').value)" data-ar="بحث" data-en="Search">بحث</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="wrap">
+      <div class="filter-inner">
+        <div class="chip on" onclick="toggleChip(this)" data-ar="الكل" data-en="All">الكل</div>
+        <div class="chip" onclick="toggleChip(this)" data-ar="سقط اليوم" data-en="Dropped today">سقط اليوم</div>
+        <div class="chip" onclick="toggleChip(this)" data-ar="DA ≥ 20" data-en="DA ≥ 20">DA ≥ 20</div>
+        <div class="chip" onclick="toggleChip(this)" data-ar="BL ≥ 500" data-en="BL ≥ 500">BL ≥ 500</div>
+        <div class="chip" onclick="toggleChip(this)" data-ar="بلا سبام" data-en="No spam">بلا سبام</div>
+        <div class="chip" onclick="toggleChip(this)" data-ar="IDN عربي" data-en="Arabic IDN">IDN عربي</div>
+        <div class="filter-spacer"></div>
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          <span data-ar="مباشر" data-en="Live">مباشر</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-body">
+    <div class="results-col">
+      <div class="tbl-head">
+        <div class="tbl-th" data-ar="الدومين" data-en="Domain">الدومين</div>
+        <div class="tbl-th" data-ar="نقاط" data-en="Score">نقاط</div>
+        <div class="tbl-th" data-ar="باك لينكات" data-en="Backlinks">باك لينكات</div>
+        <div class="tbl-th" data-ar="DA / TF" data-en="DA / TF">DA / TF</div>
+        <div class="tbl-th" data-ar="العمر" data-en="Age">العمر</div>
+        <div class="tbl-th" data-ar="الحالة" data-en="Status">الحالة</div>
+        <div class="tbl-th" data-ar="ويباك" data-en="Wayback">ويباك</div>
+      </div>
+      <div id="resultsBody"></div>
+    </div>
+    <div class="detail-col" id="detailCol"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 3 — DOMAIN DETAIL
+═══════════════════════════════════════════════════════ -->
+<div id="page-detail" class="page">
+  <div class="dd-hero-bar">
+    <div class="wrap">
+      <div class="dd-crumb">
+        <a onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</a>
+        <span>›</span>
+        <span id="dd-crumb-name">travelinsider.com</span>
+      </div>
+      <div class="dd-name-row">
+        <div>
+          <div class="dd-name" id="dd-name">travelinsider.com</div>
+          <div class="dd-tags">
+            <span class="dd-tag tag-drop" data-ar="متاح الآن" data-en="Available">متاح الآن</span>
+            <span class="dd-tag" style="background:rgba(0,0,0,0.05);color:var(--ink3);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px" id="dd-tld">.com</span>
+            <span class="dd-tag" style="background:rgba(0,0,0,0.05);color:var(--ink3);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px" id="dd-year">منذ 2008</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-shrink:0">
+          <div class="dd-score-badge">
+            <div class="dd-score-n" id="dd-score-n" style="color:var(--green)">87</div>
+            <div class="dd-score-l" data-ar="نقاط ميور" data-en="MEOR SCORE">نقاط ميور</div>
+          </div>
+          <div class="dd-actions-col">
+            <button class="btn-dark" style="font-size:12px;padding:9px 18px" data-ar="سجّل الآن" data-en="Register now">سجّل الآن</button>
+            <button class="btn-outline-dark" style="font-size:12px;padding:8px 18px" data-ar="+ مراقبة" data-en="+ Watch">+ مراقبة</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="dd-grid">
+      <div>
+        <!-- AI -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <div class="ai-box-head" style="margin:0">
+              <div class="ai-chip">✦</div>
+              <span data-ar="تحليل الذكاء الاصطناعي" data-en="AI Analysis">تحليل الذكاء الاصطناعي</span>
+            </div>
+          </div>
+          <div class="dd-card-body">
+            <div class="ai-box" id="dd-ai">
+              <strong data-ar="دومين سفر نظيف عمره 15 سنة." data-en="Clean 15-year travel domain.">دومين سفر نظيف عمره 15 سنة.</strong>
+              <span data-ar=" 94% من الباك لينكات من مواقع سفر ذات صلة. لا سبام، لا PBN، لا عقوبة جوجل. الموقع السابق كان مدونة سفر حقيقية بـ8,000 زيارة شهرية." data-en=" 94% of backlinks from relevant travel sites. No spam, no PBN, no Google penalty. Previous site was a genuine travel blog with 8K monthly visitors."> 94% من الباك لينكات من مواقع سفر ذات صلة. لا سبام، لا PBN، لا عقوبة جوجل. الموقع السابق كان مدونة سفر حقيقية بـ8,000 زيارة شهرية.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <div class="dd-card-title" data-ar="المقاييس" data-en="Metrics">المقاييس</div>
+          </div>
+          <div class="dd-card-body" style="padding:0">
+            <div class="metrics-2x">
+              <div class="metric-box"><div class="metric-box-label">Trust Flow</div><div class="metric-box-val g" id="dd-tf">42</div></div>
+              <div class="metric-box"><div class="metric-box-label">Citation Flow</div><div class="metric-box-val" id="dd-cf">38</div></div>
+              <div class="metric-box"><div class="metric-box-label">Domain Authority</div><div class="metric-box-val g" id="dd-da">34</div></div>
+              <div class="metric-box"><div class="metric-box-label" data-ar="باك لينكات" data-en="Backlinks">باك لينكات</div><div class="metric-box-val" id="dd-bl">4,820</div></div>
+              <div class="metric-box"><div class="metric-box-label" data-ar="نطاقات مرجعية" data-en="Ref. Domains">نطاقات مرجعية</div><div class="metric-box-val" id="dd-rd">312</div></div>
+              <div class="metric-box"><div class="metric-box-label" data-ar="نسبة السبام" data-en="Spam Score">نسبة السبام</div><div class="metric-box-val g" id="dd-spam">2%</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backlinks -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <div class="dd-card-title" data-ar="أقوى الباك لينكات" data-en="Top Backlinks">أقوى الباك لينكات</div>
+            <span class="section-link" data-ar="عرض الكل" data-en="View all">عرض الكل</span>
+          </div>
+          <div class="dd-card-body" style="padding:0 18px">
+            <div class="bl-item"><div class="bl-domain">lonelyplanet.com</div><span style="font-size:11px;color:var(--ink4)">DA 91</span><span class="bl-tf">TF 68</span></div>
+            <div class="bl-item"><div class="bl-domain">tripadvisor.com</div><span style="font-size:11px;color:var(--ink4)">DA 94</span><span class="bl-tf">TF 74</span></div>
+            <div class="bl-item"><div class="bl-domain">travelandleisure.com</div><span style="font-size:11px;color:var(--ink4)">DA 82</span><span class="bl-tf">TF 55</span></div>
+            <div class="bl-item"><div class="bl-domain">cntraveler.com</div><span style="font-size:11px;color:var(--ink4)">DA 88</span><span class="bl-tf">TF 61</span></div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="dd-card">
+          <div class="dd-card-head">
+            <div class="dd-card-title" data-ar="تاريخ الدومين" data-en="Domain History">تاريخ الدومين</div>
+          </div>
+          <div class="dd-card-body" style="padding:0 18px">
+            <div class="hist-row"><div class="hist-yr">2008</div><div class="hist-desc" data-ar="تسجيل أول — مدونة سفر" data-en="First registered — travel blog">تسجيل أول — مدونة سفر</div></div>
+            <div class="hist-row"><div class="hist-yr">2012</div><div class="hist-desc" data-ar="8,000 زيارة / شهر. روابط من Lonely Planet وCNN Travel" data-en="8K visits/mo. Links from Lonely Planet & CNN Travel">8,000 زيارة / شهر. روابط من Lonely Planet وCNN Travel</div></div>
+            <div class="hist-row"><div class="hist-yr">2019</div><div class="hist-desc" data-ar="آخر تحديث للمحتوى" data-en="Last content update">آخر تحديث للمحتوى</div></div>
+            <div class="hist-row"><div class="hist-yr">2023</div><div class="hist-desc" data-ar="انتهت الصلاحية — لم يجدد المالك" data-en="Expired — owner did not renew">انتهت الصلاحية — لم يجدد المالك</div></div>
+            <div class="hist-row"><div class="hist-yr" style="color:var(--green)">2025</div><div class="hist-desc" style="color:var(--green);font-weight:700" data-ar="متاح الآن للتسجيل ←" data-en="Available now ←">متاح الآن للتسجيل ←</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Registration sidebar -->
+      <div>
+        <div class="dd-card" style="position:sticky;top:80px">
+          <div class="dd-card-head">
+            <div class="dd-card-title" data-ar="التسجيل" data-en="Registration">التسجيل</div>
+          </div>
+          <div class="dd-card-body" style="padding:0 18px">
+            <div class="dd-row"><span class="dd-rk" data-ar="الحالة" data-en="Status">الحالة</span><span class="dd-rv"><span class="status-tag tag-drop" data-ar="متاح" data-en="Available">متاح</span></span></div>
+            <div class="dd-row"><span class="dd-rk" data-ar="تاريخ السقوط" data-en="Drop date">تاريخ السقوط</span><span class="dd-rv">2025-03-18</span></div>
+            <div class="dd-row"><span class="dd-rk" data-ar="التسجيل الأول" data-en="First registered">التسجيل الأول</span><span class="dd-rv">2008</span></div>
+            <div class="dd-row"><span class="dd-rk" data-ar="لقطات ويباك" data-en="Wayback snaps">لقطات ويباك</span><span class="dd-rv">418</span></div>
+            <div class="dd-row"><span class="dd-rk" data-ar="جوجل" data-en="Google">جوجل</span><span class="dd-rv" style="color:var(--green)" data-ar="مُفهرَس (14)" data-en="Indexed (14)">مُفهرَس (14)</span></div>
+          </div>
+          <div style="padding:14px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+            <button class="plan-btn plan-btn-dark" style="margin:0;font-size:13px" data-ar="سجّل عبر Namecheap — $10.98" data-en="Register via Namecheap — $10.98">سجّل عبر Namecheap — $10.98</button>
+            <button class="plan-btn plan-btn-light" style="margin:0;font-size:12px" data-ar="أضف تنبيه لهذا الدومين" data-en="Set alert for this domain">أضف تنبيه لهذا الدومين</button>
+            <button class="plan-btn plan-btn-light" style="margin:0;font-size:12px" onclick="go('tool')" data-ar="↗ تقرير ذكاء اصطناعي كامل" data-en="↗ Full AI report">↗ تقرير ذكاء اصطناعي كامل</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 4 — PRICING
+═══════════════════════════════════════════════════════ -->
+<div id="page-pricing" class="page">
+  <div class="pricing-hero">
+    <div class="wrap">
+      <div class="section-eyebrow" data-ar="الأسعار" data-en="PRICING">الأسعار</div>
+      <h1 data-ar="شفاف، بسيط، يستحق كل قرش" data-en="Transparent, simple, worth every penny">شفاف، بسيط، يستحق كل قرش</h1>
+      <p data-ar="ابدأ مجاناً. ارقَّ عندما تكون جاهزاً. لا بطاقة ائتمان للخطة المجانية." data-en="Start free. Upgrade when ready. No credit card for the free plan.">ابدأ مجاناً. ارقَّ عندما تكون جاهزاً. لا بطاقة ائتمان للخطة المجانية.</p>
+      <div class="billing-toggle">
+        <div class="bill-opt on" id="billM" onclick="setBill('m')" data-ar="شهري" data-en="Monthly">شهري</div>
+        <div class="bill-opt" id="billA" onclick="setBill('a')">
+          <span class="save-tag" data-ar="وفر 20%" data-en="Save 20%">وفر 20%</span>
+          <span data-ar="سنوي" data-en="Annual">سنوي</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="plans-grid">
+      <!-- FREE -->
+      <div class="plan-card">
+        <div class="plan-name" data-ar="مجاني" data-en="FREE">مجاني</div>
+        <div class="plan-price">$0</div>
+        <div class="plan-price-note" data-ar="للأبد" data-en="Forever">للأبد</div>
+        <div class="plan-desc" data-ar="لاكتشاف الأداة وتجربة البحث." data-en="To discover the tool and try searching.">لاكتشاف الأداة وتجربة البحث.</div>
+        <div class="plan-div"></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="50 نتيجة يومياً" data-en="50 results/day">50 نتيجة يومياً</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="فلترة أساسية" data-en="Basic filtering">فلترة أساسية</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="واجهة عربية كاملة" data-en="Full Arabic UI">واجهة عربية كاملة</span></div>
+        <div class="plan-feat"><div class="feat-check fc-no">—</div><span style="color:var(--ink4)" data-ar="نقاط الذكاء الاصطناعي" data-en="AI scoring">نقاط الذكاء الاصطناعي</span></div>
+        <div class="plan-feat"><div class="feat-check fc-no">—</div><span style="color:var(--ink4)" data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</span></div>
+        <button class="plan-btn plan-btn-light" data-ar="ابدأ مجاناً" data-en="Start free">ابدأ مجاناً</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan-card featured">
+        <div class="plan-badge-row"><div class="plan-badge" data-ar="الأكثر شعبية" data-en="MOST POPULAR">الأكثر شعبية</div></div>
+        <div class="plan-name" data-ar="برو" data-en="PRO">برو</div>
+        <div class="plan-price" id="proPrice">$9<sup data-ar="/شهر" data-en="/mo">/شهر</sup></div>
+        <div class="plan-price-note" id="proNote" data-ar="يُدفع شهرياً" data-en="Billed monthly">يُدفع شهرياً</div>
+        <div class="plan-desc" data-ar="لمحترفي السيو ومستثمري الدومينات." data-en="For SEO pros and domain investors.">لمحترفي السيو ومستثمري الدومينات.</div>
+        <div class="plan-div"></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="نتائج غير محدودة" data-en="Unlimited results">نتائج غير محدودة</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="نقاط الذكاء الاصطناعي" data-en="AI scoring">نقاط الذكاء الاصطناعي</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="فلترة متقدمة" data-en="Advanced filters">فلترة متقدمة</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="تصدير CSV" data-en="CSV export">تصدير CSV</span></div>
+        <div class="plan-feat"><div class="feat-check fc-no">—</div><span style="color:var(--ink4)" data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</span></div>
+        <button class="plan-btn plan-btn-dark" data-ar="ابدأ تجربة 7 أيام" data-en="Start 7-day trial">ابدأ تجربة 7 أيام</button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="plan-card">
+        <div class="plan-name" data-ar="بريميوم" data-en="PREMIUM">بريميوم</div>
+        <div class="plan-price" id="premPrice">$19<sup data-ar="/شهر" data-en="/mo">/شهر</sup></div>
+        <div class="plan-price-note" id="premNote" data-ar="يُدفع شهرياً" data-en="Billed monthly">يُدفع شهرياً</div>
+        <div class="plan-desc" data-ar="للوكالات وفرق السيو." data-en="For agencies and SEO teams.">للوكالات وفرق السيو.</div>
+        <div class="plan-div"></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="كل مميزات برو" data-en="Everything in Pro">كل مميزات برو</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span style="font-weight:700" data-ar="تنبيهات واتساب فورية" data-en="Instant WhatsApp alerts">تنبيهات واتساب فورية</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="تتبع .ae .sa .eg .ma" data-en=".ae .sa .eg .ma tracking">.ae .sa .eg .ma تتبع متقدم</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="API 100 طلب/يوم" data-en="API 100 calls/day">API — 100 طلب/يوم</span></div>
+        <div class="plan-feat"><div class="feat-check fc-yes">✓</div><span data-ar="دعم أولوية" data-en="Priority support">دعم أولوية</span></div>
+        <button class="plan-btn plan-btn-dark" data-ar="ابدأ تجربة 7 أيام" data-en="Start 7-day trial">ابدأ تجربة 7 أيام</button>
+      </div>
+    </div>
+
+    <!-- COMPARE -->
+    <div class="section-eyebrow mt-8" data-ar="مقارنة الخطط" data-en="COMPARE PLANS">مقارنة الخطط</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th data-ar="الميزة" data-en="Feature">الميزة</th>
+          <th class="cc" data-ar="مجاني" data-en="Free">مجاني</th>
+          <th class="cc feat-col" data-ar="برو" data-en="Pro" style="color:var(--ink)">برو</th>
+          <th class="cc" data-ar="بريميوم" data-en="Premium">بريميوم</th>
+        </tr>
+      </thead>
+      <tbody id="compareBody"></tbody>
+    </table>
+
+    <!-- FAQ -->
+    <div class="section-eyebrow" style="margin-top:48px" data-ar="أسئلة شائعة" data-en="FAQ">أسئلة شائعة</div>
+    <div id="faqList" style="margin-bottom:72px"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-bottom" style="border-top:none;padding-top:0">
+        <span style="font-size:20px;font-weight:900;letter-spacing:-.04em;color:var(--ink)">مِيور</span>
+        <span style="font-size:12px;color:var(--ink4)" data-ar="© 2025 — قبل أن يختطفه أحد" data-en="© 2025 — Before someone else does">© 2025 — قبل أن يختطفه أحد</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+<script>
+/* STATE */
+let lang = 'ar';
+let billing = 'm';
+let selId = 0;
+
+/* DOMAIN DATA */
+const DOMAINS = [
+  {id:0,name:'travelinsider.com',tld:'.com',year:2008,bl:4820,da:34,tf:42,wb:418,status:'drop',score:87,spam:2,
+   ar:'دومين سفر نظيف عمره 15 سنة. 94% من الباك لينكات من مواقع سفر ذات صلة. لا سبام ولا PBN.',
+   en:'Clean 15-year travel domain. 94% relevant backlinks. No spam, no PBN.'},
+  {id:1,name:'luxurytravel.org',tld:'.org',year:2006,bl:7300,da:61,tf:58,wb:640,status:'expiring',score:93,spam:1,
+   ar:'دومين سفر فاخر استثنائي عمره 18 سنة. روابط من Forbes وCNTraveler وNYT. صفر سبام.',
+   en:'Exceptional 18-year luxury travel domain. Links from Forbes, CNTraveler, NYT. Zero spam.'},
+  {id:2,name:'budgettravel.net',tld:'.net',year:2010,bl:2100,da:28,tf:31,wb:220,status:'drop',score:74,spam:6,
+   ar:'دومين سفر اقتصادي جيد. معظم الروابط من مواقع عروض — جودة متوسطة.',
+   en:'Solid budget travel domain. Most links from deals sites — average quality.'},
+  {id:3,name:'عقارات.السعودية',tld:'.السعودية',year:2013,bl:1840,da:29,tf:33,wb:185,status:'drop',score:78,spam:4,
+   ar:'دومين IDN عربي نادر في نيش العقارات السعودية. تاريخ نظيف وباك لينكات موثوقة.',
+   en:'Rare Arabic IDN in Saudi real estate. Clean history, trusted backlinks.'},
+  {id:4,name:'مطاعم-دبي.ae',tld:'.ae',year:2016,bl:620,da:21,tf:25,wb:72,status:'pending',score:69,spam:8,
+   ar:'دومين عربي في نيش مطاعم دبي. روابط ذات صلة وتاريخ نظيف.',
+   en:'Arabic domain in Dubai restaurants niche. Relevant links, clean history.'},
+  {id:5,name:'سياحة.مصر',tld:'.مصر',year:2015,bl:890,da:19,tf:24,wb:110,status:'drop',score:65,spam:9,
+   ar:'دومين IDN مصري في نيش السياحة. لا عقوبات ولا تاريخ PBN.',
+   en:'Egyptian IDN in tourism niche. No penalties, no PBN history.'},
+  {id:6,name:'travel-hacks.com',tld:'.com',year:2014,bl:980,da:18,tf:22,wb:95,status:'drop',score:61,spam:11,
+   ar:'جودة متوسطة. الهايفن يحد من قيمة العلامة التجارية. أنكر تكست مشبوه.',
+   en:'Moderate quality. Hyphen limits brand value. Suspicious anchor text.'},
+  {id:7,name:'traveldeals24.com',tld:'.com',year:2019,bl:340,da:12,tf:8,wb:28,status:'drop',score:32,spam:68,
+   ar:'خطر سبام عالي جداً. 68% كازينو وصيدلة. استُخدم في PBN. تجنب تماماً.',
+   en:'Very high spam risk. 68% casino/pharma. Used in PBN. Avoid completely.'},
+];
+
+const COMPARE_DATA = [
+  {ar:'النتائج اليومية',en:'Daily results',f:'50',p:'∞',m:'∞'},
+  {ar:'نقاط الذكاء الاصطناعي',en:'AI scoring',f:'✗',p:'✓',m:'✓'},
+  {ar:'فلترة متقدمة',en:'Advanced filtering',f:'✗',p:'✓',m:'✓'},
+  {ar:'تصدير CSV',en:'CSV export',f:'✗',p:'✓',m:'✓'},
+  {ar:'تنبيهات واتساب',en:'WhatsApp alerts',f:'✗',p:'✗',m:'✓'},
+  {ar:'IDN العربي',en:'Arabic IDN',f:'✗',p:'—',m:'✓'},
+  {ar:'API',en:'API',f:'✗',p:'✗',m:'100/day'},
+  {ar:'دعم أولوية',en:'Priority support',f:'✗',p:'✗',m:'✓'},
+];
+
+const FAQS = [
+  {ar:'هل ميور مجاني؟',en:'Is Meor free?',
+   aa:'نعم، الخطة المجانية متاحة للأبد بدون بطاقة ائتمان. 50 نتيجة يومياً مع الفلترة الأساسية.',
+   ae:'Yes, the free plan is available forever with no credit card. 50 daily results with basic filtering.'},
+  {ar:'كيف تعمل تنبيهات واتساب؟',en:'How do WhatsApp alerts work?',
+   aa:'في الخطة المميزة، تضع معاييرك. عندما يسقط دومين مطابق تصلك رسالة واتساب فورية.',
+   ae:'On Premium, set your criteria. When a matching domain drops, you get an instant WhatsApp message.'},
+  {ar:'هل تدعمون الدومينات العربية IDN؟',en:'Do you support Arabic IDN domains?',
+   aa:'نعم. ميور هو الوحيد الذي يتتبع .مصر و.السعودية و.امارات. نعرض الأسماء بالعربية تلقائياً.',
+   ae:'Yes. Meor is the only tool tracking .مصر .السعودية .امارات. Arabic names displayed automatically.'},
+  {ar:'من أين تأتي البيانات؟',en:'Where does the data come from?',
+   aa:'ملفات المنطقة من ICANN CZDS مجاناً (677+ امتداد). نقاط SEO من Moz وMajestic. التاريخ من Wayback Machine.',
+   ae:'Zone files free from ICANN CZDS (677+ TLDs). SEO scores from Moz and Majestic. History from Wayback Machine.'},
+  {ar:'هل يمكنني استرداد المبلغ؟',en:'Can I get a refund?',
+   aa:'نعم. ضمان استرداد كامل خلال 7 أيام دون أي أسئلة.',
+   ae:'Yes. Full refund guarantee within 7 days, no questions asked.'},
+];
+
+/* NAVIGATION */
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const nl = document.getElementById('nl-'+page);
+  if(nl) nl.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  if(page==='tool') renderResults(DOMAINS);
+}
+
+/* QUICK SEARCH */
+function qs(v){
+  document.getElementById('heroInput').value = v;
+  go('tool');
+  document.getElementById('toolInput').value = v;
+  filterDomains(v);
+}
+
+/* LANGUAGE */
+function toggleLang(){
+  lang = lang==='ar'?'en':'ar';
+  const html = document.documentElement;
+  if(lang==='ar'){html.setAttribute('lang','ar');html.setAttribute('dir','rtl');document.getElementById('langBtn').textContent='EN';}
+  else{html.setAttribute('lang','en');html.setAttribute('dir','ltr');document.getElementById('langBtn').textContent='عربي';}
+  document.querySelectorAll('[data-ar]').forEach(el=>{
+    const t = lang==='ar'?el.getAttribute('data-ar'):el.getAttribute('data-en');
+    if(t!==null) el.innerHTML=t;
+  });
+  document.querySelectorAll('[data-ar-placeholder]').forEach(el=>{
+    el.placeholder = lang==='ar'?el.getAttribute('data-ar-placeholder'):el.getAttribute('data-en-placeholder');
+  });
+  renderResults(DOMAINS);
+  renderDetail(DOMAINS[selId]);
+  renderCompare();
+  renderFAQ();
+  updatePricing();
+}
+
+function autoLang(){
+  const bl = navigator.language||'ar';
+  if(!bl.startsWith('ar')){lang='ar';toggleLang();}
+}
+
+/* RESULTS TABLE */
+function sc(s){return s>=75?'s-hi':s>=50?'s-md':'s-lo'}
+function stPill(s){
+  if(s==='drop') return`<span class="status-tag tag-drop">${lang==='ar'?'سقط':'Dropped'}</span>`;
+  if(s==='pending') return`<span class="status-tag tag-pending">${lang==='ar'?'وشيك':'Pending'}</span>`;
+  return`<span class="status-tag tag-expiring">${lang==='ar'?'ينتهي':'Expiring'}</span>`;
+}
+
+function renderResults(list){
+  const tb = document.getElementById('resultsBody');
+  if(!tb) return;
+  if(!list.length){
+    tb.innerHTML=`<div style="padding:48px;text-align:center;color:var(--ink4);font-size:14px">${lang==='ar'?'لا نتائج':'No results'}</div>`;
+    return;
+  }
+  tb.innerHTML = list.map(d=>`
+    <div class="tbl-row${d.id===selId?' sel':''}" onclick="selectRow(${d.id})">
+      <div>
+        <div class="d-name">${d.name}</div>
+        <div class="d-meta">${lang==='ar'?'منذ':'Since'} ${d.year} · ${d.tld}</div>
+      </div>
+      <div><span class="score-pill ${sc(d.score)}">${d.score}</span></div>
+      <div class="tbl-val">${d.bl.toLocaleString()}</div>
+      <div class="tbl-val">${d.da} / ${d.tf}</div>
+      <div class="tbl-val">${2025-d.year}yr</div>
+      <div>${stPill(d.status)}</div>
+      <div class="tbl-val">${d.wb}</div>
+    </div>`).join('');
+  if(list.length) renderDetail(list[0]);
+}
+
+function filterDomains(q){
+  q=(q||'').toLowerCase();
+  const tld=document.getElementById('tldFilter').value;
+  const f=DOMAINS.filter(d=>{
+    const mq=!q||d.name.toLowerCase().includes(q)||d.tld.includes(q);
+    const mt=tld==='all'||d.tld===tld;
+    return mq&&mt;
+  });
+  renderResults(f);
+}
+
+function selectRow(id){
+  selId=id;
+  const d=DOMAINS.find(x=>x.id===id);
+  document.querySelectorAll('.tbl-row').forEach(r=>{
+    r.classList.toggle('sel', r.querySelector('.d-name')&&r.querySelector('.d-name').textContent===d.name);
+  });
+  renderDetail(d);
+}
+
+/* DETAIL PANEL */
+function renderDetail(d){
+  const col=document.getElementById('detailCol');
+  if(!col||!d) return;
+  const verdict = d.score>=75?(lang==='ar'?'شراء قوي':'Strong buy'):d.score>=50?(lang==='ar'?'تابع بحذر':'With caution'):(lang==='ar'?'تجنب':'Avoid');
+  const vc = d.score>=75?'var(--green)':d.score>=50?'var(--amber)':'var(--red)';
+  col.innerHTML=`
+    <div class="dp-head">
+      <span class="dp-label">✦ ${lang==='ar'?'تحليل':'ANALYSIS'}</span>
+      <div class="dp-close" onclick="document.getElementById('detailCol').innerHTML=''">×</div>
+    </div>
+    <div class="dp-domain-block">
+      <div class="dp-dname">${d.name}</div>
+      <div class="dp-dmeta">${lang==='ar'?'منذ':'Since'} ${d.year} · ${d.tld}</div>
+    </div>
+    <div style="padding:0 14px 12px">
+      <div class="dp-score-block">
+        <div class="dp-score-row">
+          <div class="dp-score-num dp-score-${d.score>=75?'good':d.score>=50?'mid':'bad'}">${d.score}</div>
+          <div style="flex:1">
+            <div class="dp-bar"><div class="dp-bar-fill" style="width:${d.score}%;background:${vc}"></div></div>
+            <div class="dp-verdict" style="color:${vc}">${verdict}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-label">✦ ${lang==='ar'?'رأي الذكاء الاصطناعي':'AI VERDICT'}</div>
+      <div class="dp-ai">${lang==='ar'?d.ar:d.en}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-label">${lang==='ar'?'المقاييس':'METRICS'}</div>
+      <div class="dp-metric"><span class="dp-mk">Trust Flow</span><span class="dp-mv" style="color:var(--green)">${d.tf}</span></div>
+      <div class="dp-metric"><span class="dp-mk">Domain Authority</span><span class="dp-mv">${d.da}</span></div>
+      <div class="dp-metric"><span class="dp-mk">${lang==='ar'?'باك لينكات':'Backlinks'}</span><span class="dp-mv">${d.bl.toLocaleString()}</span></div>
+      <div class="dp-metric"><span class="dp-mk">${lang==='ar'?'ويباك':'Wayback'}</span><span class="dp-mv">${d.wb}</span></div>
+      <div class="dp-metric"><span class="dp-mk">${lang==='ar'?'السبام':'Spam'}</span>
+        <span class="dp-mv" style="color:${d.spam<15?'var(--green)':'var(--red)'}">${d.spam}% ${d.spam<15?(lang==='ar'?'نظيف':'clean'):(lang==='ar'?'خطر':'HIGH')}</span>
+      </div>
+    </div>
+    <div class="dp-actions">
+      <button class="dp-btn dp-btn-primary" onclick="loadDetail(${d.id})">${lang==='ar'?'عرض التفاصيل الكاملة':'View full details'}</button>
+      <button class="dp-btn dp-btn-sec">${lang==='ar'?'↗ تقرير ذكاء اصطناعي':'↗ AI report'}</button>
+    </div>`;
+}
+
+function loadDetail(id){
+  const d=DOMAINS.find(x=>x.id===id);
+  if(!d) return;
+  document.getElementById('dd-name').textContent=d.name;
+  document.getElementById('dd-crumb-name').textContent=d.name;
+  document.getElementById('dd-tld').textContent=d.tld;
+  document.getElementById('dd-year').textContent=(lang==='ar'?'منذ ':'Since ')+d.year;
+  const sn=document.getElementById('dd-score-n');
+  sn.textContent=d.score;
+  sn.style.color=d.score>=75?'var(--green)':d.score>=50?'var(--amber)':'var(--red)';
+  document.getElementById('dd-tf').textContent=d.tf;
+  document.getElementById('dd-cf').textContent=Math.round(d.tf*0.9);
+  document.getElementById('dd-da').textContent=d.da;
+  document.getElementById('dd-bl').textContent=d.bl.toLocaleString();
+  document.getElementById('dd-rd').textContent=Math.round(d.bl/15);
+  document.getElementById('dd-spam').textContent=d.spam+'%';
+  document.getElementById('dd-spam').style.color=d.spam<15?'var(--green)':'var(--red)';
+  const ai=document.getElementById('dd-ai');
+  const txt=lang==='ar'?d.ar:d.en;
+  const parts=txt.split('.');
+  ai.innerHTML=`<strong>${parts[0]}.</strong> ${parts.slice(1).join('.')}`;
+  go('detail');
+}
+
+/* CHIPS */
+function toggleChip(el){el.classList.toggle('on')}
+
+/* BILLING */
+function setBill(m){
+  billing=m;
+  document.getElementById('billM').className='bill-opt'+(m==='m'?' on':'');
+  document.getElementById('billA').className='bill-opt'+(m==='a'?' on':'');
+  updatePricing();
+}
+function updatePricing(){
+  const pm=billing==='a'?'$7':'$9';
+  const prm=billing==='a'?'$15':'$19';
+  const mo=lang==='ar'?'/شهر':'/mo';
+  const note=lang==='ar'?(billing==='a'?'يُدفع سنوياً':'يُدفع شهرياً'):(billing==='a'?'Billed annually':'Billed monthly');
+  document.getElementById('proPrice').innerHTML=pm+`<sup>${mo}</sup>`;
+  document.getElementById('premPrice').innerHTML=prm+`<sup>${mo}</sup>`;
+  document.getElementById('proNote').textContent=note;
+  document.getElementById('premNote').textContent=note;
+}
+
+/* COMPARE TABLE */
+function renderCompare(){
+  const tb=document.getElementById('compareBody');
+  if(!tb) return;
+  tb.innerHTML=COMPARE_DATA.map(r=>`
+    <tr>
+      <td>${lang==='ar'?r.ar:r.en}</td>
+      <td class="cc" style="color:${r.f==='✓'?'var(--green)':r.f==='✗'?'var(--ink4)':'var(--ink)'}">${r.f==='✓'?'✓':r.f==='✗'?'—':r.f}</td>
+      <td class="cc feat-col" style="color:${r.p==='✓'?'var(--green)':r.p==='✗'?'var(--ink4)':'var(--ink);font-weight:600'}">${r.p==='✓'?'✓':r.p==='✗'?'—':r.p}</td>
+      <td class="cc" style="color:${r.m==='✓'?'var(--green)':r.m==='✗'?'var(--ink4)':'var(--ink)'}">${r.m==='✓'?'✓':r.m==='✗'?'—':r.m}</td>
+    </tr>`).join('');
+}
+
+/* FAQ */
+function renderFAQ(){
+  const list=document.getElementById('faqList');
+  if(!list) return;
+  list.innerHTML=FAQS.map((f,i)=>`
+    <div class="faq-item" id="faq${i}" onclick="toggleFAQ(${i})">
+      <div class="faq-q">
+        <span>${lang==='ar'?f.ar:f.en}</span>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">${lang==='ar'?f.aa:f.ae}</div>
+    </div>`).join('');
+}
+function toggleFAQ(i){document.getElementById('faq'+i).classList.toggle('open')}
+
+/* INIT */
+autoLang();
+renderResults(DOMAINS);
+renderCompare();
+renderFAQ();
+updatePricing();
+</script>
 </body>
 </html>
