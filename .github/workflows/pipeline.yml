@@ -1,0 +1,28 @@
+name: Meor Domain Pipeline
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # runs every hour
+  workflow_dispatch:      # allows manual run
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests python-dotenv supabase schedule dnspython
+
+      - name: Run pipeline
+        env:
+          CZDS_USERNAME: ${{ secrets.CZDS_USERNAME }}
+          CZDS_PASSWORD: ${{ secrets.CZDS_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python pipeline.py
