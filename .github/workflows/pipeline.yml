@@ -5,6 +5,7 @@ on:
     - cron: '0 * * * *'    # every hour — small TLDs
     - cron: '0 2 * * *'    # 2am daily — large TLDs
     - cron: '*/30 * * * *' # every 30 min — MENA DNS
+    - cron: '0 */6 * * *'  # every 6 hours — enrichment
   workflow_dispatch:
 
 jobs:
@@ -15,24 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: pip install requests python-dotenv supabase
-
       - name: Restore zone cache
         uses: actions/cache@v4
         with:
           path: zone_cache
           key: zone-small-${{ runner.os }}-${{ github.run_id }}
           restore-keys: zone-small-${{ runner.os }}-
-
       - name: Ensure directories
         run: mkdir -p zone_cache data
-
       - name: Run small TLD pipeline
         env:
           CZDS_USERNAME: ${{ secrets.CZDS_USERNAME }}
@@ -40,7 +36,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python pipeline_small.py
-
       - name: Save zone cache
         uses: actions/cache@v4
         with:
@@ -53,24 +48,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: pip install requests python-dotenv supabase
-
       - name: Restore large zone cache
         uses: actions/cache@v4
         with:
           path: zone_cache_large
           key: zone-large-${{ runner.os }}-${{ github.run_id }}
           restore-keys: zone-large-${{ runner.os }}-
-
       - name: Ensure directories
         run: mkdir -p zone_cache_large data
-
       - name: Run large TLD pipeline
         env:
           CZDS_USERNAME: ${{ secrets.CZDS_USERNAME }}
@@ -78,7 +68,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python pipeline_large.py
-
       - name: Save large zone cache
         uses: actions/cache@v4
         with:
@@ -91,32 +80,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: pip install requests python-dotenv supabase
-
       - name: Restore MENA domain list cache
         uses: actions/cache@v4
         with:
           path: data/mena_known_domains.txt
           key: mena-domains-${{ runner.os }}-${{ github.run_id }}
           restore-keys: mena-domains-${{ runner.os }}-
-
       - name: Ensure directories
         run: mkdir -p data
-
       - name: Run MENA pipeline
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python pipeline_mena.py
-
       - name: Save MENA domain list
         uses: actions/cache@v4
         with:
           path: data/mena_known_domains.txt
           key: mena-domains-${{ runner.os }}-${{ github.run_id }}
+
+  # ── JOB 4: Enrichment — every 6 hours ───────────
+  enrich:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 */6 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install requests python-dotenv supabase
+      - name: Run enrichment pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          OPR_API_KEY: ${{ secrets.OPR_API_KEY }}
+        run: python pipeline_enrich.py
