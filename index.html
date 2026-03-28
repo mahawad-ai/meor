@@ -45,7 +45,7 @@
   --r-xl:        28px;
   --r-pill:      100px;
 
-  --font:        'Cairo', sans-serif;
+  --font:        'Cairo', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
   --max:         1120px;
   --ease:        cubic-bezier(0.4,0,0.2,1);
   --spring:      cubic-bezier(0.34,1.56,0.64,1);
@@ -1231,6 +1231,206 @@ input[type=range]{
 [dir=ltr] .detail-col{border-right:none;border-left:1px solid var(--border)}
 @media(max-width:860px){.detail-col{display:none}}
 
+
+/* HERO BROWSE BUTTON */
+.hero-browse-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  margin-bottom:48px;
+}
+.hero-browse-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--ink);color:#fff;
+  font-family:var(--font);
+  font-size:17px;font-weight:700;
+  padding:16px 32px;border-radius:var(--r-pill);
+  border:none;cursor:pointer;
+  transition:all .2s var(--spring);
+  box-shadow:var(--shadow-lg);
+  letter-spacing:-.01em;
+}
+.hero-browse-btn:hover{transform:scale(1.04);opacity:.88;box-shadow:var(--shadow-xl)}
+.hero-browse-btn:active{transform:scale(.98)}
+.hero-browse-arrow{
+  font-size:20px;
+  transition:transform .2s var(--spring);
+}
+.hero-browse-btn:hover .hero-browse-arrow{transform:translateX(-4px)}
+[dir=ltr] .hero-browse-arrow{transform:scaleX(-1)}
+[dir=ltr] .hero-browse-btn:hover .hero-browse-arrow{transform:scaleX(-1) translateX(-4px)}
+.hero-browse-hint{
+  font-size:13px;color:var(--ink4);font-weight:500;
+}
+
+
+/* ═══════════════════════════════════════════
+   MARKETING SECTIONS — below the tool
+═══════════════════════════════════════════ */
+.mkt-wrap{background:var(--bg)}
+
+.mkt-urgency{
+  background:var(--ink);
+  padding:10px 0;
+  margin-top:32px;
+}
+.mkt-urgency-inner{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-size:13px;font-weight:600;color:#fff;
+}
+
+.mkt-section{padding:72px 0}
+.mkt-section-alt{background:rgba(255,255,255,0.6);backdrop-filter:blur(20px)}
+.mkt-section-header{text-align:center;margin-bottom:48px}
+.mkt-eyebrow{
+  font-size:11px;font-weight:700;
+  color:var(--ink4);letter-spacing:.1em;
+  margin-bottom:10px;
+}
+.mkt-title{
+  font-size:clamp(24px,3.5vw,40px);
+  font-weight:800;letter-spacing:-.03em;
+  color:var(--ink);line-height:1.15;
+}
+.mkt-body{
+  font-size:15px;color:var(--ink3);
+  line-height:1.7;margin-bottom:24px;
+}
+
+/* Steps */
+.mkt-steps{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+@media(max-width:768px){.mkt-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.mkt-steps{grid-template-columns:1fr}}
+
+.mkt-step{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:24px 20px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .2s var(--spring);
+}
+.mkt-step:hover{transform:translateY(-3px)}
+.mkt-step-num{
+  font-size:28px;font-weight:900;
+  color:var(--ink5);letter-spacing:-.04em;
+  margin-bottom:8px;
+}
+.mkt-step-icon{font-size:24px;margin-bottom:12px}
+.mkt-step h3{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.mkt-step p{font-size:12px;color:var(--ink3);line-height:1.65}
+
+/* Two col */
+.mkt-two-col{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:48px;align-items:center;
+}
+@media(max-width:768px){.mkt-two-col{grid-template-columns:1fr}}
+
+.mkt-features-list{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.mkt-feat{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--ink2);
+}
+.mkt-feat-check{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--green-bg);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;flex-shrink:0;
+}
+
+/* Stats */
+.mkt-col-stats{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.mkt-stat-card{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:20px;
+  box-shadow:var(--shadow-sm);
+  text-align:center;
+}
+.mkt-stat-num{
+  font-size:28px;font-weight:900;
+  color:var(--ink);letter-spacing:-.03em;
+  margin-bottom:4px;
+}
+.mkt-stat-label{font-size:11px;color:var(--ink4);font-weight:500}
+
+/* Plans */
+.mkt-plans{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;max-width:900px;margin:0 auto;
+}
+@media(max-width:768px){.mkt-plans{grid-template-columns:1fr}}
+
+.mkt-plan{
+  background:var(--surface-hi);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-xl);
+  padding:28px 24px;
+  box-shadow:var(--shadow-sm);
+  position:relative;
+  transition:transform .2s var(--spring);
+}
+.mkt-plan:hover{transform:translateY(-3px)}
+.mkt-plan-featured{border-color:var(--ink);box-shadow:var(--shadow-lg)}
+.mkt-plan-badge{
+  position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;
+  font-size:9px;font-weight:800;
+  padding:3px 14px;border-radius:var(--r-pill);
+  white-space:nowrap;letter-spacing:.06em;
+}
+[dir=ltr] .mkt-plan-badge{left:50%}
+.mkt-plan-name{font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:.08em;margin-bottom:6px}
+.mkt-plan-price{font-size:40px;font-weight:900;color:var(--ink);letter-spacing:-.04em;line-height:1}
+.mkt-plan-note{font-size:11px;color:var(--ink4);margin-bottom:16px;margin-top:2px}
+.mkt-plan-divider{height:1px;background:var(--border);margin-bottom:16px}
+.mkt-plan-feat{font-size:12px;color:var(--ink2);margin-bottom:8px}
+.mkt-plan-feat.muted{color:var(--ink4)}
+.mkt-plan-btn{
+  width:100%;padding:11px;border-radius:var(--r-pill);
+  font-family:var(--font);font-size:13px;font-weight:700;
+  cursor:pointer;margin-top:20px;border:none;
+  transition:all .18s var(--spring);
+}
+.mkt-plan-btn-dark{background:var(--ink);color:#fff}
+.mkt-plan-btn-dark:hover{opacity:.82;transform:scale(1.02)}
+.mkt-plan-btn-outline{
+  background:transparent;color:var(--ink2);
+  border:1.5px solid var(--border2)!important;
+  border:none;
+}
+.mkt-plan-btn-outline:hover{border-color:var(--border3)!important;background:rgba(0,0,0,0.04)}
+
+/* Footer */
+.mkt-footer{
+  background:var(--ink);
+  padding:40px 0;
+}
+.mkt-footer-inner{
+  display:flex;flex-direction:column;align-items:center;
+  gap:8px;text-align:center;
+}
+.mkt-footer-brand{
+  font-size:24px;font-weight:900;color:#fff;
+  letter-spacing:-.04em;
+}
+.mkt-footer-tagline{font-size:13px;color:rgba(255,255,255,.5)}
+.mkt-footer-links{
+  display:flex;gap:20px;margin-top:8px;
+}
+.mkt-footer-link{
+  font-size:12px;color:rgba(255,255,255,.4);
+  cursor:pointer;transition:color .15s;
+}
+.mkt-footer-link:hover{color:#fff}
+.mkt-footer-copy{font-size:11px;color:rgba(255,255,255,.25);margin-top:4px}
+
 </style>
 </head>
 <body>
@@ -1240,19 +1440,19 @@ input[type=range]{
   <div class="nav-inner">
     <div class="nav-logo" onclick="go('home')">مِيور</div>
     <div class="nav-links">
-      <div class="nav-link active" id="nl-home" onclick="go('home')" data-ar="الرئيسية" data-en="Home">الرئيسية</div>
-      <div class="nav-link" id="nl-tool" onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</div>
-      <div class="nav-link" id="nl-pricing" onclick="go('pricing')" data-ar="الأسعار" data-en="Pricing">الأسعار</div>
+      <div class="nav-link" id="nl-home" onclick="go('pricing')" data-ar="الأسعار" data-en="Pricing">الأسعار</div>
+      <div class="nav-link active" id="nl-tool" onclick="go('tool')" data-ar="تصفح الدومينات" data-en="Browse Domains">تصفح الدومينات</div>
+      <div class="nav-link" id="nl-pricing" onclick="go('pricing')" data-ar="كيف يعمل" data-en="How it works">كيف يعمل</div>
     </div>
     <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
-    <button class="nav-cta" onclick="go('pricing')" data-ar="ابدأ مجاناً" data-en="Start Free">ابدأ مجاناً</button>
+    <button class="nav-cta" onclick="go('pricing')" data-ar="سجّل مجاناً" data-en="Sign up free">سجّل مجاناً</button>
   </div>
 </nav>
 
 <!-- ═══════════════════════════════════════════════════════
      PAGE 1 — HOME
 ═══════════════════════════════════════════════════════ -->
-<div id="page-home" class="page active">
+<div id="page-home" class="page">
   <section class="hero">
     <div class="wrap">
       <div class="hero-eyebrow">
@@ -1267,21 +1467,13 @@ input[type=range]{
         دومينات منتهية بباك لينكات قوية وتاريخ نظيف. نقاط ذكاء اصطناعي فورية وتنبيهات واتساب.
       </p>
 
-      <div class="hero-search">
-        <input type="text" id="heroInput"
-          data-ar-placeholder="ابحث عن دومين أو كلمة مفتاحية..."
-          data-en-placeholder="Search domain or keyword..."
-          placeholder="ابحث عن دومين أو كلمة مفتاحية...">
-        <button class="hero-search-btn" onclick="go('tool')" data-ar="ابحث" data-en="Search">ابحث</button>
+      <div class="hero-browse-wrap">
+        <button class="hero-browse-btn" onclick="go('tool')" data-ar="تصفح دومينات اليوم" data-en="Browse Today's Drops">
+          تصفح دومينات اليوم
+          <span class="hero-browse-arrow">←</span>
+        </button>
+        <div class="hero-browse-hint" data-ar="لا تحتاج إلى بحث — فقط اختر معاييرك" data-en="No searching needed — just set your criteria">لا تحتاج إلى بحث — فقط اختر معاييرك</div>
       </div>
-
-      <p class="hero-hint">
-        <span data-ar="جرب:" data-en="Try:">جرب:</span>
-        <span class="hint-tag" onclick="qs('travel')">travel</span>
-        <span class="hint-tag" onclick="qs('عقارات')">عقارات</span>
-        <span class="hint-tag" onclick="qs('.ae')">.ae</span>
-        <span class="hint-tag" onclick="qs('tech')">tech</span>
-      </p>
 
       <div class="stats-row">
         <div class="stat-card">
@@ -1431,7 +1623,7 @@ input[type=range]{
 <!-- ═══════════════════════════════════════════════════════
      PAGE 2 — SEARCH TOOL
 ═══════════════════════════════════════════════════════ -->
-<div id="page-tool" class="page">
+<div id="page-tool" class="page active">
 
   <!-- ── SEARCH + FILTERS PANEL ── -->
   <div class="search-panel">
@@ -1566,7 +1758,7 @@ input[type=range]{
         </div>
         <div class="sp-actions">
           <button class="sp-reset" onclick="fltReset()" data-ar="مسح" data-en="Reset">مسح</button>
-          <button class="sp-search-btn" onclick="fltRun()" data-ar="🔍 بحث" data-en="🔍 Search">🔍 بحث</button>
+          <button class="sp-search-btn" onclick="fltRun()" data-ar="تطبيق الفلاتر" data-en="Apply Filters">تطبيق الفلاتر</button>
         </div>
       </div>
 
@@ -1577,7 +1769,7 @@ input[type=range]{
   </div>
 
   <!-- ── RESULTS ── -->
-  <div id="results-section" style="display:none">
+  <div id="results-section" style="display:block">
     <div class="results-toolbar-wrap">
       <div class="wrap">
         <div class="results-toolbar-inner">
@@ -1612,6 +1804,162 @@ input[type=range]{
   </div>
 
 </div>
+
+<!-- ══ MARKETING CONTENT — below the tool ══════════════════════════ -->
+<div class="mkt-wrap">
+
+  <!-- URGENCY BANNER -->
+  <div class="mkt-urgency">
+    <div class="wrap">
+      <div class="mkt-urgency-inner">
+        <span class="live-dot"></span>
+        <span data-ar="الدومينات تُباع في ثوانٍ — كن أول من يراها" data-en="Domains sell in seconds — be the first to see them">الدومينات تُباع في ثوانٍ — كن أول من يراها</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="mkt-section">
+    <div class="wrap">
+      <div class="mkt-section-header">
+        <div class="mkt-eyebrow" data-ar="كيف يعمل ميور" data-en="HOW MEOR WORKS">كيف يعمل ميور</div>
+        <h2 class="mkt-title" data-ar="من الفلترة إلى التسجيل في ثوانٍ" data-en="From filtering to registration in seconds">من الفلترة إلى التسجيل في ثوانٍ</h2>
+      </div>
+      <div class="mkt-steps">
+        <div class="mkt-step">
+          <div class="mkt-step-num">١</div>
+          <div class="mkt-step-icon">🎯</div>
+          <h3 data-ar="اختر معاييرك" data-en="Set your criteria">اختر معاييرك</h3>
+          <p data-ar="حدد الامتداد والحد الأدنى للـ TF وDA وعمر الدومين. الفلاتر تعمل فوراً." data-en="Set extension, minimum TF, DA, domain age. Filters work instantly.">حدد الامتداد والحد الأدنى للـ TF وDA وعمر الدومين. الفلاتر تعمل فوراً.</p>
+        </div>
+        <div class="mkt-step">
+          <div class="mkt-step-num">٢</div>
+          <div class="mkt-step-icon">⚡</div>
+          <h3 data-ar="اكتشف الفرصة" data-en="Discover the opportunity">اكتشف الفرصة</h3>
+          <p data-ar="ميور يفحص 843 امتداداً كل ساعة. أنت ترى الدومين لحظة سقوطه — قبل الجميع." data-en="Meor scans 843 TLDs every hour. You see the domain the moment it drops — before everyone.">ميور يفحص 843 امتداداً كل ساعة. أنت ترى الدومين لحظة سقوطه — قبل الجميع.</p>
+        </div>
+        <div class="mkt-step">
+          <div class="mkt-step-num">٣</div>
+          <div class="mkt-step-icon">✅</div>
+          <h3 data-ar="سجّل قبل غيرك" data-en="Register before anyone">سجّل قبل غيرك</h3>
+          <p data-ar="اضغط تسجيل مباشرة من ميور. كل ثانية تفصلك عن دومين قد يغير حياتك." data-en="Click register directly from Meor. Every second counts between you and a life-changing domain.">اضغط تسجيل مباشرة من ميور. كل ثانية تفصلك عن دومين قد يغير حياتك.</p>
+        </div>
+        <div class="mkt-step">
+          <div class="mkt-step-num">٤</div>
+          <div class="mkt-step-icon">💰</div>
+          <h3 data-ar="استثمر أو ابنِ" data-en="Invest or build">استثمر أو ابنِ</h3>
+          <p data-ar="أعد بيعه بعشرة أضعاف أو ابنِ عليه موقعاً. الدومينات الجيدة نادرة والنادر ثمين." data-en="Resell it for 10x or build a site on it. Good domains are rare — and rare is valuable.">أعد بيعه بعشرة أضعاف أو ابنِ عليه موقعاً. الدومينات الجيدة نادرة والنادر ثمين.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY MEOR -->
+  <section class="mkt-section mkt-section-alt">
+    <div class="wrap">
+      <div class="mkt-two-col">
+        <div class="mkt-col-text">
+          <div class="mkt-eyebrow" data-ar="لماذا ميور" data-en="WHY MEOR">لماذا ميور</div>
+          <h2 class="mkt-title" data-ar="الأول والوحيد عربياً" data-en="First and only in Arabic">الأول والوحيد عربياً</h2>
+          <p class="mkt-body" data-ar="لا يوجد أي أداة عربية لتتبع الدومينات المنتهية. expireddomains.net كبيرة لكنها إنجليزية فقط وواجهتها من 2009. ميور مبنية للمستخدم العربي — واجهة عربية كاملة، دعم IDN، تتبع .ae و.sa و.eg و.ma و.السعودية و.مصر و.امارات." data-en="No Arabic tool tracks expired domains. expireddomains.net is big but English-only with a 2009 UI. Meor is built for Arabic users — full Arabic interface, IDN support, tracking .ae .sa .eg .ma .السعودية .مصر .امارات.">لا يوجد أي أداة عربية لتتبع الدومينات المنتهية. expireddomains.net كبيرة لكنها إنجليزية فقط وواجهتها من 2009. ميور مبنية للمستخدم العربي — واجهة عربية كاملة، دعم IDN، تتبع .ae و.sa و.eg و.ma.</p>
+          <div class="mkt-features-list">
+            <div class="mkt-feat"><span class="mkt-feat-check">✓</span><span data-ar="843 امتداد مُراقَب كل ساعة" data-en="843 TLDs monitored every hour">843 امتداد مُراقَب كل ساعة</span></div>
+            <div class="mkt-feat"><span class="mkt-feat-check">✓</span><span data-ar="نقاط ذكاء اصطناعي لكل دومين" data-en="AI score for every domain">نقاط ذكاء اصطناعي لكل دومين</span></div>
+            <div class="mkt-feat"><span class="mkt-feat-check">✓</span><span data-ar="دعم الدومينات العربية IDN" data-en="Arabic IDN domain support">دعم الدومينات العربية IDN</span></div>
+            <div class="mkt-feat"><span class="mkt-feat-check">✓</span><span data-ar="واجهة عربية وإنجليزية كاملة" data-en="Full Arabic and English interface">واجهة عربية وإنجليزية كاملة</span></div>
+            <div class="mkt-feat"><span class="mkt-feat-check">✓</span><span data-ar="تنبيهات واتساب فورية (برو)" data-en="Instant WhatsApp alerts (Pro)">تنبيهات واتساب فورية (برو)</span></div>
+          </div>
+        </div>
+        <div class="mkt-col-stats">
+          <div class="mkt-stat-card">
+            <div class="mkt-stat-num" id="mkt-domains-count">317+</div>
+            <div class="mkt-stat-label" data-ar="دومين في قاعدة البيانات" data-en="Domains in database">دومين في قاعدة البيانات</div>
+          </div>
+          <div class="mkt-stat-card">
+            <div class="mkt-stat-num">843</div>
+            <div class="mkt-stat-label" data-ar="امتداد مُراقَب" data-en="TLDs monitored">امتداد مُراقَب</div>
+          </div>
+          <div class="mkt-stat-card">
+            <div class="mkt-stat-num">كل ساعة</div>
+            <div class="mkt-stat-label" data-ar="تحديث تلقائي" data-en="Automatic updates">تحديث تلقائي</div>
+          </div>
+          <div class="mkt-stat-card">
+            <div class="mkt-stat-num">$0</div>
+            <div class="mkt-stat-label" data-ar="للبدء — مجاني تماماً" data-en="to start — completely free">للبدء — مجاني تماماً</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="mkt-section">
+    <div class="wrap">
+      <div class="mkt-section-header">
+        <div class="mkt-eyebrow" data-ar="الأسعار" data-en="PRICING">الأسعار</div>
+        <h2 class="mkt-title" data-ar="شفاف، بسيط، يستحق كل قرش" data-en="Transparent, simple, worth every penny">شفاف، بسيط، يستحق كل قرش</h2>
+      </div>
+      <div class="mkt-plans">
+        <div class="mkt-plan">
+          <div class="mkt-plan-name" data-ar="مجاني" data-en="Free">مجاني</div>
+          <div class="mkt-plan-price">$0</div>
+          <div class="mkt-plan-note" data-ar="للأبد" data-en="forever">للأبد</div>
+          <div class="mkt-plan-divider"></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="تصفح الدومينات" data-en="Browse domains">تصفح الدومينات</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="فلترة أساسية" data-en="Basic filtering">فلترة أساسية</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="واجهة عربية" data-en="Arabic interface">واجهة عربية</span></div>
+          <div class="mkt-plan-feat muted">— <span data-ar="نقاط الذكاء الاصطناعي" data-en="AI scores">نقاط الذكاء الاصطناعي</span></div>
+          <div class="mkt-plan-feat muted">— <span data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</span></div>
+          <button class="mkt-plan-btn mkt-plan-btn-outline" data-ar="ابدأ مجاناً" data-en="Start free">ابدأ مجاناً</button>
+        </div>
+        <div class="mkt-plan mkt-plan-featured">
+          <div class="mkt-plan-badge" data-ar="الأكثر شعبية" data-en="MOST POPULAR">الأكثر شعبية</div>
+          <div class="mkt-plan-name" data-ar="برو" data-en="Pro">برو</div>
+          <div class="mkt-plan-price">$9<span style="font-size:16px;font-weight:500">/mo</span></div>
+          <div class="mkt-plan-note" data-ar="يُدفع شهرياً" data-en="billed monthly">يُدفع شهرياً</div>
+          <div class="mkt-plan-divider"></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="نتائج غير محدودة" data-en="Unlimited results">نتائج غير محدودة</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="نقاط الذكاء الاصطناعي" data-en="AI scores">نقاط الذكاء الاصطناعي</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="فلترة متقدمة" data-en="Advanced filters">فلترة متقدمة</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="تصدير CSV" data-en="CSV export">تصدير CSV</span></div>
+          <div class="mkt-plan-feat muted">— <span data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</span></div>
+          <button class="mkt-plan-btn mkt-plan-btn-dark" data-ar="ابدأ تجربة 7 أيام" data-en="Start 7-day trial">ابدأ تجربة 7 أيام</button>
+        </div>
+        <div class="mkt-plan">
+          <div class="mkt-plan-name" data-ar="بريميوم" data-en="Premium">بريميوم</div>
+          <div class="mkt-plan-price">$19<span style="font-size:16px;font-weight:500">/mo</span></div>
+          <div class="mkt-plan-note" data-ar="يُدفع شهرياً" data-en="billed monthly">يُدفع شهرياً</div>
+          <div class="mkt-plan-divider"></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="كل مميزات برو" data-en="Everything in Pro">كل مميزات برو</span></div>
+          <div class="mkt-plan-feat">✓ <span style="font-weight:700" data-ar="تنبيهات واتساب فورية" data-en="Instant WhatsApp alerts">تنبيهات واتساب فورية</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="تتبع MENA المتقدم" data-en="Advanced MENA tracking">تتبع MENA المتقدم</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="API — 100 طلب/يوم" data-en="API — 100 calls/day">API — 100 طلب/يوم</span></div>
+          <div class="mkt-plan-feat">✓ <span data-ar="دعم أولوية" data-en="Priority support">دعم أولوية</span></div>
+          <button class="mkt-plan-btn mkt-plan-btn-dark" data-ar="ابدأ تجربة 7 أيام" data-en="Start 7-day trial">ابدأ تجربة 7 أيام</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="mkt-footer">
+    <div class="wrap">
+      <div class="mkt-footer-inner">
+        <div class="mkt-footer-brand">مِيور</div>
+        <div class="mkt-footer-tagline" data-ar="قبل أن يختطفه أحد" data-en="Before someone else does">قبل أن يختطفه أحد</div>
+        <div class="mkt-footer-links">
+          <span class="mkt-footer-link" data-ar="الخصوصية" data-en="Privacy">الخصوصية</span>
+          <span class="mkt-footer-link" data-ar="الشروط" data-en="Terms">الشروط</span>
+          <span class="mkt-footer-link" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</span>
+        </div>
+        <div class="mkt-footer-copy">© 2026 meor.com</div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+<!-- ══ END MARKETING ════════════════════════════════════════════════ -->
+
 <!-- ═══════════════════════════════════════════════════════
      PAGE 3 — DOMAIN DETAIL
 ═══════════════════════════════════════════════════════ -->
@@ -1876,12 +2224,13 @@ const FAQS = [
 /* NAVIGATION */
 function go(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
+  const targetPage = page === 'home' ? 'tool' : page;
+document.getElementById('page-'+targetPage).classList.add('active');
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
   const nl = document.getElementById('nl-'+page);
   if(nl) nl.classList.add('active');
   window.scrollTo({top:0,behavior:'instant'});
-  if(page==='tool'){const rs=document.getElementById('results-section');if(rs)rs.style.display='none';}
+  if(page==='tool'){if(DOMAINS.length>0)fltRun();}
 }
 
 /* QUICK SEARCH */
@@ -2091,7 +2440,7 @@ function toggleFAQ(i){document.getElementById('faq'+i).classList.toggle('open')}
 /* ═══════════════════════════════════════════
    FILTER + SEARCH JS
 ═══════════════════════════════════════════ */
-let fltActiveTLD='all', fltActiveST='all', fltMinBL=0;
+let fltActiveTLD='all', fltActiveST='all', fltMinBL=0, fltSortKey='date', fltSortDir=-1;
 const fltSws={};
 
 function fltTLD(el){
@@ -2142,16 +2491,10 @@ function qPreset(type){
 }
 
 function fltRun(){
-  // If no domains loaded yet, wait for Supabase then retry
+  // If no domains loaded yet, show loading
   if (DOMAINS.length === 0) {
-    const rs = document.getElementById('results-section');
-    if (rs) {
-      rs.style.display = 'block';
-      document.getElementById('resultsBody').innerHTML = '<div style="padding:40px;text-align:center;color:var(--ink3);font-size:14px">' + (lang==='ar'?'جار التحميل...':'Loading...') + '</div>';
-    }
-    fetchDomainsFromSupabase().then(() => {
-      if (DOMAINS.length > 0) fltRun();
-    });
+    const rb = document.getElementById('resultsBody');
+    if (rb) rb.innerHTML = '<div style="padding:60px;text-align:center;color:var(--ink3);font-size:14px">' + (lang==='ar'?'جار تحميل الدومينات...':'Loading domains...') + '</div>';
     return;
   }
   const kc=(document.getElementById('toolInput').value||'').toLowerCase();
@@ -2173,7 +2516,7 @@ function fltRun(){
     return true;
   });
 
-  // Show results section
+  // Results always visible
   const rs=document.getElementById('results-section');
   if(rs)rs.style.display='block';
 
@@ -2230,8 +2573,7 @@ function fltReset(silent){
   document.querySelectorAll('[data-bl]').forEach(c=>c.classList.remove('on','on-bl'));
   const ab=document.querySelector('[data-bl="0"]');if(ab)ab.classList.add('on-bl');
   if(!silent){
-    const rs=document.getElementById('results-section');
-    if(rs)rs.style.display='none';
+    fltRun();
     const bar=document.getElementById('fltActiveTags');
     if(bar)bar.innerHTML='';
   }
@@ -2257,31 +2599,41 @@ const SUPABASE_URL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_jhKq2BwYuaMzYPZBVzOwHw_V28SLwFy';
 
 async function fetchDomainsFromSupabase() {
+  const SURL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
+  const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d3hjbGp5ZXRmZGNndWRjcnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc2NzcsImV4cCI6MjA5MDIzMzY3N30._XSeTZgC4FNV8Kc3Y1yz__E94PSyYaT5u6JUNaHv3SI';
+
+  // Show loading state
+  const rb = document.getElementById('resultsBody');
+  if (rb) rb.innerHTML = '<div style="padding:60px;text-align:center;color:var(--ink3);font-size:14px">' + (lang==='ar'?'جار تحميل الدومينات...':'Loading domains...') + '</div>';
+
   try {
-    const resp = await fetch(
-      SUPABASE_URL + '/rest/v1/dropped_domains?select=id,domain,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn&order=meor_score.desc.nullslast&limit=500',
-      {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        }
+    const url = SURL + '/rest/v1/dropped_domains?select=id,domain,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn&order=created_at.desc&limit=500';
+    
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'apikey': SKEY,
+        'Authorization': 'Bearer ' + SKEY
       }
-    );
-    if (!resp.ok) throw new Error('Supabase error: ' + resp.status);
+    });
+
+    if (!resp.ok) {
+      throw new Error('HTTP ' + resp.status);
+    }
+
     const rows = await resp.json();
+
     if (!rows || rows.length === 0) {
-      console.log('No domains in database yet');
+      if (rb) rb.innerHTML = '<div style="padding:60px;text-align:center;color:var(--ink3);font-size:14px">' + (lang==='ar'?'لا توجد دومينات بعد':'No domains yet') + '</div>';
       return;
     }
 
-    // Map Supabase rows to DOMAINS format
+    // Map to DOMAINS format
     const live = rows.map((r, i) => ({
       id:     r.id || i,
       name:   r.domain || '',
       tld:    r.tld || '.com',
-      year:   r.first_seen_year || 2015,
+      year:   r.first_seen_year || 2020,
       bl:     r.backlinks || 0,
       da:     r.moz_da || 0,
       tf:     r.majestic_tf || 0,
@@ -2294,21 +2646,30 @@ async function fetchDomainsFromSupabase() {
       idn:    r.is_arabic_idn || false
     }));
 
-    // Replace DOMAINS with live data
     DOMAINS.length = 0;
     live.forEach(d => DOMAINS.push(d));
 
     // Load dynamic TLD chips
     if (typeof fltLoadLiveTLDs === 'function') fltLoadLiveTLDs();
 
+    // Auto-show results
+    if (document.getElementById('page-tool') &&
+        document.getElementById('page-tool').classList.contains('active')) {
+      fltRun();
+    }
+
     console.log('Loaded ' + live.length + ' domains from Supabase');
-    
-    // If results section already visible, refresh it
+    // Update marketing stats
+    const mc = document.getElementById('mkt-domains-count');
+    if (mc) mc.textContent = live.length + '+';
+
+    // If results already showing, refresh
     const rs = document.getElementById('results-section');
     if (rs && rs.style.display !== 'none') fltRun();
 
   } catch (e) {
     console.log('Supabase fetch failed:', e.message);
+    if (rb) rb.innerHTML = '<div style="padding:60px;text-align:center;color:var(--ink3);font-size:13px">' + (lang==='ar'?'تعذر تحميل البيانات. يرجى تحديث الصفحة.':'Failed to load data. Please refresh.') + '</div>';
   }
 }
 
