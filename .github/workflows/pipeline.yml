@@ -2,23 +2,38 @@ name: Meor Domain Pipeline
 
 on:
   schedule:
-    - cron: '0 * * * *'  # runs every hour
-  workflow_dispatch:      # allows manual run
+    - cron: '0 * * * *'  # every hour
+  workflow_dispatch:      # manual trigger
 
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests python-dotenv supabase schedule dnspython
+        run: pip install requests python-dotenv supabase dnspython
 
+      # ── RESTORE zone file cache ──────────────────
+      - name: Restore zone file cache
+        uses: actions/cache@v4
+        with:
+          path: zone_cache
+          key: zone-cache-${{ runner.os }}
+          restore-keys: |
+            zone-cache-
+
+      # ── CREATE zone_cache dir if missing ─────────
+      - name: Ensure cache directory exists
+        run: mkdir -p zone_cache data
+
+      # ── RUN PIPELINE ─────────────────────────────
       - name: Run pipeline
         env:
           CZDS_USERNAME: ${{ secrets.CZDS_USERNAME }}
@@ -26,3 +41,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python pipeline.py
+
+      # ── SAVE zone file cache for next run ────────
+      - name: Save zone file cache
+        uses: actions/cache@v4
+        with:
+          path: zone_cache
+          key: zone-cache-${{ runner.os }}-${{ github.run_id }}
