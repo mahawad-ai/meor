@@ -1045,58 +1045,77 @@ body::before{
 }
 
 /* ═══════════════════════════════════════════
-   FILTER PANEL — horizontal under search
+   SEARCH PANEL — filters first, results after
 ═══════════════════════════════════════════ */
-.filter-panel-wrap{
-  background:rgba(255,255,255,0.80);
-  backdrop-filter:blur(20px) saturate(180%);
+.search-panel{
+  background:var(--bg);
+  padding:28px 0 20px;
   border-bottom:1px solid var(--border);
-  padding:16px 0 12px;
 }
-.fp-row{
-  display:flex;
+
+/* Keyword */
+.sp-kw-row{margin-bottom:20px}
+.sp-kw-wrap{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-pill);
+  padding:4px 8px 4px 16px;
+  box-shadow:var(--shadow-sm);
+  max-width:500px;
+}
+.sp-kw-icon{font-size:16px;color:var(--ink4)}
+.sp-kw-wrap input{
+  flex:1;border:none;outline:none;
+  font-family:var(--font);
+  font-size:14px;font-weight:500;
+  background:transparent;color:var(--ink);
+}
+.sp-kw-wrap input::placeholder{color:var(--ink4)}
+
+/* Filter grid */
+.sp-grid{
+  display:grid;
+  grid-template-columns:1fr auto auto auto;
   gap:20px;
-  align-items:flex-start;
-  flex-wrap:wrap;
-  margin-bottom:4px;
+  margin-bottom:20px;
+  align-items:start;
 }
-.fp-row-metrics{gap:16px;align-items:flex-end}
-.fp-row-bottom{align-items:flex-start}
-.fp-divider{height:1px;background:var(--border);margin:10px 0}
-.fp-group{display:flex;flex-direction:column;gap:6px}
-.fp-group-sm{flex-shrink:0}
-.fp-group-xs{flex-shrink:0;margin-right:auto}
-[dir=ltr] .fp-group-xs{margin-right:0;margin-left:auto}
-.fp-label{
+@media(max-width:900px){.sp-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.sp-grid{grid-template-columns:1fr}}
+
+.sp-block{display:flex;flex-direction:column;gap:8px}
+.sp-block-wide{}
+.sp-block-label{
   font-size:10px;font-weight:700;
-  color:var(--ink4);letter-spacing:.07em;
-  white-space:nowrap;
+  color:var(--ink4);letter-spacing:.08em;
 }
-.fp-metric-group{
-  flex:1;min-width:160px;
-  display:flex;flex-direction:column;gap:4px;
+
+/* Chips */
+.fchips{display:flex;flex-wrap:wrap;gap:5px}
+.fchip{
+  font-size:11px;font-weight:600;
+  padding:5px 12px;border-radius:var(--r-pill);
+  border:1px solid var(--border2);
+  background:var(--surface-hi);
+  color:var(--ink3);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+  box-shadow:var(--shadow-xs);
+  user-select:none;
 }
-.fp-metric-label{
-  display:flex;align-items:center;justify-content:space-between;
+.fchip:hover{border-color:var(--border3);color:var(--ink);background:var(--white)}
+.fchip.on{background:var(--ink);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm)}
+.fchip.on-g{background:var(--green);color:#fff;border-color:transparent}
+.fchip.on-r{background:var(--red);color:#fff;border-color:transparent}
+.fchip.on-bl{background:var(--ink);color:#fff;border-color:transparent}
+
+/* Toggles */
+.sp-toggles{display:flex;flex-direction:column;gap:7px}
+.sp-tog{
+  display:flex;align-items:center;gap:7px;
+  cursor:pointer;
   font-size:11px;font-weight:600;color:var(--ink2);
 }
-.fp-metric-val{
-  font-size:11px;font-weight:700;
-  background:var(--ink);color:#fff;
-  padding:1px 7px;border-radius:var(--r-pill);
-  min-width:28px;text-align:center;
-}
-.fp-range-hints{
-  display:flex;justify-content:space-between;
-  font-size:9px;color:var(--ink4);font-weight:500;
-}
-input[type=range]{
-  width:100%;accent-color:var(--ink);
-  height:3px;cursor:pointer;
-}
-.fp-toggles{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.fp-tog-item{display:flex;align-items:center;gap:5px;cursor:pointer}
-.fp-tog-label{font-size:11px;font-weight:600;color:var(--ink2)}
 .ftog{
   width:30px;height:17px;
   background:var(--border2);border-radius:var(--r-pill);
@@ -1110,62 +1129,107 @@ input[type=range]{
   box-shadow:0 1px 2px rgba(0,0,0,.15);
 }
 .ftog.on::after{transform:translateX(13px)}
-.fp-reset-btn{
-  background:rgba(0,0,0,0.05);
-  color:var(--ink2);
-  font-family:var(--font);
-  font-size:11px;font-weight:700;
-  padding:7px 16px;border-radius:var(--r-pill);
-  border:1px solid var(--border2);
-  cursor:pointer;transition:all .15s;
-  white-space:nowrap;
-}
-.fp-reset-btn:hover{background:var(--ink);color:#fff;border-color:transparent}
-.fchips{display:flex;flex-wrap:wrap;gap:5px}
-.fchip{
-  font-size:11px;font-weight:600;
-  padding:5px 11px;border-radius:var(--r-pill);
-  border:1px solid var(--border2);
+
+/* Sliders */
+.sp-sliders{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  padding:16px 20px;
   background:var(--surface-hi);
-  color:var(--ink3);cursor:pointer;
-  transition:all .12s;white-space:nowrap;
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  margin-bottom:16px;
   box-shadow:var(--shadow-xs);
 }
-.fchip:hover{border-color:var(--border3);color:var(--ink)}
-.fchip.on{background:var(--ink);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm)}
-.fchip.on-g{background:var(--green);color:#fff;border-color:transparent}
-.fchip.on-r{background:var(--red);color:#fff;border-color:transparent}
-.fchip.on-bl{background:var(--ink);color:#fff;border-color:transparent}
-.atags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;min-height:4px}
+@media(max-width:760px){.sp-sliders{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.sp-sliders{grid-template-columns:1fr}}
+
+.sp-slider{display:flex;flex-direction:column;gap:6px}
+.sp-slider-label{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:11px;font-weight:600;color:var(--ink2);
+}
+.sp-slider-val{
+  background:var(--ink);color:#fff;
+  font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:var(--r-pill);
+  min-width:28px;text-align:center;
+}
+input[type=range]{
+  width:100%;accent-color:var(--ink);
+  height:4px;cursor:pointer;
+}
+
+/* Bottom row */
+.sp-bottom{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+}
+.sp-presets{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.sp-preset-label{font-size:11px;font-weight:700;color:var(--ink4);white-space:nowrap}
+.sp-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.sp-reset{
+  background:transparent;color:var(--ink3);
+  font-family:var(--font);font-size:12px;font-weight:600;
+  padding:8px 16px;border-radius:var(--r-pill);
+  border:1px solid var(--border2);cursor:pointer;
+  transition:all .15s;
+}
+.sp-reset:hover{border-color:var(--border3);color:var(--ink)}
+.sp-search-btn{
+  background:var(--ink);color:#fff;
+  font-family:var(--font);font-size:13px;font-weight:700;
+  padding:10px 28px;border-radius:var(--r-pill);
+  border:none;cursor:pointer;
+  transition:all .18s var(--spring);
+  box-shadow:var(--shadow-sm);
+  letter-spacing:.01em;
+}
+.sp-search-btn:hover{transform:scale(1.03);opacity:.85}
+
+/* Active tags */
+.atags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;min-height:4px}
 .atag{
   display:inline-flex;align-items:center;gap:4px;
   font-size:10px;font-weight:600;
-  background:rgba(0,0,0,0.08);color:var(--ink);
+  background:rgba(0,0,0,0.07);color:var(--ink);
   padding:3px 9px;border-radius:var(--r-pill);
   border:1px solid var(--border2);
 }
 .atag-x{cursor:pointer;opacity:.5;font-size:13px;line-height:1}
 .atag-x:hover{opacity:1}
-.tool-body{display:flex;min-height:calc(100vh - 320px)}
+
+/* Results toolbar */
+.results-toolbar-wrap{
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+  background:rgba(242,242,247,0.80);
+  backdrop-filter:blur(20px);
+  position:sticky;top:52px;z-index:10;
+}
+.results-toolbar-inner{
+  display:flex;align-items:center;
+  justify-content:space-between;
+}
+.results-meta-text{font-size:12px;color:var(--ink3)}
+.results-meta-text strong{color:var(--ink);font-weight:700}
+
+/* Results body */
+.tool-body{display:flex;min-height:60vh}
 .results-col{flex:1;min-width:0}
 .detail-col{
   width:290px;flex-shrink:0;
   border-right:1px solid var(--border);
   background:rgba(255,255,255,0.70);
   backdrop-filter:var(--blur-md);
-  position:sticky;top:52px;
-  height:calc(100vh - 52px);
+  position:sticky;top:100px;
+  height:calc(100vh - 100px);
   overflow-y:auto;
 }
 [dir=ltr] .detail-col{border-right:none;border-left:1px solid var(--border)}
-@media(max-width:860px){
-  .detail-col{display:none}
-  .fp-metric-group{min-width:120px}
-}
-@media(max-width:580px){
-  .fp-row{gap:12px}
-  .fp-metric-group{min-width:100%}
-}
+@media(max-width:860px){.detail-col{display:none}}
 
 </style>
 </head>
@@ -1369,37 +1433,28 @@ input[type=range]{
 ═══════════════════════════════════════════════════════ -->
 <div id="page-tool" class="page">
 
-  <!-- TOP SEARCH BAR -->
-  <div class="tool-bar">
+  <!-- ── SEARCH + FILTERS PANEL ── -->
+  <div class="search-panel">
     <div class="wrap">
-      <div class="tool-row">
-        <div class="tool-search-wrap">
+
+      <!-- KEYWORD (optional) -->
+      <div class="sp-kw-row">
+        <div class="sp-kw-wrap">
+          <span class="sp-kw-icon">🔍</span>
           <input type="text" id="toolInput"
-            data-ar-placeholder="كلمة مفتاحية اختيارية..."
-            data-en-placeholder="Optional keyword..."
-            placeholder="كلمة مفتاحية اختيارية..."
-            oninput="fltRun()">
-        </div>
-        <button class="tool-btn" onclick="fltRun()" data-ar="بحث" data-en="Search">بحث</button>
-        <div class="live-badge">
-          <span class="live-dot"></span>
-          <span data-ar="مباشر" data-en="Live">مباشر</span>
+            data-ar-placeholder="كلمة مفتاحية — اختياري"
+            data-en-placeholder="Keyword — optional"
+            placeholder="كلمة مفتاحية — اختياري">
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- FILTER PANEL — horizontal, always visible -->
-  <div class="filter-panel-wrap">
-    <div class="wrap">
-
-      <!-- ROW 1: TLD + Status + Date -->
-      <div class="fp-row">
+      <!-- FILTER GRID -->
+      <div class="sp-grid">
 
         <!-- TLD -->
-        <div class="fp-group">
-          <div class="fp-label" data-ar="الامتداد" data-en="Extension">الامتداد</div>
-          <div class="fchips" id="tld-chips">
+        <div class="sp-block sp-block-wide">
+          <div class="sp-block-label" data-ar="الامتداد" data-en="Extension">الامتداد</div>
+          <div class="fchips">
             <div class="fchip on" data-tld="all" onclick="fltTLD(this)" data-ar="الكل" data-en="All">الكل</div>
             <div class="fchip" data-tld=".com" onclick="fltTLD(this)">.com</div>
             <div class="fchip" data-tld=".net" onclick="fltTLD(this)">.net</div>
@@ -1418,9 +1473,9 @@ input[type=range]{
           </div>
         </div>
 
-        <!-- Status -->
-        <div class="fp-group fp-group-sm">
-          <div class="fp-label" data-ar="الحالة" data-en="Status">الحالة</div>
+        <!-- STATUS -->
+        <div class="sp-block">
+          <div class="sp-block-label" data-ar="الحالة" data-en="Status">الحالة</div>
           <div class="fchips">
             <div class="fchip on" data-st="all" onclick="fltST(this)" data-ar="الكل" data-en="All">الكل</div>
             <div class="fchip" data-st="drop" onclick="fltST(this)" data-ar="سقط" data-en="Dropped">سقط</div>
@@ -1428,65 +1483,10 @@ input[type=range]{
             <div class="fchip" data-st="expiring" onclick="fltST(this)" data-ar="ينتهي" data-en="Expiring">ينتهي</div>
           </div>
         </div>
-      </div>
 
-      <!-- DIVIDER -->
-      <div class="fp-divider"></div>
-
-      <!-- ROW 2: SEO Metrics sliders -->
-      <div class="fp-row fp-row-metrics">
-
-        <div class="fp-metric-group">
-          <div class="fp-metric-label">Trust Flow <span class="fp-metric-val" id="fv-tf">0+</span></div>
-          <input type="range" id="fr-tf" min="0" max="100" value="0" step="1" oninput="fltRV('tf',this.value)">
-          <div class="fp-range-hints"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
-        </div>
-
-        <div class="fp-metric-group">
-          <div class="fp-metric-label">Domain Authority <span class="fp-metric-val" id="fv-da">0+</span></div>
-          <input type="range" id="fr-da" min="0" max="100" value="0" step="1" oninput="fltRV('da',this.value)">
-          <div class="fp-range-hints"><span>0</span><span>20</span><span>40</span><span>60</span><span>100</span></div>
-        </div>
-
-        <div class="fp-metric-group">
-          <div class="fp-metric-label">Meor AI Score <span class="fp-metric-val" id="fv-ai">0+</span></div>
-          <input type="range" id="fr-ai" min="0" max="100" value="0" step="1" oninput="fltRV('ai',this.value)">
-          <div class="fp-range-hints"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
-        </div>
-
-        <div class="fp-metric-group">
-          <div class="fp-metric-label" data-ar="حد السبام" data-en="Max Spam">حد السبام <span class="fp-metric-val" id="fv-sp">≤100%</span></div>
-          <input type="range" id="fr-sp" min="0" max="100" value="100" step="1" oninput="fltRVSpam(this.value)">
-          <div class="fp-range-hints">
-            <span data-ar="نظيف" data-en="Clean">نظيف</span>
-            <span>25%</span><span>50%</span><span>75%</span>
-            <span data-ar="سبام" data-en="Spam">سبام</span>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- DIVIDER -->
-      <div class="fp-divider"></div>
-
-      <!-- ROW 3: Quick filters + toggles + BL + reset -->
-      <div class="fp-row fp-row-bottom">
-
-        <!-- Quick presets -->
-        <div class="fp-group">
-          <div class="fp-label" data-ar="فلاتر سريعة" data-en="Quick filters">فلاتر سريعة</div>
-          <div class="fchips">
-            <div class="fchip" onclick="qPreset('clean')" data-ar="نظيف (سبام ≤5%)" data-en="Clean (spam ≤5%)">نظيف</div>
-            <div class="fchip" onclick="qPreset('highda')" data-ar="DA عالي (≥30)" data-en="High DA (≥30)">DA عالي</div>
-            <div class="fchip" onclick="qPreset('aged')" data-ar="قديم (10 سنوات+)" data-en="Aged (10yr+)">قديم</div>
-            <div class="fchip" onclick="qPreset('arabic')" data-ar="عربي IDN" data-en="Arabic IDN">IDN عربي</div>
-            <div class="fchip" onclick="qPreset('mena')" data-ar="MENA فقط" data-en="MENA only">MENA</div>
-          </div>
-        </div>
-
-        <!-- Backlinks -->
-        <div class="fp-group fp-group-sm">
-          <div class="fp-label" data-ar="الحد الأدنى للباك لينكات" data-en="Min backlinks">الحد الأدنى للباك لينكات</div>
+        <!-- BACKLINKS -->
+        <div class="sp-block">
+          <div class="sp-block-label" data-ar="الباك لينكات" data-en="Backlinks">الباك لينكات</div>
           <div class="fchips">
             <div class="fchip on-bl" data-bl="0" onclick="qBL(this,0)" data-ar="أي" data-en="Any">أي</div>
             <div class="fchip" data-bl="100" onclick="qBL(this,100)">100+</div>
@@ -1496,33 +1496,78 @@ input[type=range]{
           </div>
         </div>
 
-        <!-- Toggles -->
-        <div class="fp-group fp-group-sm">
-          <div class="fp-label" data-ar="خيارات" data-en="Options">خيارات</div>
-          <div class="fp-toggles">
-            <div class="fp-tog-item" onclick="fltSw('hyp')">
+        <!-- OPTIONS -->
+        <div class="sp-block">
+          <div class="sp-block-label" data-ar="خيارات" data-en="Options">خيارات</div>
+          <div class="sp-toggles">
+            <div class="sp-tog" onclick="fltSw('hyp')">
               <div class="ftog" id="ft-hyp"></div>
-              <span class="fp-tog-label" data-ar="بلا هايفن" data-en="No hyphens">بلا هايفن</span>
+              <span data-ar="بلا هايفن" data-en="No hyphens">بلا هايفن</span>
             </div>
-            <div class="fp-tog-item" onclick="fltSw('num')">
+            <div class="sp-tog" onclick="fltSw('num')">
               <div class="ftog" id="ft-num"></div>
-              <span class="fp-tog-label" data-ar="بلا أرقام" data-en="No numbers">بلا أرقام</span>
+              <span data-ar="بلا أرقام" data-en="No numbers">بلا أرقام</span>
             </div>
-            <div class="fp-tog-item" onclick="fltSw('idn')">
+            <div class="sp-tog" onclick="fltSw('idn')">
               <div class="ftog" id="ft-idn"></div>
-              <span class="fp-tog-label" data-ar="IDN فقط" data-en="IDN only">IDN فقط</span>
+              <span data-ar="IDN عربي فقط" data-en="Arabic IDN only">IDN عربي فقط</span>
             </div>
           </div>
         </div>
 
-        <!-- Reset -->
-        <div class="fp-group fp-group-xs">
-          <button class="fp-reset-btn" onclick="fltReset()" data-ar="مسح الكل" data-en="Reset all">مسح الكل</button>
-          <div style="font-size:10px;color:var(--ink4);margin-top:4px;text-align:center">
-            <span id="fp-active-count"></span>
+      </div>
+
+      <!-- SLIDERS ROW -->
+      <div class="sp-sliders">
+
+        <div class="sp-slider">
+          <div class="sp-slider-label">
+            <span>Trust Flow</span>
+            <span class="sp-slider-val" id="fv-tf">0+</span>
           </div>
+          <input type="range" id="fr-tf" min="0" max="100" value="0" step="1" oninput="fltRV('tf',this.value)">
         </div>
 
+        <div class="sp-slider">
+          <div class="sp-slider-label">
+            <span>Domain Authority</span>
+            <span class="sp-slider-val" id="fv-da">0+</span>
+          </div>
+          <input type="range" id="fr-da" min="0" max="100" value="0" step="1" oninput="fltRV('da',this.value)">
+        </div>
+
+        <div class="sp-slider">
+          <div class="sp-slider-label">
+            <span data-ar="نقاط ميور" data-en="Meor Score">نقاط ميور</span>
+            <span class="sp-slider-val" id="fv-ai">0+</span>
+          </div>
+          <input type="range" id="fr-ai" min="0" max="100" value="0" step="1" oninput="fltRV('ai',this.value)">
+        </div>
+
+        <div class="sp-slider">
+          <div class="sp-slider-label">
+            <span data-ar="حد السبام" data-en="Max Spam">حد السبام</span>
+            <span class="sp-slider-val" id="fv-sp">≤100%</span>
+          </div>
+          <input type="range" id="fr-sp" min="0" max="100" value="100" step="1" oninput="fltRVSpam(this.value)">
+        </div>
+
+      </div>
+
+      <!-- QUICK PRESETS + SEARCH BTN -->
+      <div class="sp-bottom">
+        <div class="sp-presets">
+          <span class="sp-preset-label" data-ar="سريع:" data-en="Quick:">سريع:</span>
+          <div class="fchip" onclick="qPreset('clean')" data-ar="نظيف" data-en="Clean">نظيف</div>
+          <div class="fchip" onclick="qPreset('highda')" data-ar="DA عالي" data-en="High DA">DA عالي</div>
+          <div class="fchip" onclick="qPreset('aged')" data-ar="قديم 10سنة+" data-en="Aged 10yr+">قديم 10سنة+</div>
+          <div class="fchip" onclick="qPreset('mena')" data-ar="MENA" data-en="MENA">MENA</div>
+          <div class="fchip" onclick="qPreset('arabic')" data-ar="IDN عربي" data-en="Arabic IDN">IDN عربي</div>
+        </div>
+        <div class="sp-actions">
+          <button class="sp-reset" onclick="fltReset()" data-ar="مسح" data-en="Reset">مسح</button>
+          <button class="sp-search-btn" onclick="fltRun()" data-ar="🔍 بحث" data-en="🔍 Search">🔍 بحث</button>
+        </div>
       </div>
 
       <!-- ACTIVE TAGS -->
@@ -1531,8 +1576,24 @@ input[type=range]{
     </div>
   </div>
 
-  <!-- RESULTS TABLE -->
-  <div class="wrap" style="padding-top:0">
+  <!-- ── RESULTS ── -->
+  <div id="results-section" style="display:none">
+    <div class="results-toolbar-wrap">
+      <div class="wrap">
+        <div class="results-toolbar-inner">
+          <div class="results-meta-text">
+            <span data-ar="عرض" data-en="Showing">عرض</span>
+            <strong id="resultCount">0</strong>
+            <span data-ar="نتيجة" data-en="results">نتيجة</span>
+          </div>
+          <div class="live-badge">
+            <span class="live-dot"></span>
+            <span data-ar="مباشر" data-en="Live">مباشر</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="tool-body">
       <div class="results-col">
         <div class="tbl-head">
@@ -1549,6 +1610,7 @@ input[type=range]{
       <div class="detail-col" id="detailCol"></div>
     </div>
   </div>
+
 </div>
 <!-- ═══════════════════════════════════════════════════════
      PAGE 3 — DOMAIN DETAIL
@@ -1844,7 +1906,7 @@ function go(page){
   const nl = document.getElementById('nl-'+page);
   if(nl) nl.classList.add('active');
   window.scrollTo({top:0,behavior:'instant'});
-  if(page==='tool'){renderResults(DOMAINS);}
+  if(page==='tool'){const rs=document.getElementById('results-section');if(rs)rs.style.display='none';}
 }
 
 /* QUICK SEARCH */
@@ -2052,7 +2114,7 @@ function toggleFAQ(i){document.getElementById('faq'+i).classList.toggle('open')}
 
 
 /* ═══════════════════════════════════════════
-   FILTER SYSTEM JS
+   FILTER + SEARCH JS
 ═══════════════════════════════════════════ */
 let fltActiveTLD='all', fltActiveST='all', fltMinBL=0;
 const fltSws={};
@@ -2061,52 +2123,47 @@ function fltTLD(el){
   fltActiveTLD=el.dataset.tld;
   document.querySelectorAll('[data-tld]').forEach(c=>c.classList.remove('on'));
   el.classList.add('on');
-  fltRun();
 }
 
 function fltST(el){
   fltActiveST=el.dataset.st;
   el.closest('.fchips').querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
   el.classList.add('on');
-  fltRun();
 }
 
 function fltSw(id){
   fltSws[id]=!fltSws[id];
   document.getElementById('ft-'+id).classList.toggle('on',fltSws[id]);
-  fltRun();
 }
 
 function fltRV(id,val){
   val=Math.round(+val);
   document.getElementById('fv-'+id).textContent=val===0?'0+':val+'+';
-  fltRun();
 }
 
 function fltRVSpam(val){
   val=Math.round(+val);
   document.getElementById('fv-sp').textContent='≤'+val+'%';
-  fltRun();
 }
 
 function qBL(el,v){
   fltMinBL=v;
   el.closest('.fchips').querySelectorAll('.fchip').forEach(c=>c.classList.remove('on','on-bl'));
   el.classList.add('on-bl');
-  fltRun();
 }
 
 function qPreset(type){
   fltReset(true);
   if(type==='clean'){document.getElementById('fr-sp').value=5;fltRVSpam(5);}
   if(type==='highda'){document.getElementById('fr-da').value=30;fltRV('da',30);}
-  if(type==='aged'){document.getElementById('fr-ai').value=0;}
+  if(type==='aged'){document.getElementById('fr-da').value=20;fltRV('da',20);}
   if(type==='arabic'){fltSws.idn=true;document.getElementById('ft-idn').classList.add('on');}
   if(type==='mena'){
-    const menaEl=document.querySelector('[data-tld=".ae"]');
-    if(menaEl)fltTLD(menaEl);
+    fltActiveTLD='.ae';
+    document.querySelectorAll('[data-tld]').forEach(c=>c.classList.remove('on'));
+    const el=document.querySelector('[data-tld=".ae"]');
+    if(el)el.classList.add('on');
   }
-  fltRun();
 }
 
 function fltRun(){
@@ -2117,8 +2174,7 @@ function fltRun(){
   const spMax=+document.getElementById('fr-sp').value;
 
   const f=DOMAINS.filter(d=>{
-    const n=d.name.toLowerCase();
-    if(kc&&!n.includes(kc))return false;
+    if(kc&&!d.name.toLowerCase().includes(kc))return false;
     if(fltActiveTLD!=='all'&&d.tld!==fltActiveTLD)return false;
     if(d.tf<tfMin||d.da<daMin||d.score<aiMin)return false;
     if(d.bl<fltMinBL)return false;
@@ -2130,8 +2186,22 @@ function fltRun(){
     return true;
   });
 
+  // Show results section
+  const rs=document.getElementById('results-section');
+  if(rs)rs.style.display='block';
+
+  // Update count
+  const rc=document.getElementById('resultCount');
+  if(rc)rc.textContent=f.length;
+
   renderResults(f);
   fltRenderTags();
+
+  // Scroll to results
+  setTimeout(()=>{
+    const rs=document.getElementById('results-section');
+    if(rs)rs.scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
 }
 
 function fltRenderTags(){
@@ -2146,17 +2216,15 @@ function fltRenderTags(){
   if(aiv>0)tags.push({l:'Score≥'+aiv,c:()=>{document.getElementById('fr-ai').value=0;fltRV('ai',0)}});
   const spv=+document.getElementById('fr-sp').value;
   if(spv<100)tags.push({l:'Spam≤'+spv+'%',c:()=>{document.getElementById('fr-sp').value=100;fltRVSpam(100)}});
-  if(fltMinBL>0)tags.push({l:'BL≥'+fltMinBL.toLocaleString(),c:()=>{fltMinBL=0;document.querySelector('.fchip.on-bl').classList.remove('on-bl');document.querySelector('[data-bl="0"]').classList.add('on-bl');fltRun()}});
-  if(fltActiveTLD!=='all')tags.push({l:'TLD:'+fltActiveTLD,c:()=>{fltActiveTLD='all';document.querySelector('[data-tld="all"]').classList.add('on');document.querySelectorAll('[data-tld]:not([data-tld="all"])').forEach(c=>c.classList.remove('on'));fltRun()}});
-  if(fltActiveST!=='all')tags.push({l:(lang==='ar'?'الحالة: ':'Status: ')+fltActiveST,c:()=>{fltActiveST='all';document.querySelector('[data-st="all"]').classList.add('on');document.querySelectorAll('[data-st]:not([data-st="all"])').forEach(c=>c.classList.remove('on'));fltRun()}});
+  if(fltMinBL>0)tags.push({l:'BL≥'+fltMinBL.toLocaleString(),c:()=>{fltMinBL=0;document.querySelectorAll('[data-bl]').forEach(c=>c.classList.remove('on','on-bl'));const ab=document.querySelector('[data-bl="0"]');if(ab)ab.classList.add('on-bl');fltRun()}});
+  if(fltActiveTLD!=='all')tags.push({l:'TLD:'+fltActiveTLD,c:()=>{fltActiveTLD='all';document.querySelectorAll('[data-tld]').forEach(c=>c.classList.remove('on'));const at=document.querySelector('[data-tld="all"]');if(at)at.classList.add('on');fltRun()}});
+  if(fltActiveST!=='all')tags.push({l:(lang==='ar'?'الحالة: ':'Status: ')+fltActiveST,c:()=>{fltActiveST='all';document.querySelectorAll('[data-st]').forEach(c=>c.classList.remove('on'));const as=document.querySelector('[data-st="all"]');if(as)as.classList.add('on');fltRun()}});
   if(fltSws.hyp)tags.push({l:lang==='ar'?'بلا هايفن':'No hyphens',c:()=>fltSw('hyp')});
   if(fltSws.num)tags.push({l:lang==='ar'?'بلا أرقام':'No numbers',c:()=>fltSw('num')});
   if(fltSws.idn)tags.push({l:'IDN',c:()=>fltSw('idn')});
   window._fltCbs=tags.map(t=>t.c);
   const bar=document.getElementById('fltActiveTags');
   if(bar)bar.innerHTML=tags.map((t,i)=>`<div class="atag">${t.l}<span class="atag-x" onclick="window._fltCbs[${i}]()">×</span></div>`).join('');
-  const cnt=document.getElementById('fp-active-count');
-  if(cnt)cnt.textContent=tags.length>0?(lang==='ar'?tags.length+' فلتر نشط':tags.length+' active filter'+(tags.length>1?'s':'')):'';
 }
 
 function fltReset(silent){
@@ -2174,10 +2242,14 @@ function fltReset(silent){
   const as=document.querySelector('[data-st="all"]');if(as)as.classList.add('on');
   document.querySelectorAll('[data-bl]').forEach(c=>c.classList.remove('on','on-bl'));
   const ab=document.querySelector('[data-bl="0"]');if(ab)ab.classList.add('on-bl');
-  if(!silent){renderResults(DOMAINS);fltRenderTags();}
+  if(!silent){
+    const rs=document.getElementById('results-section');
+    if(rs)rs.style.display='none';
+    const bar=document.getElementById('fltActiveTags');
+    if(bar)bar.innerHTML='';
+  }
 }
 
-/* Load live TLDs from database into chips */
 function fltLoadLiveTLDs(){
   const staticTLDs=['all','.com','.net','.org','.ae','.sa','.eg','.ma','.السعودية','.مصر','.امارات','.io','.tech','.shop'];
   const live=[...new Set(DOMAINS.map(d=>d.tld))].filter(t=>!staticTLDs.includes(t));
