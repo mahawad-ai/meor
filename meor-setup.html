@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meor — Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Cairo',sans-serif;
+  background:#F2F2F7;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:36px 32px;
+  max-width:520px;width:100%;
+  box-shadow:0 4px 24px rgba(0,0,0,0.08);
+}
+.logo{
+  font-size:22px;font-weight:800;
+  letter-spacing:-.04em;
+  margin-bottom:6px;
+}
+.subtitle{
+  font-size:13px;color:#888;
+  margin-bottom:28px;
+  line-height:1.5;
+}
+.section{
+  background:#F8F8F8;
+  border-radius:14px;
+  padding:18px 20px;
+  margin-bottom:14px;
+  border:1px solid #ECECEC;
+}
+.section-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;
+  color:#000;margin-bottom:14px;
+}
+.section-icon{
+  width:24px;height:24px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;
+}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+label{
+  display:block;
+  font-size:11px;font-weight:700;
+  color:#888;letter-spacing:.04em;
+  margin-bottom:5px;
+}
+input{
+  width:100%;
+  background:#fff;
+  border:1px solid #E0E0E0;
+  border-radius:10px;
+  padding:10px 14px;
+  font-family:'Cairo',sans-serif;
+  font-size:13px;color:#000;
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+input:focus{
+  border-color:#000;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.06);
+}
+input::placeholder{color:#C0C0C0}
+.hint{
+  font-size:11px;color:#AAA;
+  margin-top:4px;line-height:1.5;
+}
+.hint a{color:#007AFF;text-decoration:none}
+.optional{
+  font-size:10px;font-weight:600;
+  color:#BBB;
+  background:#F0F0F0;
+  padding:1px 7px;border-radius:20px;
+  margin-right:6px;
+}
+.divider{height:1px;background:#ECECEC;margin:4px 0 14px}
+
+.generate-btn{
+  width:100%;
+  background:#000;color:#fff;
+  font-family:'Cairo',sans-serif;
+  font-size:14px;font-weight:700;
+  padding:14px;
+  border-radius:12px;
+  border:none;cursor:pointer;
+  transition:opacity .15s,transform .1s;
+  margin-top:6px;
+  letter-spacing:.01em;
+}
+.generate-btn:hover{opacity:.85}
+.generate-btn:active{transform:scale(.98)}
+
+.result{
+  display:none;
+  margin-top:20px;
+  background:#000;
+  border-radius:14px;
+  padding:20px;
+}
+.result-title{
+  font-size:12px;font-weight:700;
+  color:rgba(255,255,255,.5);
+  letter-spacing:.06em;
+  margin-bottom:12px;
+}
+.result-code{
+  font-family:monospace;
+  font-size:11px;
+  color:#fff;
+  white-space:pre;
+  line-height:1.8;
+  word-break:break-all;
+  white-space:pre-wrap;
+}
+.download-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;
+  background:rgba(255,255,255,0.12);
+  color:#fff;
+  font-family:'Cairo',sans-serif;
+  font-size:13px;font-weight:700;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.2);
+  cursor:pointer;
+  transition:background .15s;
+  margin-top:14px;
+}
+.download-btn:hover{background:rgba(255,255,255,0.18)}
+
+.step-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;
+  background:#000;color:#fff;
+  border-radius:50%;
+  font-size:10px;font-weight:800;
+  flex-shrink:0;
+}
+.success-msg{
+  display:none;
+  background:#EAF3DE;
+  border:1px solid #C0DD97;
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:13px;
+  color:#3B6D11;
+  line-height:1.6;
+  margin-top:14px;
+}
+.success-msg strong{font-weight:700}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">مِيور Setup</div>
+  <div class="subtitle">Fill in your credentials below. Your file is generated instantly and downloaded to your Mac — nothing is sent anywhere.</div>
+
+  <!-- STEP 1: CZDS -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">1</span>
+      <div class="section-icon" style="background:#E6F1FB">🌐</div>
+      ICANN CZDS Credentials
+    </div>
+    <div class="hint" style="margin-bottom:12px">The email and password you used to register at <a href="https://czds.icann.org" target="_blank">czds.icann.org</a></div>
+    <div class="field">
+      <label>EMAIL ADDRESS</label>
+      <input type="email" id="czds-email" placeholder="your-email@example.com">
+    </div>
+    <div class="field">
+      <label>PASSWORD</label>
+      <input type="password" id="czds-pass" placeholder="your CZDS password">
+      <div class="hint">Stored only in the .env file on your Mac. Never sent anywhere.</div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Supabase -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">2</span>
+      <div class="section-icon" style="background:#EAF3DE">🗄️</div>
+      Supabase Database
+      <span class="optional">OPTIONAL FOR NOW</span>
+    </div>
+    <div class="hint" style="margin-bottom:12px">From <a href="https://supabase.com" target="_blank">supabase.com</a> → your project → Settings → API. Skip if you haven't set it up yet.</div>
+    <div class="field">
+      <label>PROJECT URL</label>
+      <input type="url" id="sb-url" placeholder="https://abcdef.supabase.co">
+    </div>
+    <div class="field">
+      <label>ANON / PUBLIC KEY</label>
+      <input type="text" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+    </div>
+  </div>
+
+  <!-- STEP 3: WhatsApp -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">3</span>
+      <div class="section-icon" style="background:#EAF3DE">💬</div>
+      WhatsApp Alerts
+      <span class="optional">OPTIONAL</span>
+    </div>
+    <div class="hint" style="margin-bottom:12px">From Meta for Developers → WhatsApp Business API. Add later when ready.</div>
+    <div class="field">
+      <label>WHATSAPP TOKEN</label>
+      <input type="text" id="wa-token" placeholder="Leave empty for now">
+    </div>
+    <div class="field">
+      <label>PHONE NUMBER ID</label>
+      <input type="text" id="wa-phone" placeholder="Leave empty for now">
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generate()">Generate my .env file →</button>
+
+  <!-- RESULT -->
+  <div class="result" id="result">
+    <div class="result-title">YOUR .ENV FILE CONTENTS</div>
+    <div class="result-code" id="result-code"></div>
+    <button class="download-btn" onclick="download()">⬇ Download .env file to my Mac</button>
+  </div>
+
+  <div class="success-msg" id="success-msg">
+    <strong>File downloaded.</strong> Now move it into your <code>meor-pipeline</code> folder on your Desktop. Then come back to Claude and tell me it's done — we'll run the pipeline together.
+  </div>
+</div>
+
+<script>
+function generate(){
+  const email = document.getElementById('czds-email').value.trim();
+  const pass  = document.getElementById('czds-pass').value.trim();
+
+  if(!email || !pass){
+    alert('Please enter your CZDS email and password first.');
+    return;
+  }
+
+  const sbUrl  = document.getElementById('sb-url').value.trim()  || 'https://your-project-id.supabase.co';
+  const sbKey  = document.getElementById('sb-key').value.trim()  || 'your-anon-public-key-here';
+  const waToken= document.getElementById('wa-token').value.trim()|| '';
+  const waPhone= document.getElementById('wa-phone').value.trim()|| '';
+
+  const content =
+`# meor.com Pipeline — Environment Variables
+# Generated by Meor Setup on ${new Date().toLocaleDateString()}
+# Keep this file private — never share it
+
+# ── ICANN CZDS ──────────────────────────────
+CZDS_USERNAME=${email}
+CZDS_PASSWORD=${pass}
+
+# ── SUPABASE ────────────────────────────────
+SUPABASE_URL=${sbUrl}
+SUPABASE_KEY=${sbKey}
+
+# ── WHATSAPP (optional) ─────────────────────
+META_WHATSAPP_TOKEN=${waToken||'not-set-yet'}
+META_PHONE_NUMBER_ID=${waPhone||'not-set-yet'}
+`;
+
+  // Show preview (mask password)
+  const preview = content.replace(pass, '●'.repeat(pass.length));
+  document.getElementById('result-code').textContent = preview;
+  document.getElementById('result').style.display = 'block';
+
+  // Store real content for download
+  window._envContent = content;
+
+  // Scroll to result
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function download(){
+  const content = window._envContent;
+  if(!content) return;
+
+  const blob = new Blob([content], {type:'text/plain'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = '.env';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  document.getElementById('success-msg').style.display = 'block';
+}
+</script>
+</body>
+</html>

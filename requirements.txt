@@ -1,0 +1,9 @@
+# meor.com Pipeline — Python Requirements
+# Install all of these with one command:
+#   pip install -r requirements.txt
+
+requests==2.31.0        # downloading zone files and API calls
+dnspython==2.4.2        # DNS lookups to verify dropped domains
+python-dotenv==1.0.0    # reads your .env file
+supabase==2.3.0         # saves data to your Supabase database
+schedule==1.2.1         # runs the pipeline automatically every day
