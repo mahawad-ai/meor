@@ -1431,6 +1431,214 @@ input[type=range]{
 .mkt-footer-link:hover{color:#fff}
 .mkt-footer-copy{font-size:11px;color:rgba(255,255,255,.25);margin-top:4px}
 
+
+/* ═══════════════════════════════════════════
+   AUTH MODAL
+═══════════════════════════════════════════ */
+.auth-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.auth-overlay.open{display:flex;animation:fadeIn .2s var(--ease)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.auth-card{
+  background:#fff;
+  border-radius:var(--r-xl);
+  padding:40px 36px;
+  width:100%;max-width:420px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.18);
+  position:relative;
+  animation:slideUp .25s var(--spring);
+}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+
+.auth-close{
+  position:absolute;top:16px;right:16px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--ink3);cursor:pointer;
+  border:none;transition:background .15s;
+}
+[dir=rtl] .auth-close{right:auto;left:16px}
+.auth-close:hover{background:rgba(0,0,0,0.12)}
+
+.auth-logo{
+  font-size:22px;font-weight:900;
+  letter-spacing:-.04em;color:var(--ink);
+  margin-bottom:6px;
+}
+.auth-subtitle{
+  font-size:13px;color:var(--ink3);
+  margin-bottom:28px;line-height:1.5;
+}
+
+.auth-tabs{
+  display:flex;gap:0;
+  background:rgba(0,0,0,0.05);
+  border-radius:var(--r-pill);
+  padding:3px;
+  margin-bottom:24px;
+}
+.auth-tab{
+  flex:1;padding:8px;border-radius:var(--r-pill);
+  font-family:var(--font);font-size:13px;font-weight:600;
+  color:var(--ink3);cursor:pointer;border:none;
+  background:transparent;transition:all .15s;text-align:center;
+}
+.auth-tab.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
+
+.auth-field{margin-bottom:14px}
+.auth-label{
+  display:block;font-size:11px;font-weight:700;
+  color:var(--ink4);letter-spacing:.05em;margin-bottom:6px;
+}
+.auth-input{
+  width:100%;
+  border:1.5px solid var(--border2);
+  border-radius:var(--r-md);
+  padding:11px 14px;
+  font-family:var(--font);font-size:14px;
+  color:var(--ink);background:#fff;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.auth-input:focus{
+  border-color:var(--ink);
+  box-shadow:0 0 0 3px rgba(0,0,0,0.06);
+}
+.auth-input::placeholder{color:var(--ink4)}
+
+.auth-btn{
+  width:100%;padding:13px;
+  background:var(--ink);color:#fff;
+  font-family:var(--font);font-size:14px;font-weight:700;
+  border:none;border-radius:var(--r-pill);
+  cursor:pointer;margin-top:6px;
+  transition:all .18s var(--spring);
+  letter-spacing:.01em;
+}
+.auth-btn:hover{opacity:.85;transform:scale(1.02)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.auth-error{
+  background:var(--red-bg);color:var(--red);
+  border-radius:var(--r-md);padding:10px 14px;
+  font-size:12px;font-weight:600;
+  margin-bottom:14px;display:none;
+}
+.auth-error.show{display:block}
+
+.auth-success{
+  background:var(--green-bg);color:var(--green);
+  border-radius:var(--r-md);padding:10px 14px;
+  font-size:12px;font-weight:600;
+  margin-bottom:14px;display:none;
+  line-height:1.5;
+}
+.auth-success.show{display:block}
+
+.auth-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:16px 0;font-size:11px;color:var(--ink4);
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+.auth-footer{
+  text-align:center;font-size:12px;color:var(--ink4);
+  margin-top:16px;
+}
+.auth-footer a{color:var(--ink);font-weight:600;cursor:pointer}
+
+/* USER STATE in nav */
+.nav-user{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;color:var(--ink2);
+}
+.nav-user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  cursor:pointer;
+}
+.nav-user-menu{
+  position:absolute;top:52px;left:0;
+  background:var(--surface-hi);
+  border:1px solid var(--border2);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:var(--blur-md);
+  padding:6px;min-width:160px;
+  display:none;z-index:300;
+}
+[dir=rtl] .nav-user-menu{left:auto;right:0}
+.nav-user-menu.open{display:block}
+.nav-user-email{
+  font-size:11px;color:var(--ink4);
+  padding:6px 10px;border-bottom:1px solid var(--border);
+  margin-bottom:4px;word-break:break-all;
+}
+.nav-user-item{
+  font-size:12px;font-weight:600;color:var(--ink2);
+  padding:8px 10px;border-radius:var(--r-sm);
+  cursor:pointer;transition:background .12s;
+}
+.nav-user-item:hover{background:rgba(0,0,0,0.05);color:var(--ink)}
+.nav-user-item.danger{color:var(--red)}
+.nav-user-item.danger:hover{background:var(--red-bg)}
+
+/* PAYWALL BLUR */
+.result-blurred{
+  position:relative;
+}
+.result-blurred .tbl-row{
+  filter:blur(4px);
+  pointer-events:none;
+  user-select:none;
+}
+.paywall-overlay{
+  position:sticky;
+  bottom:0;
+  background:linear-gradient(to bottom, transparent, rgba(242,242,247,0.95) 40%);
+  padding:60px 20px 32px;
+  text-align:center;
+  margin-top:-120px;
+}
+.paywall-card{
+  background:#fff;
+  border:1px solid var(--border2);
+  border-radius:var(--r-xl);
+  padding:28px 24px;
+  max-width:400px;
+  margin:0 auto;
+  box-shadow:var(--shadow-lg);
+}
+.paywall-title{
+  font-size:18px;font-weight:800;
+  color:var(--ink);letter-spacing:-.02em;
+  margin-bottom:8px;
+}
+.paywall-sub{
+  font-size:13px;color:var(--ink3);
+  margin-bottom:20px;line-height:1.6;
+}
+.paywall-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#fff;
+  font-family:var(--font);font-size:13px;font-weight:700;
+  padding:11px 24px;border-radius:var(--r-pill);
+  border:none;cursor:pointer;
+  transition:all .18s var(--spring);
+}
+.paywall-btn:hover{transform:scale(1.03);opacity:.85}
+
 </style>
 </head>
 <body>
@@ -1445,7 +1653,7 @@ input[type=range]{
       <div class="nav-link" id="nl-pricing" onclick="go('pricing')" data-ar="كيف يعمل" data-en="How it works">كيف يعمل</div>
     </div>
     <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
-    <button class="nav-cta" onclick="go('pricing')" data-ar="سجّل مجاناً" data-en="Sign up free">سجّل مجاناً</button>
+    <button class="nav-cta" onclick="go('pricing')" data-ar="سجّل مجاناً" data-en="Sign up free" onclick="openAuth()">سجّل مجاناً</button>
   </div>
 </nav>
 
@@ -2584,11 +2792,238 @@ function fltLoadLiveTLDs(){
   }
 }
 
+
+/* ═══════════════════════════════════════════
+   AUTH SYSTEM — Supabase Auth
+═══════════════════════════════════════════ */
+const SURL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d3hjbGp5ZXRmZGNndWRjcnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc2NzcsImV4cCI6MjA5MDIzMzY3N30._XSeTZgC4FNV8Kc3Y1yz__E94PSyYaT5u6JUNaHv3SI';
+
+let currentUser = null;
+let authTab = 'signup';
+const FREE_LIMIT = 50;
+
+// ── AUTH API CALLS ───────────────────────────────────────────────────
+async function authSignUp(email, password) {
+  const r = await fetch(SURL + '/auth/v1/signup', {
+    method: 'POST',
+    headers: {'apikey': SKEY, 'Content-Type': 'application/json'},
+    body: JSON.stringify({email, password})
+  });
+  return r.json();
+}
+
+async function authSignIn(email, password) {
+  const r = await fetch(SURL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: {'apikey': SKEY, 'Content-Type': 'application/json'},
+    body: JSON.stringify({email, password})
+  });
+  return r.json();
+}
+
+async function authSignOut() {
+  const token = localStorage.getItem('meor_token');
+  if (token) {
+    await fetch(SURL + '/auth/v1/logout', {
+      method: 'POST',
+      headers: {'apikey': SKEY, 'Authorization': 'Bearer ' + token}
+    });
+  }
+  localStorage.removeItem('meor_token');
+  localStorage.removeItem('meor_user');
+  currentUser = null;
+  updateNavState();
+  closeUserMenu();
+  applyPaywall();
+}
+
+// ── MODAL CONTROLS ───────────────────────────────────────────────────
+function openAuth() {
+  document.getElementById('authOverlay').classList.add('open');
+  document.getElementById('authEmail').focus();
+}
+
+function closeAuth() {
+  document.getElementById('authOverlay').classList.remove('open');
+  document.getElementById('authError').classList.remove('show');
+  document.getElementById('authSuccess').classList.remove('show');
+  document.getElementById('authEmail').value = '';
+  document.getElementById('authPassword').value = '';
+}
+
+function authClickOutside(e) {
+  if (e.target === document.getElementById('authOverlay')) closeAuth();
+}
+
+function switchTab(tab) {
+  authTab = tab;
+  const isSignup = tab === 'signup';
+  document.getElementById('tabSignup').classList.toggle('on', isSignup);
+  document.getElementById('tabLogin').classList.toggle('on', !isSignup);
+  document.getElementById('authBtnText').setAttribute('data-ar', isSignup ? 'إنشاء حساب مجاني' : 'تسجيل الدخول');
+  document.getElementById('authBtnText').setAttribute('data-en', isSignup ? 'Create free account' : 'Log in');
+  document.getElementById('authBtnText').textContent = lang === 'ar' ? (isSignup ? 'إنشاء حساب مجاني' : 'تسجيل الدخول') : (isSignup ? 'Create free account' : 'Log in');
+  document.getElementById('authFooterText').innerHTML = isSignup ?
+    '<span data-ar="لديك حساب؟" data-en="Already have an account?">لديك حساب؟</span> <a onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</a>' :
+    '<span data-ar="ليس لديك حساب؟" data-en="No account?">ليس لديك حساب؟</span> <a onclick="switchTab('signup')" data-ar="إنشاء حساب" data-en="Sign up">إنشاء حساب</a>';
+  document.getElementById('authError').classList.remove('show');
+  document.getElementById('authSuccess').classList.remove('show');
+}
+
+async function authSubmit() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const btn = document.getElementById('authSubmitBtn');
+  const err = document.getElementById('authError');
+  const suc = document.getElementById('authSuccess');
+
+  if (!email || !password) {
+    err.textContent = lang === 'ar' ? 'يرجى إدخال البريد الإلكتروني وكلمة المرور' : 'Please enter email and password';
+    err.classList.add('show'); return;
+  }
+  if (password.length < 6) {
+    err.textContent = lang === 'ar' ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters';
+    err.classList.add('show'); return;
+  }
+
+  btn.disabled = true;
+  err.classList.remove('show');
+  suc.classList.remove('show');
+
+  try {
+    let data;
+    if (authTab === 'signup') {
+      data = await authSignUp(email, password);
+      if (data.error) throw new Error(data.error.message || data.msg || 'Sign up failed');
+      if (data.access_token) {
+        // Auto-confirmed
+        setUser(data);
+        closeAuth();
+      } else {
+        // Email confirmation required
+        suc.textContent = lang === 'ar' ? 'تحقق من بريدك الإلكتروني لتأكيد حسابك' : 'Check your email to confirm your account';
+        suc.classList.add('show');
+      }
+    } else {
+      data = await authSignIn(email, password);
+      if (data.error) throw new Error(data.error.message || data.msg || 'Login failed');
+      if (!data.access_token) throw new Error('Invalid credentials');
+      setUser(data);
+      closeAuth();
+    }
+  } catch (e) {
+    let msg = e.message;
+    if (msg.includes('already registered')) msg = lang === 'ar' ? 'هذا البريد مسجل مسبقاً — سجّل الدخول' : 'Email already registered — please log in';
+    if (msg.includes('Invalid login')) msg = lang === 'ar' ? 'البريد أو كلمة المرور غير صحيحة' : 'Invalid email or password';
+    err.textContent = msg;
+    err.classList.add('show');
+  }
+
+  btn.disabled = false;
+}
+
+// ── USER STATE ───────────────────────────────────────────────────────
+function setUser(data) {
+  currentUser = data.user || {email: data.email};
+  localStorage.setItem('meor_token', data.access_token);
+  localStorage.setItem('meor_user', JSON.stringify(currentUser));
+  updateNavState();
+  applyPaywall();
+}
+
+function updateNavState() {
+  const navWrap = document.getElementById('navUserWrap');
+  const navCta = document.querySelector('.nav-btn');
+  const avatar = document.getElementById('navAvatar');
+  const emailEl = document.getElementById('navUserEmail');
+
+  if (currentUser) {
+    if (navWrap) navWrap.style.display = 'block';
+    if (navCta) navCta.style.display = 'none';
+    const initial = (currentUser.email || 'U')[0].toUpperCase();
+    if (avatar) avatar.textContent = initial;
+    if (emailEl) emailEl.textContent = currentUser.email || '';
+  } else {
+    if (navWrap) navWrap.style.display = 'none';
+    if (navCta) navCta.style.display = '';
+  }
+}
+
+function toggleUserMenu() {
+  document.getElementById('navUserMenu').classList.toggle('open');
+}
+function closeUserMenu() {
+  const m = document.getElementById('navUserMenu');
+  if (m) m.classList.remove('open');
+}
+
+// ── PAYWALL ──────────────────────────────────────────────────────────
+function applyPaywall() {
+  // Remove existing paywall
+  document.querySelectorAll('.paywall-overlay,.result-blurred-wrap').forEach(el => el.remove());
+  document.querySelectorAll('.tbl-row').forEach(r => r.style.filter = '');
+
+  if (currentUser) return; // logged in — no blur for now (add plan check later)
+
+  const rows = document.querySelectorAll('.tbl-row');
+  if (rows.length <= FREE_LIMIT) return;
+
+  // Blur rows beyond FREE_LIMIT
+  rows.forEach((r, i) => {
+    if (i >= FREE_LIMIT) r.style.filter = 'blur(4px)';
+  });
+
+  // Add paywall overlay after results
+  const rb = document.getElementById('resultsBody');
+  if (!rb) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'paywall-overlay';
+  overlay.innerHTML = '<div class="paywall-card">' +
+    '<div class="paywall-title">' + (lang==='ar' ? 'أكثر من 50 دومين متاح' : 'More than 50 domains available') + '</div>' +
+    '<div class="paywall-sub">' + (lang==='ar' ? 'سجّل مجاناً لرؤية جميع النتائج وفتح الفلاتر المتقدمة' : 'Sign up free to see all results and unlock advanced filters') + '</div>' +
+    '<button class="paywall-btn" onclick="openAuth()">' + (lang==='ar' ? 'سجّل مجاناً — بلا بطاقة ائتمان' : 'Sign up free — no credit card') + '</button>' +
+    '</div>';
+  rb.parentElement.appendChild(overlay);
+}
+
+// ── INIT AUTH ────────────────────────────────────────────────────────
+function initAuth() {
+  // Restore session from localStorage
+  const token = localStorage.getItem('meor_token');
+  const user = localStorage.getItem('meor_user');
+  if (token && user) {
+    try {
+      currentUser = JSON.parse(user);
+      updateNavState();
+    } catch(e) {
+      localStorage.removeItem('meor_token');
+      localStorage.removeItem('meor_user');
+    }
+  }
+}
+
+// Close user menu when clicking outside
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('navUserWrap');
+  if (wrap && !wrap.contains(e.target)) closeUserMenu();
+});
+
+// Handle Enter key in auth form
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('authOverlay').classList.contains('open')) {
+    authSubmit();
+  }
+  if (e.key === 'Escape') closeAuth();
+});
+
 /* INIT */
 autoLang();
 renderCompare();
 renderFAQ();
 updatePricing();
+initAuth();
 
 /* ── SUPABASE LIVE DATA ─────────────────────────── */
 const SUPABASE_URL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
@@ -2655,6 +3090,7 @@ async function fetchDomainsFromSupabase() {
     }
 
     console.log('Loaded ' + live.length + ' domains from Supabase');
+    applyPaywall();
     // Update marketing stats
     const mc = document.getElementById('mkt-domains-count');
     if (mc) mc.textContent = live.length + '+';
@@ -2671,5 +3107,48 @@ async function fetchDomainsFromSupabase() {
 
 fetchDomainsFromSupabase();
 </script>
+
+<!-- ═══ AUTH MODAL ════════════════════════════════════════════════ -->
+<div class="auth-overlay" id="authOverlay" onclick="authClickOutside(event)">
+  <div class="auth-card" id="authCard">
+    <button class="auth-close" onclick="closeAuth()">×</button>
+    <div class="auth-logo">مِيور</div>
+    <div class="auth-subtitle" id="authSubtitle" data-ar="انضم إلى آلاف مستثمري الدومينات العرب" data-en="Join thousands of Arabic domain investors">انضم إلى آلاف مستثمري الدومينات العرب</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabSignup" onclick="switchTab('signup')" data-ar="إنشاء حساب" data-en="Sign up">إنشاء حساب</button>
+      <button class="auth-tab" id="tabLogin" onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</button>
+    </div>
+
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-success" id="authSuccess"></div>
+
+    <div class="auth-field">
+      <label class="auth-label" data-ar="البريد الإلكتروني" data-en="EMAIL">البريد الإلكتروني</label>
+      <input class="auth-input" type="email" id="authEmail"
+        data-ar-placeholder="your@email.com"
+        data-en-placeholder="your@email.com"
+        placeholder="your@email.com">
+    </div>
+
+    <div class="auth-field" id="authPasswordField">
+      <label class="auth-label" data-ar="كلمة المرور" data-en="PASSWORD">كلمة المرور</label>
+      <input class="auth-input" type="password" id="authPassword"
+        data-ar-placeholder="8 أحرف على الأقل"
+        data-en-placeholder="At least 8 characters"
+        placeholder="8 أحرف على الأقل">
+    </div>
+
+    <button class="auth-btn" id="authSubmitBtn" onclick="authSubmit()">
+      <span id="authBtnText" data-ar="إنشاء حساب مجاني" data-en="Create free account">إنشاء حساب مجاني</span>
+    </button>
+
+    <div class="auth-footer" id="authFooterText">
+      <span data-ar="لديك حساب؟" data-en="Already have an account?">لديك حساب؟</span>
+      <a onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
