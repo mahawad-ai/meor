@@ -1043,6 +1043,167 @@ body::before{
   .footer-grid{grid-template-columns:1fr}
   .plans-grid{grid-template-columns:1fr}
 }
+
+/* ═══════════════════════════════════════════
+   FILTER SIDEBAR
+═══════════════════════════════════════════ */
+.tool-layout{display:flex;min-height:calc(100vh - 170px)}
+.filter-sidebar{
+  width:280px;flex-shrink:0;
+  padding:16px 12px 16px 0;
+  position:sticky;top:130px;
+  height:calc(100vh - 130px);
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
+  border-left:1px solid var(--border);
+}
+[dir=ltr] .filter-sidebar{border-left:none;border-right:1px solid var(--border);padding:16px 0 16px 12px}
+.filter-sidebar::-webkit-scrollbar{width:3px}
+.filter-sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.results-col{flex:1;min-width:0}
+
+/* FILTER HEADER */
+.flt-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;padding:0 4px;
+}
+.flt-title{font-size:12px;font-weight:800;color:var(--ink)}
+.flt-reset{font-size:11px;font-weight:600;color:var(--ink3);cursor:pointer;transition:color .15s}
+.flt-reset:hover{color:var(--red)}
+.flt-active-count{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--ink);color:#fff;
+  font-size:9px;font-weight:800;
+  width:15px;height:15px;border-radius:50%;
+  margin-right:5px;
+}
+[dir=ltr] .flt-active-count{margin-right:0;margin-left:5px}
+
+/* FILTER SECTION */
+.fsec{
+  background:var(--surface-hi);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  margin-bottom:8px;
+  overflow:hidden;
+}
+.fsec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;cursor:pointer;user-select:none;
+  transition:background .12s;
+}
+.fsec-head:hover{background:rgba(0,0,0,0.02)}
+.fsec-left{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--ink)}
+.fsec-ico{
+  width:22px;height:22px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+}
+.fsec-arrow{font-size:10px;color:var(--ink4);transition:transform .18s}
+.fsec.open .fsec-arrow{transform:rotate(90deg)}
+.fsec-body{padding:0 12px 12px;display:none;flex-direction:column;gap:7px}
+.fsec.open .fsec-body{display:flex}
+.fsec-badge{
+  background:var(--ink);color:#fff;
+  font-size:9px;font-weight:800;
+  min-width:15px;height:15px;border-radius:8px;
+  padding:0 4px;display:inline-flex;align-items:center;justify-content:center;
+  margin-right:4px;
+}
+[dir=ltr] .fsec-badge{margin-right:0;margin-left:4px}
+
+/* MINI LABEL */
+.mlabel{font-size:10px;font-weight:700;color:var(--ink4);letter-spacing:.06em;margin-top:4px}
+
+/* CHIPS */
+.fchips{display:flex;flex-wrap:wrap;gap:4px}
+.fchip{
+  font-size:10px;font-weight:600;
+  padding:4px 9px;border-radius:var(--r-pill);
+  border:1px solid var(--border2);
+  background:var(--surface-hi);
+  color:var(--ink3);cursor:pointer;
+  transition:all .12s;white-space:nowrap;
+}
+.fchip:hover{border-color:var(--border3);color:var(--ink)}
+.fchip.on{background:var(--ink);color:#fff;border-color:transparent}
+.fchip.on-g{background:var(--green);color:#fff;border-color:transparent}
+.fchip.on-r{background:var(--red);color:#fff;border-color:transparent}
+
+/* TOGGLE ROW */
+.tog-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;
+}
+.tog-row:last-child{border-bottom:none}
+.tog-lbl{color:var(--ink2)}
+.ftog{
+  width:30px;height:17px;
+  background:var(--border2);border-radius:var(--r-pill);
+  position:relative;cursor:pointer;transition:background .18s;flex-shrink:0;
+}
+.ftog.on{background:var(--ink)}
+.ftog::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:13px;height:13px;border-radius:50%;
+  background:#fff;transition:transform .18s var(--spring);
+  box-shadow:0 1px 2px rgba(0,0,0,.15);
+}
+.ftog.on::after{transform:translateX(13px)}
+
+/* NUMBER INPUTS */
+.fnum-pair{display:flex;gap:5px;align-items:center}
+.fnum{
+  flex:1;border:1px solid var(--border2);border-radius:var(--r-sm);
+  padding:6px 8px;font-family:var(--font);font-size:11px;font-weight:600;
+  color:var(--ink);background:rgba(0,0,0,0.03);outline:none;text-align:center;
+  transition:border-color .15s;
+}
+.fnum:focus{border-color:var(--border3);background:#fff}
+.fnum-sep{font-size:10px;color:var(--ink4)}
+
+/* RANGE SLIDER */
+.frange-row{display:flex;align-items:center;gap:8px}
+.frange-name{font-size:11px;color:var(--ink2);flex:1}
+.frange-val{
+  font-size:10px;font-weight:700;color:var(--ink);
+  background:rgba(0,0,0,0.05);padding:2px 6px;
+  border-radius:var(--r-pill);min-width:28px;text-align:center;
+}
+input[type=range]{accent-color:var(--ink);height:3px}
+
+/* KEYWORD INPUT */
+.fkw{
+  width:100%;border:1px solid var(--border2);border-radius:var(--r-sm);
+  padding:7px 10px;font-family:var(--font);font-size:12px;font-weight:500;
+  color:var(--ink);background:rgba(0,0,0,0.03);outline:none;
+  transition:border-color .15s;
+}
+.fkw:focus{border-color:var(--border3);background:#fff}
+.fkw::placeholder{color:var(--ink4)}
+
+/* ACTIVE TAGS */
+.atags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:4px}
+.atag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:600;
+  background:var(--ink);color:#fff;
+  padding:3px 8px;border-radius:var(--r-pill);
+}
+.atag-x{cursor:pointer;opacity:.65;font-size:13px;line-height:1}
+.atag-x:hover{opacity:1}
+
+/* APPLY BTN */
+.fapply{
+  width:100%;background:var(--ink);color:#fff;
+  font-family:var(--font);font-size:12px;font-weight:700;
+  padding:10px;border-radius:var(--r-pill);border:none;
+  cursor:pointer;transition:all .15s;margin-top:6px;
+}
+.fapply:hover{opacity:.82;transform:scale(1.02)}
+
+@media(max-width:860px){.filter-sidebar{display:none}}
+
 </style>
 </head>
 <body>
@@ -1282,7 +1443,186 @@ body::before{
     </div>
   </div>
 
-  <div class="tool-body">
+  <div class="tool-layout">
+    <div class="filter-sidebar" id="filterSidebar">
+      <div class="flt-header">
+        <div class="flt-title">
+          <span id="fltActiveBadge" class="flt-active-count" style="display:none">0</span>
+          <span data-ar="الفلاتر" data-en="Filters">الفلاتر</span>
+        </div>
+        <span class="flt-reset" onclick="fltReset()" data-ar="مسح الكل" data-en="Reset all">مسح الكل</span>
+      </div>
+
+      <!-- 1. KEYWORD -->
+      <div class="fsec open" id="fs-kw">
+        <div class="fsec-head" onclick="fltToggleSec('kw')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:var(--blue-bg)">🔍</div><span data-ar="بحث بالكلمة" data-en="Keyword">بحث بالكلمة</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-kw" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <input class="fkw" id="fkw-c" data-ar-placeholder="يحتوي على... مثل: travel" data-en-placeholder="Contains... e.g. travel" placeholder="يحتوي على..." oninput="fltRun()">
+          <input class="fkw" id="fkw-s" data-ar-placeholder="يبدأ بـ..." data-en-placeholder="Starts with..." placeholder="يبدأ بـ..." oninput="fltRun()">
+          <div style="margin-top:4px">
+            <div class="tog-row"><span class="tog-lbl" data-ar="بلا هايفن" data-en="No hyphens">بلا هايفن</span><div class="ftog" id="ft-hyp" onclick="fltSw('hyp')"></div></div>
+            <div class="tog-row"><span class="tog-lbl" data-ar="بلا أرقام" data-en="No numbers">بلا أرقام</span><div class="ftog" id="ft-num" onclick="fltSw('num')"></div></div>
+            <div class="tog-row"><span class="tog-lbl" data-ar="IDN عربي فقط" data-en="Arabic IDN only">IDN عربي فقط</span><div class="ftog" id="ft-idn" onclick="fltSw('idn')"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. TLD -->
+      <div class="fsec open" id="fs-tld">
+        <div class="fsec-head" onclick="fltToggleSec('tld')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:var(--green-bg)">🌐</div><span data-ar="الامتداد" data-en="Extension">الامتداد</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-tld" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="mlabel" data-ar="شائع" data-en="POPULAR">شائع</div>
+          <div class="fchips" id="tld-chips">
+            <div class="fchip on" data-tld="all" onclick="fltTLD(this)" data-ar="الكل" data-en="All">الكل</div>
+            <div class="fchip" data-tld=".com" onclick="fltTLD(this)">.com</div>
+            <div class="fchip" data-tld=".net" onclick="fltTLD(this)">.net</div>
+            <div class="fchip" data-tld=".org" onclick="fltTLD(this)">.org</div>
+          </div>
+          <div class="mlabel" data-ar="عربي / MENA" data-en="ARABIC / MENA">عربي / MENA</div>
+          <div class="fchips" id="tld-chips-mena">
+            <div class="fchip" data-tld=".ae" onclick="fltTLD(this)">.ae</div>
+            <div class="fchip" data-tld=".sa" onclick="fltTLD(this)">.sa</div>
+            <div class="fchip" data-tld=".eg" onclick="fltTLD(this)">.eg</div>
+            <div class="fchip" data-tld=".ma" onclick="fltTLD(this)">.ma</div>
+            <div class="fchip" data-tld=".السعودية" onclick="fltTLD(this)">.السعودية</div>
+            <div class="fchip" data-tld=".مصر" onclick="fltTLD(this)">.مصر</div>
+            <div class="fchip" data-tld=".امارات" onclick="fltTLD(this)">.امارات</div>
+          </div>
+          <div class="mlabel" data-ar="أخرى" data-en="OTHER">أخرى</div>
+          <div class="fchips">
+            <div class="fchip" data-tld=".io" onclick="fltTLD(this)">.io</div>
+            <div class="fchip" data-tld=".co" onclick="fltTLD(this)">.co</div>
+            <div class="fchip" data-tld=".tech" onclick="fltTLD(this)">.tech</div>
+            <div class="fchip" data-tld=".shop" onclick="fltTLD(this)">.shop</div>
+            <div class="fchip" data-tld=".online" onclick="fltTLD(this)">.online</div>
+          </div>
+          <div class="mlabel" data-ar="من قاعدة البيانات" data-en="FROM DATABASE">من قاعدة البيانات</div>
+          <div class="fchips" id="tld-chips-live"></div>
+        </div>
+      </div>
+
+      <!-- 3. SEO METRICS -->
+      <div class="fsec open" id="fs-seo">
+        <div class="fsec-head" onclick="fltToggleSec('seo')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:var(--amber-bg)">📊</div><span data-ar="مقاييس SEO" data-en="SEO Metrics">مقاييس SEO</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-seo" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="frange-row"><span class="frange-name">Trust Flow (TF)</span><input type="range" id="fr-tf" min="0" max="100" value="0" step="1" style="flex:1" oninput="fltRV('tf',this.value)"><span class="frange-val" id="fv-tf">0+</span></div>
+          <div class="frange-row"><span class="frange-name">Domain Authority (DA)</span><input type="range" id="fr-da" min="0" max="100" value="0" step="1" style="flex:1" oninput="fltRV('da',this.value)"><span class="frange-val" id="fv-da">0+</span></div>
+          <div class="frange-row"><span class="frange-name">Meor AI Score</span><input type="range" id="fr-ai" min="0" max="100" value="0" step="1" style="flex:1" oninput="fltRV('ai',this.value)"><span class="frange-val" id="fv-ai">0+</span></div>
+        </div>
+      </div>
+
+      <!-- 4. BACKLINKS -->
+      <div class="fsec" id="fs-bl">
+        <div class="fsec-head" onclick="fltToggleSec('bl')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:rgba(175,82,222,0.09)">🔗</div><span data-ar="الباك لينكات" data-en="Backlinks">الباك لينكات</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-bl" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="mlabel" data-ar="الحد الأدنى" data-en="MIN BACKLINKS">الحد الأدنى</div>
+          <div class="fnum-pair">
+            <input class="fnum" type="number" id="fbl-mn" placeholder="من" min="0" oninput="fltRun()">
+            <span class="fnum-sep">–</span>
+            <input class="fnum" type="number" id="fbl-mx" placeholder="إلى" min="0" oninput="fltRun()">
+          </div>
+          <div class="fchips" style="margin-top:4px">
+            <div class="fchip" onclick="document.getElementById('fbl-mn').value=100;fltRun()">100+</div>
+            <div class="fchip" onclick="document.getElementById('fbl-mn').value=500;fltRun()">500+</div>
+            <div class="fchip" onclick="document.getElementById('fbl-mn').value=1000;fltRun()">1K+</div>
+            <div class="fchip" onclick="document.getElementById('fbl-mn').value=5000;fltRun()">5K+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. AGE -->
+      <div class="fsec" id="fs-age">
+        <div class="fsec-head" onclick="fltToggleSec('age')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:var(--blue-bg)">📅</div><span data-ar="العمر" data-en="Age">العمر</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-age" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="mlabel" data-ar="سنة التسجيل" data-en="REGISTERED BETWEEN">سنة التسجيل</div>
+          <div class="fnum-pair">
+            <input class="fnum" type="number" id="fyr-mn" value="2000" min="1990" max="2025" oninput="fltRun()">
+            <span class="fnum-sep">–</span>
+            <input class="fnum" type="number" id="fyr-mx" value="2025" min="1990" max="2025" oninput="fltRun()">
+          </div>
+          <div class="fchips" style="margin-top:4px">
+            <div class="fchip" onclick="document.getElementById('fyr-mx').value=2020;fltRun()" data-ar="5 سنوات+" data-en="5yr+">5yr+</div>
+            <div class="fchip" onclick="document.getElementById('fyr-mx').value=2015;fltRun()" data-ar="10 سنوات+" data-en="10yr+">10yr+</div>
+            <div class="fchip" onclick="document.getElementById('fyr-mx').value=2010;fltRun()" data-ar="15 سنوات+" data-en="15yr+">15yr+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. SPAM -->
+      <div class="fsec" id="fs-spam">
+        <div class="fsec-head" onclick="fltToggleSec('spam')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:var(--red-bg)">🛡️</div><span data-ar="الجودة والسبام" data-en="Quality & Spam">الجودة والسبام</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-spam" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="frange-row"><span class="frange-name" data-ar="حد السبام" data-en="Max spam">حد السبام</span><input type="range" id="fr-sp" min="0" max="100" value="100" step="1" style="flex:1" oninput="fltRVSpam(this.value)"><span class="frange-val" id="fv-sp">≤100%</span></div>
+          <div class="fchips" style="margin-top:4px">
+            <div class="fchip on-g" onclick="document.getElementById('fr-sp').value=5;fltRVSpam(5)" data-ar="نظيف ≤5%" data-en="Clean ≤5%">نظيف ≤5%</div>
+            <div class="fchip" onclick="document.getElementById('fr-sp').value=15;fltRVSpam(15)">≤15%</div>
+            <div class="fchip" onclick="document.getElementById('fr-sp').value=30;fltRVSpam(30)">≤30%</div>
+            <div class="fchip on-r" onclick="document.getElementById('fr-sp').value=100;fltRVSpam(100)" data-ar="الكل" data-en="Any">الكل</div>
+          </div>
+          <div style="margin-top:6px">
+            <div class="tog-row"><span class="tog-lbl" data-ar="بلا PBN" data-en="No PBN history">بلا PBN</span><div class="ftog" id="ft-pbn" onclick="fltSw('pbn')"></div></div>
+            <div class="tog-row"><span class="tog-lbl" data-ar="بلا عقوبة جوجل" data-en="No Google penalty">بلا عقوبة جوجل</span><div class="ftog" id="ft-pen" onclick="fltSw('pen')"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. STATUS -->
+      <div class="fsec open" id="fs-st">
+        <div class="fsec-head" onclick="fltToggleSec('st')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:rgba(0,0,0,0.05)">⏱️</div><span data-ar="الحالة" data-en="Status">الحالة</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-st" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="fchips">
+            <div class="fchip on" data-st="all" onclick="fltST(this)" data-ar="الكل" data-en="All">الكل</div>
+            <div class="fchip" data-st="drop" onclick="fltST(this)" data-ar="سقط" data-en="Dropped">سقط</div>
+            <div class="fchip" data-st="pending" onclick="fltST(this)" data-ar="وشيك" data-en="Pending">وشيك</div>
+            <div class="fchip" data-st="expiring" onclick="fltST(this)" data-ar="ينتهي" data-en="Expiring">ينتهي</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. LENGTH -->
+      <div class="fsec" id="fs-len">
+        <div class="fsec-head" onclick="fltToggleSec('len')">
+          <div class="fsec-left"><div class="fsec-ico" style="background:rgba(0,0,0,0.05)">📏</div><span data-ar="الطول" data-en="Length">الطول</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><span class="fsec-badge" id="fb-len" style="display:none">1</span><span class="fsec-arrow">›</span></div>
+        </div>
+        <div class="fsec-body">
+          <div class="fnum-pair">
+            <input class="fnum" type="number" id="fln-mn" value="1" min="1" max="63" oninput="fltRun()">
+            <span class="fnum-sep" data-ar="إلى" data-en="to">إلى</span>
+            <input class="fnum" type="number" id="fln-mx" value="30" min="1" max="63" oninput="fltRun()">
+          </div>
+          <div class="fchips" style="margin-top:4px">
+            <div class="fchip" onclick="document.getElementById('fln-mn').value=1;document.getElementById('fln-mx').value=4;fltRun()" data-ar="1–4 نادر" data-en="1–4 rare">1–4</div>
+            <div class="fchip" onclick="document.getElementById('fln-mn').value=1;document.getElementById('fln-mx').value=6;fltRun()" data-ar="1–6 قصير" data-en="1–6 short">1–6</div>
+            <div class="fchip" onclick="document.getElementById('fln-mn').value=1;document.getElementById('fln-mx').value=10;fltRun()">1–10</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="fapply" onclick="fltRun()" data-ar="تطبيق الفلاتر" data-en="Apply Filters">تطبيق الفلاتر</button>
+    </div>
+
     <div class="results-col">
       <div class="tbl-head">
         <div class="tbl-th" data-ar="الدومين" data-en="Domain">الدومين</div>
@@ -1293,10 +1633,12 @@ body::before{
         <div class="tbl-th" data-ar="الحالة" data-en="Status">الحالة</div>
         <div class="tbl-th" data-ar="ويباك" data-en="Wayback">ويباك</div>
       </div>
+      <div class="atags" id="fltActiveTags"></div>
       <div id="resultsBody"></div>
     </div>
     <div class="detail-col" id="detailCol"></div>
   </div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -1800,67 +2142,173 @@ function renderFAQ(){
 function toggleFAQ(i){document.getElementById('faq'+i).classList.toggle('open')}
 
 
-/* ── SUPABASE LIVE DATA ─────────────────────────── */
-const SUPABASE_URL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d3hjbGp5ZXRmZGNndWRjcnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc2NzcsImV4cCI6MjA5MDIzMzY3N30._XSeTZgC4FNV8Kc3Y1yz__E94PSyYaT5u6JUNaHv3SI';
+/* ═══════════════════════════════════════════
+   FILTER SYSTEM
+═══════════════════════════════════════════ */
+let fltActiveTLD='all', fltActiveST='all';
+const fltSws={};
 
-async function fetchDomainsFromSupabase() {
-  try {
-    const resp = await fetch(
-      SUPABASE_URL + '/rest/v1/dropped_domains?select=*&order=meor_score.desc.nullslast&limit=100',
-      {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    if (!resp.ok) throw new Error('Supabase error: ' + resp.status);
-    const rows = await resp.json();
-    if (!rows || rows.length === 0) return;
+function fltToggleSec(id){document.getElementById('fs-'+id).classList.toggle('open')}
 
-    // Map Supabase rows to our DOMAINS format
-    const live = rows.map((r, i) => ({
-      id: r.id || i,
-      name: r.domain || '',
-      tld: r.tld || '.com',
-      year: r.first_seen_year || 2015,
-      bl: r.backlinks || 0,
-      da: r.moz_da || 0,
-      tf: r.majestic_tf || 0,
-      wb: r.wayback_snaps || 0,
-      status: r.status === 'dropped' ? 'drop' : r.status || 'drop',
-      score: r.meor_score || 0,
-      spam: r.spam_score || 0,
-      ar: r.ai_verdict || 'لا يوجد تحليل بعد.',
-      en: r.ai_verdict_en || 'No analysis yet.',
-      idn: r.is_arabic_idn || false
-    }));
+function fltSw(id){
+  fltSws[id]=!fltSws[id];
+  document.getElementById('ft-'+id).classList.toggle('on',fltSws[id]);
+  fltRun();
+}
 
-    // Replace sample data with live data
-    DOMAINS.length = 0;
-    live.forEach(d => DOMAINS.push(d));
+function fltTLD(el){
+  fltActiveTLD=el.dataset.tld;
+  document.querySelectorAll('[data-tld]').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  fltRun();
+}
 
-    // Update stats bar
-    const countEl = document.querySelector('.stat-num');
-    if (countEl) countEl.textContent = rows.length + '+';
+function fltST(el){
+  fltActiveST=el.dataset.st;
+  el.closest('.fchips').querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  fltRun();
+}
 
-    // Re-render if on tool page
-    if (document.getElementById('page-tool').classList.contains('active')) {
-      renderResults(DOMAINS);
-    }
+function fltRV(id,val){
+  val=Math.round(+val);
+  document.getElementById('fv-'+id).textContent=val===0?'0+':val+'+';
+  fltRun();
+}
 
-    console.log('Loaded ' + live.length + ' domains from Supabase');
-  } catch (e) {
-    console.log('Using sample data:', e.message);
+function fltRVSpam(val){
+  val=Math.round(+val);
+  document.getElementById('fv-sp').textContent='≤'+val+'%';
+  fltRun();
+}
+
+function fltRun(){
+  const kc=(document.getElementById('fkw-c').value||'').toLowerCase();
+  const ks=(document.getElementById('fkw-s').value||'').toLowerCase();
+  const tfMin=+document.getElementById('fr-tf').value;
+  const daMin=+document.getElementById('fr-da').value;
+  const aiMin=+document.getElementById('fr-ai').value;
+  const spMax=+document.getElementById('fr-sp').value;
+  const blMn=+document.getElementById('fbl-mn').value||0;
+  const blMx=+document.getElementById('fbl-mx').value||Infinity;
+  const yrMn=+document.getElementById('fyr-mn').value||1990;
+  const yrMx=+document.getElementById('fyr-mx').value||2025;
+  const lnMn=+document.getElementById('fln-mn').value||1;
+  const lnMx=+document.getElementById('fln-mx').value||63;
+
+  const f=DOMAINS.filter(d=>{
+    const n=d.name.toLowerCase();
+    if(kc&&!n.includes(kc))return false;
+    if(ks&&!n.startsWith(ks))return false;
+    const lbl=d.name.split('.')[0];
+    if(lbl.length<lnMn||lbl.length>lnMx)return false;
+    if(fltActiveTLD!=='all'&&d.tld!==fltActiveTLD)return false;
+    if(d.tf<tfMin||d.da<daMin||d.score<aiMin)return false;
+    if(d.bl<blMn||d.bl>blMx)return false;
+    if(d.year<yrMn||d.year>yrMx)return false;
+    if(d.spam>spMax)return false;
+    if(fltActiveST!=='all'&&d.status!==fltActiveST)return false;
+    if(fltSws.hyp&&d.name.includes('-'))return false;
+    if(fltSws.num&&/\d/.test(d.name))return false;
+    if(fltSws.idn&&!d.idn)return false;
+    return true;
+  });
+
+  renderResults(f);
+  fltRenderTags();
+  fltUpdateBadges();
+}
+
+function fltRenderTags(){
+  const tags=[];
+  const kc=document.getElementById('fkw-c').value;
+  if(kc)tags.push({l:(lang==='ar'?'يحتوي: ':'Contains: ')+kc,c:()=>{document.getElementById('fkw-c').value='';fltRun()}});
+  const tfv=+document.getElementById('fr-tf').value;
+  if(tfv>0)tags.push({l:'TF≥'+tfv,c:()=>{document.getElementById('fr-tf').value=0;fltRV('tf',0)}});
+  const dav=+document.getElementById('fr-da').value;
+  if(dav>0)tags.push({l:'DA≥'+dav,c:()=>{document.getElementById('fr-da').value=0;fltRV('da',0)}});
+  const spv=+document.getElementById('fr-sp').value;
+  if(spv<100)tags.push({l:'Spam≤'+spv+'%',c:()=>{document.getElementById('fr-sp').value=100;fltRVSpam(100)}});
+  const blv=+document.getElementById('fbl-mn').value;
+  if(blv>0)tags.push({l:'BL≥'+blv.toLocaleString(),c:()=>{document.getElementById('fbl-mn').value='';fltRun()}});
+  if(fltActiveTLD!=='all')tags.push({l:'TLD:'+fltActiveTLD,c:()=>{fltActiveTLD='all';document.querySelector('[data-tld="all"]').classList.add('on');fltRun()}});
+  if(fltActiveST!=='all')tags.push({l:lang==='ar'?'الحالة':'Status:'+fltActiveST,c:()=>{fltActiveST='all';document.querySelector('[data-st="all"]').classList.add('on');fltRun()}});
+  if(fltSws.hyp)tags.push({l:lang==='ar'?'بلا هايفن':'No hyphens',c:()=>fltSw('hyp')});
+  if(fltSws.num)tags.push({l:lang==='ar'?'بلا أرقام':'No numbers',c:()=>fltSw('num')});
+  if(fltSws.idn)tags.push({l:'IDN',c:()=>fltSw('idn')});
+  window._fltCbs=tags.map(t=>t.c);
+  const bar=document.getElementById('fltActiveTags');
+  if(bar)bar.innerHTML=tags.map((t,i)=>`<div class="atag">${t.l}<span class="atag-x" onclick="window._fltCbs[${i}]()">×</span></div>`).join('');
+  const badge=document.getElementById('fltActiveBadge');
+  if(badge){if(tags.length>0){badge.textContent=tags.length;badge.style.display='inline-flex';}else badge.style.display='none';}
+}
+
+function fltUpdateBadges(){
+  const tfv=+document.getElementById('fr-tf').value;
+  const dav=+document.getElementById('fr-da').value;
+  const aiv=+document.getElementById('fr-ai').value;
+  fltBadge('fb-seo',(tfv>0?1:0)+(dav>0?1:0)+(aiv>0?1:0));
+  const blv=+document.getElementById('fbl-mn').value;
+  fltBadge('fb-bl',blv>0?1:0);
+  const kc=document.getElementById('fkw-c').value;
+  const ks=document.getElementById('fkw-s').value;
+  const togN=Object.values(fltSws).filter(Boolean).length;
+  fltBadge('fb-kw',(kc?1:0)+(ks?1:0)+togN);
+  fltBadge('fb-tld',fltActiveTLD!=='all'?1:0);
+  fltBadge('fb-st',fltActiveST!=='all'?1:0);
+  const spv=+document.getElementById('fr-sp').value;
+  fltBadge('fb-spam',spv<100?1:0);
+  const yrMx=+document.getElementById('fyr-mx').value;
+  fltBadge('fb-age',yrMx<2025?1:0);
+  const lmn=+document.getElementById('fln-mn').value;
+  const lmx=+document.getElementById('fln-mx').value;
+  fltBadge('fb-len',(lmn>1||lmx<30)?1:0);
+}
+
+function fltBadge(id,n){
+  const b=document.getElementById(id);
+  if(!b)return;
+  if(n>0){b.textContent=n;b.style.display='inline-flex';}
+  else b.style.display='none';
+}
+
+function fltReset(){
+  document.getElementById('fkw-c').value='';
+  document.getElementById('fkw-s').value='';
+  ['fr-tf','fr-da','fr-ai'].forEach(id=>{document.getElementById(id).value=0});
+  document.getElementById('fr-sp').value=100;
+  ['fbl-mn','fbl-mx'].forEach(id=>{document.getElementById(id).value=''});
+  document.getElementById('fyr-mn').value=2000;
+  document.getElementById('fyr-mx').value=2025;
+  document.getElementById('fln-mn').value=1;
+  document.getElementById('fln-mx').value=30;
+  Object.keys(fltSws).forEach(k=>{fltSws[k]=false;const el=document.getElementById('ft-'+k);if(el)el.classList.remove('on')});
+  fltActiveTLD='all';fltActiveST='all';
+  document.querySelectorAll('[data-tld]').forEach(c=>c.classList.remove('on'));
+  const allTld=document.querySelector('[data-tld="all"]');if(allTld)allTld.classList.add('on');
+  document.querySelectorAll('[data-st]').forEach(c=>c.classList.remove('on'));
+  const allSt=document.querySelector('[data-st="all"]');if(allSt)allSt.classList.add('on');
+  ['fv-tf','fv-da','fv-ai'].forEach(id=>{document.getElementById(id).textContent='0+'});
+  document.getElementById('fv-sp').textContent='≤100%';
+  renderResults(DOMAINS);
+  fltRenderTags();
+  fltUpdateBadges();
+}
+
+/* Dynamic TLD chips from database */
+function fltLoadLiveTLDs(){
+  const tlds=[...new Set(DOMAINS.map(d=>d.tld))];
+  const staticTLDs=['.com','.net','.org','.ae','.sa','.eg','.ma','.السعودية','.مصر','.امارات','.io','.co','.tech','.shop','.online','all'];
+  const live=tlds.filter(t=>!staticTLDs.includes(t));
+  const container=document.getElementById('tld-chips-live');
+  if(container&&live.length>0){
+    container.innerHTML=live.map(t=>`<div class="fchip" data-tld="${t}" onclick="fltTLD(this)">${t}</div>`).join('');
   }
 }
 
 /* INIT */
 autoLang();
 renderResults(DOMAINS);
-fetchDomainsFromSupabase();
 renderCompare();
 renderFAQ();
 updatePricing();
