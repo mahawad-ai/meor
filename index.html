@@ -2527,11 +2527,7 @@ function fltRun(){
   renderResults(f);
   fltRenderTags();
 
-  // Scroll to results
-  setTimeout(()=>{
-    const rs=document.getElementById('results-section');
-    if(rs)rs.scrollIntoView({behavior:'smooth',block:'start'});
-  },100);
+  // No scroll — user stays at top
 }
 
 function fltRenderTags(){
