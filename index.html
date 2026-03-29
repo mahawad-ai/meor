@@ -2864,9 +2864,12 @@ function switchTab(tab) {
   document.getElementById('authBtnText').setAttribute('data-ar', isSignup ? 'إنشاء حساب مجاني' : 'تسجيل الدخول');
   document.getElementById('authBtnText').setAttribute('data-en', isSignup ? 'Create free account' : 'Log in');
   document.getElementById('authBtnText').textContent = lang === 'ar' ? (isSignup ? 'إنشاء حساب مجاني' : 'تسجيل الدخول') : (isSignup ? 'Create free account' : 'Log in');
-  document.getElementById('authFooterText').innerHTML = isSignup ?
-    '<span data-ar="لديك حساب؟" data-en="Already have an account?">لديك حساب؟</span> <a onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</a>' :
-    '<span data-ar="ليس لديك حساب؟" data-en="No account?">ليس لديك حساب؟</span> <a onclick="switchTab('signup')" data-ar="إنشاء حساب" data-en="Sign up">إنشاء حساب</a>';
+  const footerEl = document.getElementById('authFooterText');
+  if (isSignup) {
+    footerEl.innerHTML = (lang==='ar'?'لديك حساب؟ ':'Already have an account? ') + '<a onclick="switchTab(\'login\')" style="color:var(--ink);font-weight:600;cursor:pointer">' + (lang==='ar'?'تسجيل الدخول':'Log in') + '</a>';
+  } else {
+    footerEl.innerHTML = (lang==='ar'?'ليس لديك حساب؟ ':'No account? ') + '<a onclick="switchTab(\'signup\')" style="color:var(--ink);font-weight:600;cursor:pointer">' + (lang==='ar'?'إنشاء حساب':'Sign up') + '</a>';
+  }
   document.getElementById('authError').classList.remove('show');
   document.getElementById('authSuccess').classList.remove('show');
 }
@@ -2980,11 +2983,10 @@ function applyPaywall() {
 
   const overlay = document.createElement('div');
   overlay.className = 'paywall-overlay';
-  overlay.innerHTML = '<div class="paywall-card">' +
-    '<div class="paywall-title">' + (lang==='ar' ? 'أكثر من 50 دومين متاح' : 'More than 50 domains available') + '</div>' +
-    '<div class="paywall-sub">' + (lang==='ar' ? 'سجّل مجاناً لرؤية جميع النتائج وفتح الفلاتر المتقدمة' : 'Sign up free to see all results and unlock advanced filters') + '</div>' +
-    '<button class="paywall-btn" onclick="openAuth()">' + (lang==='ar' ? 'سجّل مجاناً — بلا بطاقة ائتمان' : 'Sign up free — no credit card') + '</button>' +
-    '</div>';
+  const pwTitle = lang==='ar' ? 'أكثر من 50 دومين متاح' : 'More than 50 domains available';
+  const pwSub = lang==='ar' ? 'سجّل مجاناً لرؤية جميع النتائج وفتح الفلاتر المتقدمة' : 'Sign up free to see all results and unlock advanced filters';
+  const pwBtn = lang==='ar' ? 'سجّل مجاناً — بلا بطاقة ائتمان' : 'Sign up free — no credit card';
+  overlay.innerHTML = '<div class="paywall-card"><div class="paywall-title">' + pwTitle + '</div><div class="paywall-sub">' + pwSub + '</div><button class="paywall-btn" onclick="openAuth()">' + pwBtn + '</button></div>';
   rb.parentElement.appendChild(overlay);
 }
 
@@ -3143,7 +3145,7 @@ fetchDomainsFromSupabase();
 
     <div class="auth-footer" id="authFooterText">
       <span data-ar="لديك حساب؟" data-en="Already have an account?">لديك حساب؟</span>
-      <a onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</a>
+      <a onclick="switchTab('login')" style="color:var(--ink);font-weight:600;cursor:pointer" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</a>
     </div>
   </div>
 </div>
