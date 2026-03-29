@@ -1653,7 +1653,7 @@ input[type=range]{
       <div class="nav-link" id="nl-pricing" onclick="go('pricing')" data-ar="كيف يعمل" data-en="How it works">كيف يعمل</div>
     </div>
     <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
-    <button class="nav-cta" onclick="go('pricing')" data-ar="سجّل مجاناً" data-en="Sign up free" onclick="openAuth()">سجّل مجاناً</button>
+    <div id="navUserWrap" style="position:relative;display:none"><div class="nav-user"><div class="nav-user-avatar" id="navAvatar" onclick="toggleUserMenu()">M</div></div><div class="nav-user-menu" id="navUserMenu"><div class="nav-user-email" id="navUserEmail"></div><div class="nav-user-item" data-ar="تسجيل الخروج" data-en="Sign out" onclick="authSignOut()">تسجيل الخروج</div></div></div><button class="nav-cta" onclick="openAuth()" data-ar="سجّل مجاناً" data-en="Sign up free">سجّل مجاناً</button>
   </div>
 </nav>
 
@@ -2433,7 +2433,7 @@ const FAQS = [
 function go(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const targetPage = page === 'home' ? 'tool' : page;
-document.getElementById('page-'+targetPage).classList.add('active');
+  document.getElementById('page-'+targetPage).classList.add('active');
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
   const nl = document.getElementById('nl-'+page);
   if(nl) nl.classList.add('active');
@@ -3027,11 +3027,9 @@ initAuth();
 
 /* ── SUPABASE LIVE DATA ─────────────────────────── */
 const SUPABASE_URL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_jhKq2BwYuaMzYPZBVzOwHw_V28SLwFy';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d3hjbGp5ZXRmZGNndWRjcnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc2NzcsImV4cCI6MjA5MDIzMzY3N30._XSeTZgC4FNV8Kc3Y1yz__E94PSyYaT5u6JUNaHv3SI';
 
 async function fetchDomainsFromSupabase() {
-  const SURL = 'https://rtwxcljyetfdcgudcrye.supabase.co';
-  const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d3hjbGp5ZXRmZGNndWRjcnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc2NzcsImV4cCI6MjA5MDIzMzY3N30._XSeTZgC4FNV8Kc3Y1yz__E94PSyYaT5u6JUNaHv3SI';
 
   // Show loading state
   const rb = document.getElementById('resultsBody');
