@@ -1087,36 +1087,42 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         <span style="font-size:12px;color:var(--ink4)" data-ar="كل ما يحتاجه موقعك — في مكان واحد" data-en="Everything your website needs — in one place">كل ما يحتاجه موقعك — في مكان واحد</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" class="svc-grid">
-        <a href="https://www.secureserver.net/products/domain-registration/find?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+
+        <a href="https://www.secureserver.net/products/domain-registration/find?plid=600707" target="_blank" rel="noopener" class="svc-card">
           <span class="svc-badge" data-ar="الأكثر طلباً" data-en="POPULAR">الأكثر طلباً</span>
           <div class="svc-icon">🌐</div>
           <div class="svc-name" data-ar="تسجيل نطاقات" data-en="Domains">تسجيل نطاقات</div>
           <div class="svc-price" data-ar="من $8.99 / سنة" data-en="From $8.99 / yr">من $8.99 / سنة</div>
         </a>
-        <a href="https://www.secureserver.net/hosting/web-hosting?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+
+        <a href="https://www.secureserver.net/products/web-hosting?plid=600707" target="_blank" rel="noopener" class="svc-card">
           <span class="svc-badge" style="visibility:hidden">_</span>
           <div class="svc-icon">🚀</div>
           <div class="svc-name" data-ar="استضافة مواقع" data-en="Web Hosting">استضافة مواقع</div>
           <div class="svc-price" data-ar="من $5.99 / شهر" data-en="From $5.99 / mo">من $5.99 / شهر</div>
         </a>
-        <a href="https://www.secureserver.net/email/professional-email?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+
+        <a href="https://www.secureserver.net/products/professional-email?plid=600707" target="_blank" rel="noopener" class="svc-card">
           <span class="svc-badge" style="visibility:hidden">_</span>
           <div class="svc-icon">✉️</div>
           <div class="svc-name" data-ar="بريد احترافي" data-en="Professional Email">بريد احترافي</div>
           <div class="svc-price" data-ar="من $1.99 / شهر" data-en="From $1.99 / mo">من $1.99 / شهر</div>
         </a>
-        <a href="https://www.secureserver.net/web-security/ssl-certificate?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+
+        <a href="https://www.secureserver.net/products/ssl?plid=600707" target="_blank" rel="noopener" class="svc-card">
           <span class="svc-badge" style="visibility:hidden">_</span>
           <div class="svc-icon">🔒</div>
           <div class="svc-name" data-ar="شهادة SSL" data-en="SSL Certificate">شهادة SSL</div>
           <div class="svc-price" data-ar="من $63.99 / سنة" data-en="From $63.99 / yr">من $63.99 / سنة</div>
         </a>
-        <a href="https://www.secureserver.net/websites/website-builder?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+
+        <a href="https://www.secureserver.net/products/websites?plid=600707" target="_blank" rel="noopener" class="svc-card">
           <span class="svc-badge" style="visibility:hidden">_</span>
           <div class="svc-icon">🎨</div>
           <div class="svc-name" data-ar="بناء موقع" data-en="Website Builder">بناء موقع</div>
           <div class="svc-price" data-ar="من $9.99 / شهر" data-en="From $9.99 / mo">من $9.99 / شهر</div>
         </a>
+
       </div>
     </div>
   </div>
@@ -1385,8 +1391,10 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 function registerDomain(domainName) {
   if (!domainName) return;
   domainName = domainName.trim().replace(/[^\w.-]/g, '');
-  const url = 'https://www.secureserver.net/products/domain-registration/find?domainToCheck='
-    + encodeURIComponent(domainName) + '&pl_id=600707';
+  if (!domainName) return;
+  // Direct storefront search — most reliable format for GoDaddy reseller pl_id=600707
+  const url = 'https://www.secureserver.net/products/domain-registration/find?plid=600707&domainToCheck='
+    + encodeURIComponent(domainName);
   window.open(url, '_blank', 'noopener');
 }
 
