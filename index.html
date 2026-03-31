@@ -1483,10 +1483,16 @@ function registerDomain(domainName) {
   if (!domainName) return;
   domainName = domainName.trim().replace(/[^\w.-]/g, '');
   if (!domainName) return;
-  // Direct storefront search — most reliable format for GoDaddy reseller pl_id=600707
   const url = 'https://www.secureserver.net/products/domain-registration/find?plid=600707&domainToCheck='
     + encodeURIComponent(domainName);
-  window.open(url, '_blank', 'noopener');
+  // Use anchor element click — works on mobile (window.open blocked as popup)
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 /* ═══════════════════════════════════
