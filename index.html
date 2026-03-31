@@ -933,6 +933,9 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   .search-tld-select{display:none}   /* hide TLD select, default to .com */
   .search-btn{border-radius:var(--r-sm)!important;width:100%;min-width:auto;padding:12px}
   .search-box{border-radius:var(--r-sm)}
+  /* new hero search bar on mobile */
+  #newDomainInput{font-size:16px!important;padding:15px 8px!important}
+  #newDomainInput+select+button{font-size:15px!important;padding:15px 20px!important}
 
   /* services — 2 col on mobile */
   .svc-grid{grid-template-columns:repeat(2,1fr)!important}
@@ -1049,25 +1052,38 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
       </h1>
       <p class="hero-sub" data-ar="سجّل نطاقاً جديداً أو تصفّح الدومينات المنتهية بالقيمة — مجاناً، بلا تسجيل" data-en="Register a new domain or browse valuable expired domains — free, no sign-up">Register a new domain or browse valuable expired domains — free, no sign-up</p>
 
-      <!-- SINGLE NEW-DOMAIN SEARCH BAR -->
-      <div class="search-box" style="max-width:760px">
-        <div style="padding:16px">
-          <div class="search-row">
-            <input class="search-input" type="text" id="newDomainInput"
-              data-ar-placeholder="Find your perfect domain name..."
-              data-en-placeholder="Find your perfect domain name..."
-              placeholder="Find your perfect domain name..."
-              onkeydown="if(event.key==='Enter')searchNewDomain()">
-            <select class="search-tld-select" id="newDomainTld">
-              <option>.com</option><option>.ae</option><option>.sa</option>
-              <option>.net</option><option>.org</option><option>.io</option>
-              <option>.store</option><option>.online</option>
-            </select>
-            <button class="search-btn" onclick="searchNewDomain()" data-ar="بحث عن نطاق" data-en="Search Domains">Search Domains</button>
+      <!-- HERO SEARCH BAR — bold border + shadow -->
+      <div style="max-width:700px;margin:0 auto">
+
+        <!-- Main search bar -->
+        <div style="display:flex;background:var(--white);border:2.5px solid var(--ink);border-radius:var(--r-md);overflow:hidden;box-shadow:5px 5px 0 var(--ink);transition:box-shadow .15s">
+          <!-- Search icon -->
+          <div style="display:flex;align-items:center;padding:0 18px;color:var(--ink4);flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </div>
+          <!-- Input -->
+          <input type="text" id="newDomainInput"
+            data-ar-placeholder="اكتب اسم النطاق الذي تريده..."
+            data-en-placeholder="Find your perfect domain name..."
+            placeholder="Find your perfect domain name..."
+            onkeydown="if(event.key==='Enter')searchNewDomain()"
+            style="flex:1;border:none;outline:none;padding:20px 8px;font-size:18px;font-family:var(--font);color:var(--ink);background:transparent">
+          <!-- Hidden TLD select (still used by searchNewDomain JS) -->
+          <select id="newDomainTld" style="display:none">
+            <option>.com</option><option>.ae</option><option>.sa</option>
+            <option>.net</option><option>.org</option><option>.io</option>
+            <option>.store</option><option>.online</option>
+          </select>
+          <!-- Button -->
+          <button onclick="searchNewDomain()"
+            style="background:var(--ink);color:#fff;font-family:var(--font);font-size:16px;font-weight:700;padding:0 32px;border:none;cursor:pointer;white-space:nowrap;transition:opacity .15s;flex-shrink:0"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'"
+            data-ar="بحث عن نطاق" data-en="Search Domains">Search Domains</button>
         </div>
-        <div class="search-hint">
-          <span class="search-hint-label" data-ar="امتدادات شائعة:" data-en="Popular:">Popular:</span>
+
+        <!-- TLD chips below -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px;justify-content:center">
+          <span style="font-size:14px;color:var(--ink4);font-weight:500" data-ar="الأكثر طلباً:" data-en="Popular:">Popular:</span>
           <button class="hint-chip" onclick="setTld('.com')">.com</button>
           <button class="hint-chip" onclick="setTld('.ae')">.ae</button>
           <button class="hint-chip" onclick="setTld('.sa')">.sa</button>
@@ -1075,6 +1091,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
           <button class="hint-chip" onclick="setTld('.store')">.store</button>
           <button class="hint-chip" onclick="setTld('.online')">.online</button>
         </div>
+
       </div>
     </div>
   </div>
@@ -1508,7 +1525,22 @@ function searchNewDomain() {
 }
 
 function setTld(tld) {
-  document.getElementById('newDomainTld').value = tld;
+  const sel = document.getElementById('newDomainTld');
+  if (sel) sel.value = tld;
+  // Highlight active chip
+  document.querySelectorAll('.hint-chip').forEach(c => {
+    c.style.background = '';
+    c.style.color = '';
+    c.style.borderColor = '';
+  });
+  // Find the clicked chip and highlight it
+  document.querySelectorAll('.hint-chip').forEach(c => {
+    if (c.textContent.trim() === tld) {
+      c.style.background = 'var(--ink)';
+      c.style.color = '#fff';
+      c.style.borderColor = 'var(--ink)';
+    }
+  });
   document.getElementById('newDomainInput').focus();
 }
 
