@@ -315,7 +315,7 @@ input,select,textarea{font-family:var(--font)}
   padding:20px 0;
 }
 .stats-inner{
-  display:flex;gap:0;
+  display:flex;flex-wrap:wrap;gap:0;
   max-width:var(--max);margin:0 auto;padding:0 24px;
 }
 .stat-item{
@@ -544,7 +544,6 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   overflow-y:auto;
 }
 [dir=ltr] .detail-col{border-right:none;border-left:1px solid var(--border)}
-@media(max-width:900px){.detail-col{display:none}}
 
 .tbl-head{
   display:grid;
@@ -856,20 +855,126 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 /* ═══════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════ */
+/* ── SERVICES ── */
+.svc-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:all .18s;text-decoration:none;color:inherit}
+.svc-card:hover{border-color:var(--border3);background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.07);transform:translateY(-2px)}
+.svc-icon{font-size:24px;margin-bottom:8px}
+.svc-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.svc-price{font-size:11px;color:var(--ink4)}
+.svc-badge{font-size:9px;font-weight:700;color:var(--gold);background:var(--gold-bg);border:1px solid rgba(184,152,42,.2);border-radius:var(--r-sm);padding:2px 7px;margin-bottom:6px;display:inline-block;letter-spacing:.04em}
+/* ── HOW PAGE ── */
+.how-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-top:28px}
+.how-card{background:var(--white);padding:26px 22px}
+.how-step{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.how-icon{font-size:22px;margin-bottom:10px;display:block}
+.how-card h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:7px}
+.how-card p{font-size:13px;color:var(--ink3);line-height:1.6}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:28px}
+.feat-item{padding:22px 0;border-top:2px solid var(--border);transition:border-color .18s}
+.feat-item:hover{border-top-color:var(--gold)}
+.feat-item-icon{font-size:20px;margin-bottom:10px;display:block}
+.feat-item h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.feat-item p{font-size:13px;color:var(--ink3);line-height:1.6}
+.cta-band{background:var(--ink);padding:48px 0;text-align:center}
+.cta-band h2{font-size:clamp(20px,3vw,32px);font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:10px}
+.cta-band p{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
+.btn-white-lg{font-family:var(--font);font-size:14px;font-weight:700;background:#fff;color:var(--ink);padding:12px 30px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:opacity .15s}
+.btn-white-lg:hover{opacity:.9}
+/* ── 900px: hide table detail col, collapse table cols ── */
 @media(max-width:900px){
+  .detail-col{display:none}
   .tbl-head,.tbl-row{grid-template-columns:2fr 55px 85px 75px 95px}
   .tbl-head>*:nth-child(5),.tbl-head>*:nth-child(6),.tbl-head>*:nth-child(7),
   .tbl-row>*:nth-child(5),.tbl-row>*:nth-child(6),.tbl-row>*:nth-child(7){display:none}
   .tbl-head>*:nth-child(4),.tbl-row>*:nth-child(4){display:flex}
 }
+
+/* ── 860px: how grid, feat grid ── */
+@media(max-width:860px){
+  .how-grid-4{grid-template-columns:1fr 1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ── 760px: services 3-col intermediate ── */
+@media(max-width:760px){
+  .svc-grid{grid-template-columns:repeat(3,1fr)!important}
+  .slider-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ── 600px: mobile ── */
 @media(max-width:600px){
+  /* nav */
   .util-bar{display:none}
   .nav-links{display:none}
-  .hero{padding:32px 0 28px}
+  .nav-inner{padding:0 16px}
+
+  /* hero */
+  .hero{padding:24px 0 20px}
+  .wrap{padding:0 16px}
+  .hero-title{font-size:26px}
+  .hero-sub{font-size:14px;margin-bottom:20px}
+
+  /* search bar — stack vertically */
+  .search-row{flex-direction:column;gap:8px}
+  .search-input{border-radius:var(--r-sm)!important;border:1px solid var(--border2)!important}
+  .search-tld-select{display:none}   /* hide TLD select, default to .com */
+  .search-btn{border-radius:var(--r-sm)!important;width:100%;min-width:auto;padding:12px}
+  .search-box{border-radius:var(--r-sm)}
+
+  /* services — 2 col on mobile */
+  .svc-grid{grid-template-columns:repeat(2,1fr)!important}
+  .svc-card{padding:14px 8px}
+  .svc-icon{font-size:20px;margin-bottom:6px}
+  .svc-name{font-size:12px}
+
+  /* stats bar — 2x2 grid on mobile */
+  .stats-inner{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border)}
+  .stat-item{border:none!important;background:var(--white);padding:14px 12px}
+  .stat-num{font-size:20px}
+
+  /* filter bar */
+  .tool-filter-bar{top:56px;padding:14px 0}
+  .filter-kw-wrap{max-width:100%}
+  .filter-kw-input{font-size:14px}
+  .frow{gap:6px}
+  .fdiv{display:none}   /* hide vertical dividers between filter groups */
+  .fgroup-label{display:none}  /* hide labels on mobile to save space */
+  .fchip{font-size:11px;padding:4px 9px}
+  .slider-grid{grid-template-columns:1fr 1fr;gap:12px;padding-top:10px}
+  .factions{gap:6px;padding-top:10px}
+  .fpresets{gap:4px}
+
+  /* table — 2 cols on phone */
+  .tbl-head,.tbl-row{grid-template-columns:1fr 40px 80px}
+  .tbl-head>*:nth-child(n+4),.tbl-row>*:nth-child(n+4){display:none}
+  .tbl-head>*:nth-child(1),.tbl-row>*:nth-child(1){display:block}
+  .tbl-head>*:nth-child(2),.tbl-row>*:nth-child(2){display:flex}
+  .tbl-head>*:nth-child(3),.tbl-row>*:nth-child(3){display:flex}
+  .tbl-row{padding:10px 12px}
+  .d-name{font-size:13px}
+  .reg-btn{font-size:11px;padding:5px 10px}
+
+  /* domain detail */
+  .dd-name-row{flex-direction:column;gap:12px}
+  .dd-actions{flex-direction:row;min-width:auto;width:100%}
+  .dd-btn-p,.dd-btn-s{flex:1;font-size:12px;padding:9px 12px}
+  .dd-score-card{display:none}  /* hide score badge in header on mobile, shown in cards below */
+  .metrics-grid{grid-template-columns:1fr 1fr}
+
+  /* footer */
   .footer-grid{grid-template-columns:1fr 1fr}
-  .plans-grid,.features-grid{grid-template-columns:1fr}
-  .how-grid{grid-template-columns:1fr}
-  .search-btn{min-width:auto;padding:12px 16px}
+
+  /* how page */
+  .how-grid-4{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr}
+}
+
+/* ── 380px: very small phones ── */
+@media(max-width:380px){
+  .svc-grid{grid-template-columns:1fr 1fr!important}
+  .hero-title{font-size:22px}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .fchip{font-size:10px;padding:3px 7px}
 }
 </style>
 </head>
@@ -884,7 +989,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
       <div class="util-divider"></div>
       <a data-ar="مساعدة" data-en="Help">مساعدة</a>
       <div class="util-divider"></div>
-      <a onclick="openAuth()" id="utilSignIn" data-ar="تسجيل الدخول" data-en="Sign In">تسجيل الدخول</a>
+      
     </div>
   </div>
 </div>
@@ -894,20 +999,12 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   <div class="nav-inner">
     <div class="nav-links">
       <div class="nav-link active" id="nl-tool" onclick="go('tool')" data-ar="الرئيسية" data-en="Home">الرئيسية</div>
-      <div class="nav-link" id="nl-home" onclick="go('home')" data-ar="كيف يعمل" data-en="How It Works">كيف يعمل</div>
-      <div class="nav-link" id="nl-pricing" onclick="go('pricing')" data-ar="الأسعار" data-en="Pricing">الأسعار</div>
+      <div class="nav-link" id="nl-how" onclick="go('how')" data-ar="كيف يعمل" data-en="How It Works">كيف يعمل</div>
+      
     </div>
     <div class="nav-cta-group">
       <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
-      <div id="navUserWrap" class="nav-user-wrap" style="display:none">
-        <div class="nav-avatar" id="navAvatar" onclick="toggleUserMenu()">M</div>
-        <div class="nav-user-menu" id="navUserMenu">
-          <div class="nav-user-email" id="navUserEmail"></div>
-          <div class="nav-user-item danger" onclick="authSignOut()" data-ar="تسجيل الخروج" data-en="Sign out">تسجيل الخروج</div>
-        </div>
-      </div>
-      <button class="nav-btn-ghost" onclick="openAuth()" id="navSignIn" data-ar="تسجيل الدخول" data-en="Sign In">تسجيل الدخول</button>
-      <button class="nav-btn-primary" onclick="openAuth()" data-ar="ابدأ مجاناً" data-en="Get Started Free">ابدأ مجاناً</button>
+      
     </div>
   </div>
 </nav>
@@ -917,56 +1014,27 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 ═══════════════════════════════════════════ -->
 <div id="page-tool" class="page active">
 
-  <!-- HERO SEARCH AREA -->
+  <!-- ══ HERO — new domain search only, GoDaddy style ══ -->
   <div class="hero">
     <div class="wrap">
       <div class="hero-eyebrow">
         <span class="live-dot"></span>
-        <span data-ar="الأول عربياً — محرك الدومينات المنتهية" data-en="First in Arabic — Expired Domain Search Engine">الأول عربياً — محرك الدومينات المنتهية</span>
+        <span data-ar="الأول عربياً — نطاقات جديدة ومنتهية" data-en="First in Arabic — New & Expired Domains">الأول عربياً — نطاقات جديدة ومنتهية</span>
       </div>
       <h1 class="hero-title">
         <span data-ar="ابحث عن نطاقك " data-en="Find your perfect ">ابحث عن نطاقك </span><span class="hero-title-light" data-ar="المثالي" data-en="domain">المثالي</span>
       </h1>
-      <p class="hero-sub" data-ar="سجّل نطاقاً جديداً أو اكتشف الدومينات المنتهية ذات القيمة — أول منصة عربية من نوعها" data-en="Register a new domain or discover valuable expired domains — the first Arabic platform of its kind">سجّل نطاقاً جديداً أو اكتشف الدومينات المنتهية ذات القيمة — أول منصة عربية من نوعها</p>
+      <p class="hero-sub" data-ar="سجّل نطاقاً جديداً أو تصفّح الدومينات المنتهية بالقيمة — مجاناً، بلا تسجيل" data-en="Register a new domain or browse valuable expired domains — free, no sign-up">سجّل نطاقاً جديداً أو تصفّح الدومينات المنتهية بالقيمة — مجاناً، بلا تسجيل</p>
 
-      <!-- TWO-TAB SEARCH BOX -->
-      <div class="search-box">
-        <div class="search-tabs-bar">
-          <button class="search-tab-btn on" id="stab-expired" onclick="switchSearchTab('expired')" data-ar="نطاقات منتهية" data-en="Expired Domains">نطاقات منتهية</button>
-          <button class="search-tab-btn" id="stab-new" onclick="switchSearchTab('new')" data-ar="نطاق جديد" data-en="New Domain">نطاق جديد</button>
-        </div>
-
-        <!-- EXPIRED TAB -->
-        <div class="search-pane on" id="spane-expired">
-          <div class="search-row">
-            <input class="search-input" type="text" id="expiredSearchInput"
-              data-ar-placeholder="ابحث باسم النطاق، الكلمة المفتاحية، أو الامتداد..."
-              data-en-placeholder="Search by name, keyword, or extension..."
-              placeholder="ابحث باسم النطاق، الكلمة المفتاحية، أو الامتداد..."
-              oninput="homeExpiredSearch(this.value)"
-              onkeydown="if(event.key==='Enter')homeExpiredSearch(this.value)"/>
-            <button class="search-btn" onclick="homeExpiredSearch(document.getElementById('expiredSearchInput').value)" data-ar="بحث" data-en="Search Domains">بحث</button>
-          </div>
-          <div class="search-hint">
-            <span class="search-hint-label" data-ar="تصفح سريع:" data-en="Quick browse:">تصفح سريع:</span>
-            <span class="hint-chip" onclick="homeExpiredSearch('.com')">.com</span>
-            <span class="hint-chip" onclick="homeExpiredSearch('.ae')">.ae</span>
-            <span class="hint-chip" onclick="homeExpiredSearch('.sa')">.sa</span>
-            <span class="hint-chip" onclick="homeExpiredSearch('.io')">.io</span>
-            <span class="hint-chip" onclick="homeExpiredSearch('')" data-ar="عرض الكل" data-en="View all">عرض الكل</span>
-          </div>
-          <!-- INLINE RESULTS -->
-          <div class="home-results" id="homeExpiredResults"></div>
-        </div>
-
-        <!-- NEW DOMAIN TAB -->
-        <div class="search-pane" id="spane-new">
+      <!-- SINGLE NEW-DOMAIN SEARCH BAR -->
+      <div class="search-box" style="max-width:760px">
+        <div style="padding:16px">
           <div class="search-row">
             <input class="search-input" type="text" id="newDomainInput"
               data-ar-placeholder="اكتب اسم النطاق الذي تريده..."
               data-en-placeholder="Find your perfect domain name..."
               placeholder="اكتب اسم النطاق الذي تريده..."
-              onkeydown="if(event.key==='Enter')searchNewDomain()"/>
+              onkeydown="if(event.key==='Enter')searchNewDomain()">
             <select class="search-tld-select" id="newDomainTld">
               <option>.com</option><option>.ae</option><option>.sa</option>
               <option>.net</option><option>.org</option><option>.io</option>
@@ -974,39 +1042,79 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
             </select>
             <button class="search-btn" onclick="searchNewDomain()" data-ar="بحث عن نطاق" data-en="Search Domains">بحث عن نطاق</button>
           </div>
-          <div class="search-hint">
-            <span class="search-hint-label" data-ar="امتدادات شائعة:" data-en="Popular extensions:">امتدادات شائعة:</span>
-            <span class="hint-chip" onclick="setTld('.com')">.com</span>
-            <span class="hint-chip" onclick="setTld('.ae')">.ae</span>
-            <span class="hint-chip" onclick="setTld('.sa')">.sa</span>
-            <span class="hint-chip" onclick="setTld('.io')">.io</span>
-            <span class="hint-chip" onclick="setTld('.store')">.store</span>
-          </div>
+        </div>
+        <div class="search-hint">
+          <span class="search-hint-label" data-ar="امتدادات شائعة:" data-en="Popular:">امتدادات شائعة:</span>
+          <span class="hint-chip" onclick="setTld('.com')">.com</span>
+          <span class="hint-chip" onclick="setTld('.ae')">.ae</span>
+          <span class="hint-chip" onclick="setTld('.sa')">.sa</span>
+          <span class="hint-chip" onclick="setTld('.io')">.io</span>
+          <span class="hint-chip" onclick="setTld('.store')">.store</span>
+          <span class="hint-chip" onclick="setTld('.online')">.online</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- STATS BAR -->
-  <div class="stats-bar">
-    <div class="stats-inner">
-      <div class="stat-item"><div class="stat-num" id="stat-total">—</div><div class="stat-label" data-ar="نطاق في قاعدة البيانات" data-en="Domains in database">نطاق في قاعدة البيانات</div></div>
-      <div class="stat-item"><div class="stat-num" id="stat-dropped">—</div><div class="stat-label" data-ar="سقطوا اليوم" data-en="Dropped today">سقطوا اليوم</div></div>
-      <div class="stat-item"><div class="stat-num">843</div><div class="stat-label" data-ar="امتداد مُراقَب" data-en="TLDs tracked">امتداد مُراقَب</div></div>
-      <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label" data-ar="مراقبة مستمرة" data-en="Live monitoring">مراقبة مستمرة</div></div>
+  <!-- ══ SERVICES — right under hero ══ -->
+  <div style="background:var(--white);border-bottom:1px solid var(--border);padding:24px 0">
+    <div class="wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em" data-ar="خدماتنا" data-en="OUR SERVICES">خدماتنا</span>
+        <span style="font-size:12px;color:var(--ink4)" data-ar="كل ما يحتاجه موقعك — في مكان واحد" data-en="Everything your website needs — in one place">كل ما يحتاجه موقعك — في مكان واحد</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px" class="svc-grid">
+        <a href="https://www.secureserver.net/products/domain-registration/find?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+          <span class="svc-badge" data-ar="الأكثر طلباً" data-en="POPULAR">الأكثر طلباً</span>
+          <div class="svc-icon">🌐</div>
+          <div class="svc-name" data-ar="تسجيل نطاقات" data-en="Domains">تسجيل نطاقات</div>
+          <div class="svc-price" data-ar="من $8.99 / سنة" data-en="From $8.99 / yr">من $8.99 / سنة</div>
+        </a>
+        <a href="https://www.secureserver.net/hosting/web-hosting?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+          <span class="svc-badge" style="visibility:hidden">_</span>
+          <div class="svc-icon">🚀</div>
+          <div class="svc-name" data-ar="استضافة مواقع" data-en="Web Hosting">استضافة مواقع</div>
+          <div class="svc-price" data-ar="من $5.99 / شهر" data-en="From $5.99 / mo">من $5.99 / شهر</div>
+        </a>
+        <a href="https://www.secureserver.net/email/professional-email?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+          <span class="svc-badge" style="visibility:hidden">_</span>
+          <div class="svc-icon">✉️</div>
+          <div class="svc-name" data-ar="بريد احترافي" data-en="Professional Email">بريد احترافي</div>
+          <div class="svc-price" data-ar="من $1.99 / شهر" data-en="From $1.99 / mo">من $1.99 / شهر</div>
+        </a>
+        <a href="https://www.secureserver.net/web-security/ssl-certificate?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+          <span class="svc-badge" style="visibility:hidden">_</span>
+          <div class="svc-icon">🔒</div>
+          <div class="svc-name" data-ar="شهادة SSL" data-en="SSL Certificate">شهادة SSL</div>
+          <div class="svc-price" data-ar="من $63.99 / سنة" data-en="From $63.99 / yr">من $63.99 / سنة</div>
+        </a>
+        <a href="https://www.secureserver.net/websites/website-builder?pl_id=600707" target="_blank" rel="noopener" class="svc-card">
+          <span class="svc-badge" style="visibility:hidden">_</span>
+          <div class="svc-icon">🎨</div>
+          <div class="svc-name" data-ar="بناء موقع" data-en="Website Builder">بناء موقع</div>
+          <div class="svc-price" data-ar="من $9.99 / شهر" data-en="From $9.99 / mo">من $9.99 / شهر</div>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- FILTER BAR -->
+  <!-- ══ EXPIRED DOMAIN FILTER BAR ══ -->
   <div class="tool-filter-bar">
     <div class="wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px">
+        <div>
+          <span style="font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em" data-ar="نطاقات منتهية" data-en="EXPIRED DOMAINS">نطاقات منتهية</span>
+          <span style="font-size:11px;color:var(--ink4);margin-right:8px;margin-left:8px">—</span>
+          <span style="font-size:13px;font-weight:600;color:var(--ink2)" data-ar="ابحث في الدومينات المنتهية ذات القيمة" data-en="Search valuable expired domains">ابحث في الدومينات المنتهية ذات القيمة</span>
+        </div>
+      </div>
       <div class="filter-kw-row">
         <div class="filter-kw-wrap">
           <input class="filter-kw-input" type="text" id="toolInput"
-            data-ar-placeholder="تصفية بالكلمة المفتاحية..."
-            data-en-placeholder="Filter by keyword..."
-            placeholder="تصفية بالكلمة المفتاحية...">
-          <button class="filter-kw-btn" onclick="fltRun()" data-ar="تطبيق" data-en="Apply">تطبيق</button>
+            data-ar-placeholder="ابحث باسم النطاق أو الكلمة المفتاحية..."
+            data-en-placeholder="Search by domain name or keyword..."
+            placeholder="ابحث باسم النطاق أو الكلمة المفتاحية...">
+          <button class="filter-kw-btn" onclick="fltRun()" data-ar="بحث" data-en="Search">بحث</button>
         </div>
       </div>
 
@@ -1079,6 +1187,16 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
     </div>
   </div>
 
+  <!-- ══ STATS BAR — after filter, before results ══ -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-item"><div class="stat-num" id="stat-total">—</div><div class="stat-label" data-ar="نطاق منتهٍ مُفهرَس" data-en="Expired domains indexed">نطاق منتهٍ مُفهرَس</div></div>
+      <div class="stat-item"><div class="stat-num" id="stat-dropped">—</div><div class="stat-label" data-ar="سقطوا مؤخراً" data-en="Recently dropped">سقطوا مؤخراً</div></div>
+      <div class="stat-item"><div class="stat-num">843</div><div class="stat-label" data-ar="امتداد مُراقَب" data-en="TLDs tracked">امتداد مُراقَب</div></div>
+      <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label" data-ar="مجاني — بلا تسجيل" data-en="Free — no sign-up">مجاني — بلا تسجيل</div></div>
+    </div>
+  </div>
+
   <!-- RESULTS -->
   <div id="results-section">
     <div class="results-toolbar">
@@ -1109,143 +1227,67 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PAGE: HOME (how it works / marketing)
-═══════════════════════════════════════════ -->
-<div id="page-home" class="page">
-  <div class="hero" style="padding:56px 0 48px">
-    <div class="wrap">
-      <div class="hero-eyebrow"><span class="live-dot"></span><span data-ar="كيف يعمل ميور" data-en="How Meor Works">كيف يعمل ميور</span></div>
-      <h1 class="hero-title" data-ar="من الاكتشاف إلى التسجيل في دقائق" data-en="From discovery to registration in minutes">من الاكتشاف إلى التسجيل في دقائق</h1>
-      <p class="hero-sub" data-ar="ميور هو المنصة العربية الأولى لاكتشاف الدومينات المنتهية وتسجيلها مباشرة" data-en="Meor is the first Arabic platform for discovering and registering expired domains directly">ميور هو المنصة العربية الأولى لاكتشاف الدومينات المنتهية وتسجيلها مباشرة</p>
-    </div>
-  </div>
-
-  <div class="section" style="background:var(--white);border-bottom:1px solid var(--border)">
-    <div class="wrap">
-      <div class="how-grid">
-        <div class="how-card"><div class="how-step" data-ar="الخطوة ١" data-en="STEP 1">الخطوة ١</div><div class="how-icon">🔍</div><h3 data-ar="اكتشف" data-en="Discover">اكتشف</h3><p data-ar="ابحث في قاعدة بيانات تضم مئات الآلاف من الدومينات المنتهية بفلاتر متقدمة." data-en="Search a database of hundreds of thousands of expired domains with advanced filters.">ابحث في قاعدة بيانات تضم مئات الآلاف من الدومينات المنتهية بفلاتر متقدمة.</p></div>
-        <div class="how-card"><div class="how-step" data-ar="الخطوة ٢" data-en="STEP 2">الخطوة ٢</div><div class="how-icon">📊</div><h3 data-ar="حلّل" data-en="Analyze">حلّل</h3><p data-ar="اقرأ نقاط الذكاء الاصطناعي، DA، TF، الباك لينكات، وتاريخ الدومين في صفحة واحدة." data-en="Read AI score, DA, TF, backlinks, and domain history in one page.">اقرأ نقاط الذكاء الاصطناعي، DA، TF، الباك لينكات، وتاريخ الدومين في صفحة واحدة.</p></div>
-        <div class="how-card"><div class="how-step" data-ar="الخطوة ٣" data-en="STEP 3">الخطوة ٣</div><div class="how-icon">⚡</div><h3 data-ar="سجّل" data-en="Register">سجّل</h3><p data-ar="اضغط تسجيل — ستنتقل مباشرة لإتمام الشراء مع تحميل الدومين تلقائياً." data-en="Click register — you go directly to checkout with the domain pre-loaded.">اضغط تسجيل — ستنتقل مباشرة لإتمام الشراء مع تحميل الدومين تلقائياً.</p></div>
-        <div class="how-card"><div class="how-step" data-ar="الخطوة ٤" data-en="STEP 4">الخطوة ٤</div><div class="how-icon">💰</div><h3 data-ar="استثمر" data-en="Invest">استثمر</h3><p data-ar="أعد البيع أو ابنِ موقعاً على نطاق له تاريخ وباك لينكات حقيقية." data-en="Resell or build a site on a domain with real history and backlinks.">أعد البيع أو ابنِ موقعاً على نطاق له تاريخ وباك لينكات حقيقية.</p></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="wrap">
-      <div class="hero-eyebrow" style="justify-content:flex-start" data-ar="المميزات" data-en="FEATURES">المميزات</div>
-      <h2 style="font-size:clamp(20px,3vw,32px);font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-bottom:6px" data-ar="كل ما يحتاجه مستثمر الدومينات" data-en="Everything a domain investor needs">كل ما يحتاجه مستثمر الدومينات</h2>
-      <p style="font-size:15px;color:var(--ink3);max-width:480px;line-height:1.6" data-ar="مبني للسوق العربي، بواجهة عربية كاملة، وبيانات لحظية" data-en="Built for the Arabic market, with a full Arabic interface and real-time data">مبني للسوق العربي، بواجهة عربية كاملة، وبيانات لحظية</p>
-      <div class="features-grid">
-        <div class="feature-item"><span class="feature-icon">🤖</span><h3 data-ar="نقاط ذكاء اصطناعي" data-en="AI Scoring">نقاط ذكاء اصطناعي</h3><p data-ar="درجة 0-100 تجمع TF وDA ونظافة الباك لينكات والسبام في ثانية." data-en="0-100 score combining TF, DA, backlink quality, and spam in one second.">درجة 0-100 تجمع TF وDA ونظافة الباك لينكات والسبام في ثانية.</p></div>
-        <div class="feature-item"><span class="feature-icon">🌍</span><h3 data-ar="843 امتداد مُراقَب" data-en="843 TLDs tracked">843 امتداد مُراقَب</h3><p data-ar="من .ae و.sa و.eg إلى .السعودية و.مصر و.امارات — أشمل تغطية للمنطقة." data-en="From .ae .sa .eg to .السعودية .مصر .امارات — widest MENA coverage.">من .ae و.sa و.eg إلى .السعودية و.مصر و.امارات — أشمل تغطية للمنطقة.</p></div>
-        <div class="feature-item"><span class="feature-icon">⚡</span><h3 data-ar="تحديث كل ساعة" data-en="Updated every hour">تحديث كل ساعة</h3><p data-ar="مقارنة ملفات المنطقة يومياً. ترى الدومين لحظة سقوطه قبل الجميع." data-en="Zone file comparison daily. See the domain the moment it drops, before everyone.">مقارنة ملفات المنطقة يومياً. ترى الدومين لحظة سقوطه قبل الجميع.</p></div>
-        <div class="feature-item"><span class="feature-icon">🛡️</span><h3 data-ar="كشف السبام" data-en="Spam detection">كشف السبام</h3><p data-ar="كشف تلقائي للباك لينكات السامة وتاريخ PBN ونسب الأنكر تكست المشبوهة." data-en="Auto-detect toxic backlinks, PBN history, and suspicious anchor text ratios.">كشف تلقائي للباك لينكات السامة وتاريخ PBN ونسب الأنكر تكست المشبوهة.</p></div>
-        <div class="feature-item"><span class="feature-icon">💬</span><h3 data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</h3><p data-ar="رسالة واتساب فورية لحظة سقوط دومين يطابق معاييرك. (الخطة المميزة)" data-en="Instant WhatsApp when a matching domain drops. (Premium plan)">رسالة واتساب فورية لحظة سقوط دومين يطابق معاييرك. (الخطة المميزة)</p></div>
-        <div class="feature-item"><span class="feature-icon">📊</span><h3 data-ar="تصدير CSV وAPI" data-en="CSV export & API">تصدير CSV وAPI</h3><p data-ar="صدّر قوائمك بالكامل أو استخدم API مع 100 طلب يومياً في الخطة المميزة." data-en="Export your full lists or use the API with 100 daily calls on Premium.">صدّر قوائمك بالكامل أو استخدم API مع 100 طلب يومياً في الخطة المميزة.</p></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="cta-band">
-    <div class="wrap">
-      <h2 data-ar="ابدأ البحث الآن — مجاناً" data-en="Start searching now — for free">ابدأ البحث الآن — مجاناً</h2>
-      <p data-ar="لا بطاقة ائتمان. لا التزامات. فقط نطاقات." data-en="No credit card. No commitments. Just domains.">لا بطاقة ائتمان. لا التزامات. فقط نطاقات.</p>
-      <button class="btn-ghost-white" onclick="go('pricing')" data-ar="عرض الأسعار" data-en="View pricing">عرض الأسعار</button>
-      <button class="btn-white" onclick="go('tool')" data-ar="ابدأ البحث" data-en="Start searching">ابدأ البحث</button>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <div class="wrap">
-      <div class="footer-grid">
-        <div><div class="footer-brand">مِيور | Meor</div><div class="footer-tagline" data-ar="أول منصة عربية لاكتشاف الدومينات المنتهية وتسجيلها" data-en="The first Arabic platform for discovering and registering expired domains">أول منصة عربية لاكتشاف الدومينات المنتهية وتسجيلها</div></div>
-        <div><div class="footer-col-title" data-ar="المنصة" data-en="PLATFORM">المنصة</div><div class="footer-link" onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</div><div class="footer-link" onclick="go('home')" data-ar="كيف يعمل" data-en="How it works">كيف يعمل</div><div class="footer-link" onclick="go('pricing')" data-ar="الأسعار" data-en="Pricing">الأسعار</div></div>
-        <div><div class="footer-col-title" data-ar="الامتدادات" data-en="EXTENSIONS">الامتدادات</div><div class="footer-link">.ae</div><div class="footer-link">.sa</div><div class="footer-link">.eg</div><div class="footer-link">.السعودية</div></div>
-        <div><div class="footer-col-title" data-ar="الشركة" data-en="COMPANY">الشركة</div><div class="footer-link" data-ar="من نحن" data-en="About">من نحن</div><div class="footer-link" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</div><div class="footer-link" data-ar="الخصوصية" data-en="Privacy">الخصوصية</div></div>
-      </div>
-      <div class="footer-bottom">
-        <span>© 2026 meor.com</span>
-        <span class="footer-registrar" data-ar="خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد" data-en="Registration services provided by WildWestDomains.com — ICANN accredited registrar">خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد</span>
-      </div>
-    </div>
-  </footer>
-</div>
-
-<!-- ═══════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      PAGE: DOMAIN DETAIL
-═══════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <div id="page-detail" class="page">
   <div class="dd-header">
     <div class="wrap">
-      <div class="dd-crumb"><a onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</a> <span>›</span> <span id="dd-crumb-name">domain.com</span></div>
+      <div class="dd-crumb"><a onclick="go('tool')" data-ar="البحث" data-en="Search">البحث</a> <span>›</span> <span id="dd-crumb-name">—</span></div>
       <div class="dd-name-row">
         <div>
-          <div class="dd-name" id="dd-name">domain<span class="dd-tld">.com</span></div>
+          <div class="dd-name" id="dd-name">—</div>
           <div class="dd-tags">
-            <span class="dd-tag tag-drop" id="dd-status-tag" data-ar="متاح الآن" data-en="Available Now">متاح الآن</span>
-            <span class="dd-tag" style="background:var(--gold-bg);color:var(--gold)" id="dd-tld-tag">.com</span>
+            <span class="dd-tag tag-drop" data-ar="متاح الآن" data-en="Available Now">متاح الآن</span>
+            <span class="dd-tag" style="background:var(--gold-bg);color:var(--gold)" id="dd-tld-tag">—</span>
             <span class="dd-tag" style="background:var(--bg);color:var(--ink3);border:1px solid var(--border)" id="dd-age-tag">—</span>
           </div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;flex-shrink:0">
           <div class="dd-score-card"><div class="dd-score-n" id="dd-score-n" style="color:var(--green)">—</div><div class="dd-score-l" data-ar="نقاط ميور" data-en="MEOR SCORE">نقاط ميور</div></div>
           <div class="dd-actions">
-            <button class="dd-btn-primary" id="dd-register-btn" onclick="registerDomain(document.getElementById('dd-name').textContent.trim())" data-ar="سجّل هذا النطاق" data-en="Register This Domain">سجّل هذا النطاق</button>
-            <button class="dd-btn-sec" data-ar="+ إضافة تنبيه" data-en="+ Set Alert">+ إضافة تنبيه</button>
+            <button class="dd-btn-p" id="dd-reg-top" data-ar="سجّل هذا النطاق" data-en="Register This Domain">سجّل هذا النطاق</button>
+            <button class="dd-btn-s" onclick="go('tool')" data-ar="← العودة للبحث" data-en="← Back to search">← العودة للبحث</button>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <div class="wrap">
     <div class="dd-grid">
-      <!-- LEFT COLUMN -->
       <div>
         <div class="dd-card" style="margin-top:0">
           <div class="dd-card-head"><div class="dd-card-title" style="display:flex;align-items:center;gap:7px"><div class="ai-chip">✦</div><span data-ar="تحليل الذكاء الاصطناعي" data-en="AI Analysis">تحليل الذكاء الاصطناعي</span></div></div>
-          <div class="dd-card-body"><div class="ai-block" id="dd-ai-block"><div class="ai-block-label"><div class="ai-chip">✦</div><span data-ar="رأي ميور" data-en="MEOR VERDICT">رأي ميور</span></div><div class="ai-text" id="dd-ai">—</div></div></div>
+          <div style="padding:18px"><div class="ai-block"><div class="ai-block-label"><div class="ai-chip">✦</div><span data-ar="رأي ميور" data-en="MEOR VERDICT">رأي ميور</span></div><div class="ai-text" id="dd-ai">—</div></div></div>
         </div>
         <div class="dd-card">
           <div class="dd-card-head"><div class="dd-card-title" data-ar="المقاييس التقنية" data-en="Technical Metrics">المقاييس التقنية</div></div>
-          <div class="dd-card-body" style="padding:0">
-            <div class="metrics-grid">
-              <div class="metric-cell"><div class="metric-cell-label">Trust Flow</div><div class="metric-cell-val g" id="dd-tf">—</div></div>
-              <div class="metric-cell"><div class="metric-cell-label">Citation Flow</div><div class="metric-cell-val" id="dd-cf">—</div></div>
-              <div class="metric-cell"><div class="metric-cell-label">Domain Authority</div><div class="metric-cell-val g" id="dd-da">—</div></div>
-              <div class="metric-cell"><div class="metric-cell-label" data-ar="باك لينكات" data-en="Backlinks">باك لينكات</div><div class="metric-cell-val" id="dd-bl">—</div></div>
-              <div class="metric-cell"><div class="metric-cell-label" data-ar="نطاقات مرجعية" data-en="Ref. Domains">نطاقات مرجعية</div><div class="metric-cell-val" id="dd-rd">—</div></div>
-              <div class="metric-cell"><div class="metric-cell-label" data-ar="نسبة السبام" data-en="Spam Score">نسبة السبام</div><div class="metric-cell-val g" id="dd-spam">—</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="dd-card">
-          <div class="dd-card-head"><div class="dd-card-title" data-ar="أقوى الباك لينكات" data-en="Top Backlinks">أقوى الباك لينكات</div></div>
-          <div class="dd-card-body" style="padding:0 18px">
-            <div class="bl-item"><div class="bl-domain">—</div></div>
+          <div class="metrics-grid">
+            <div class="metric-cell"><div class="metric-cell-label">Trust Flow</div><div class="metric-cell-val g" id="dd-tf">—</div></div>
+            <div class="metric-cell"><div class="metric-cell-label">Citation Flow</div><div class="metric-cell-val" id="dd-cf">—</div></div>
+            <div class="metric-cell"><div class="metric-cell-label">Domain Authority</div><div class="metric-cell-val g" id="dd-da">—</div></div>
+            <div class="metric-cell"><div class="metric-cell-label" data-ar="باك لينكات" data-en="Backlinks">باك لينكات</div><div class="metric-cell-val" id="dd-bl">—</div></div>
+            <div class="metric-cell"><div class="metric-cell-label" data-ar="نطاقات مرجعية" data-en="Ref. Domains">نطاقات مرجعية</div><div class="metric-cell-val" id="dd-rd">—</div></div>
+            <div class="metric-cell"><div class="metric-cell-label" data-ar="نسبة السبام" data-en="Spam Score">نسبة السبام</div><div class="metric-cell-val" id="dd-spam">—</div></div>
           </div>
         </div>
         <div class="dd-card">
           <div class="dd-card-head"><div class="dd-card-title" data-ar="تاريخ النطاق" data-en="Domain History">تاريخ النطاق</div></div>
-          <div class="dd-card-body" id="dd-history" style="padding:0 18px"><div class="hist-row"><div class="hist-yr">—</div><div class="hist-desc" data-ar="جار التحميل..." data-en="Loading...">جار التحميل...</div></div></div>
+          <div id="dd-history"><div class="hist-row"><div class="hist-yr">—</div><div class="hist-desc" data-ar="جار التحميل..." data-en="Loading...">جار التحميل...</div></div></div>
         </div>
       </div>
-
-      <!-- RIGHT: REGISTRATION CARD -->
       <div>
         <div class="reg-card" style="margin-top:0">
           <div class="reg-card-head"><div class="reg-card-title" data-ar="معلومات التسجيل" data-en="Registration Info">معلومات التسجيل</div></div>
-          <div class="reg-card-body">
+          <div>
             <div class="dd-row"><span class="dd-rk" data-ar="الحالة" data-en="Status">الحالة</span><span class="dd-rv"><span class="status-tag tag-drop" data-ar="متاح" data-en="Available">متاح</span></span></div>
-            <div class="dd-row"><span class="dd-rk" data-ar="تاريخ السقوط" data-en="Drop date">تاريخ السقوط</span><span class="dd-rv" id="dd-drop-date">—</span></div>
+            <div class="dd-row"><span class="dd-rk" data-ar="تاريخ السقوط" data-en="Drop date">تاريخ السقوط</span><span class="dd-rv" id="dd-drop">—</span></div>
             <div class="dd-row"><span class="dd-rk" data-ar="العمر" data-en="Age">العمر</span><span class="dd-rv" id="dd-age">—</span></div>
-            <div class="dd-row"><span class="dd-rk" data-ar="لقطات ويباك" data-en="Wayback snaps">لقطات ويباك</span><span class="dd-rv" id="dd-wb">—</span></div>
+            <div class="dd-row"><span class="dd-rk" data-ar="لقطات ويباك" data-en="Wayback">لقطات ويباك</span><span class="dd-rv" id="dd-wb">—</span></div>
           </div>
           <div class="reg-card-actions">
-            <button class="dd-btn-primary" id="sidebar-reg-btn" onclick="registerDomain(document.getElementById('dd-name').textContent.trim())" data-ar="سجّل هذا النطاق" data-en="Register This Domain">سجّل هذا النطاق</button>
-            <button class="dd-btn-sec" onclick="go('tool')" data-ar="← العودة للبحث" data-en="← Back to search">← العودة للبحث</button>
+            <button class="dd-btn-p" id="dd-reg-sidebar" data-ar="سجّل هذا النطاق" data-en="Register This Domain">سجّل هذا النطاق</button>
+            <button class="dd-btn-s" onclick="go('tool')" data-ar="← العودة للبحث" data-en="← Back to search">← العودة للبحث</button>
             <p class="reg-note" data-ar="خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد" data-en="Registration provided by WildWestDomains.com — ICANN accredited registrar">خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد</p>
           </div>
         </div>
@@ -1254,97 +1296,62 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PAGE: PRICING
-═══════════════════════════════════════════ -->
-<div id="page-pricing" class="page">
-  <div class="pricing-hero">
+<!-- ══════════════════════════════════════════
+     PAGE: HOW IT WORKS
+══════════════════════════════════════════ -->
+<div id="page-how" class="page">
+  <div class="hero" style="padding:48px 0 40px">
     <div class="wrap">
-      <h1 data-ar="أسعار شفافة، بسيطة، تستحق كل قرش" data-en="Transparent pricing, worth every penny">أسعار شفافة، بسيطة، تستحق كل قرش</h1>
-      <p data-ar="ابدأ مجاناً. ارقَّ عندما تكون جاهزاً." data-en="Start free. Upgrade when ready.">ابدأ مجاناً. ارقَّ عندما تكون جاهزاً.</p>
-      <div class="billing-toggle">
-        <div class="bill-opt on" id="billM" onclick="setBill('m')" data-ar="شهري" data-en="Monthly">شهري</div>
-        <div class="bill-opt" id="billA" onclick="setBill('a')"><span class="save-chip" data-ar="وفر 20%" data-en="Save 20%">وفر 20%</span><span data-ar="سنوي" data-en="Annual">سنوي</span></div>
-      </div>
+      <div class="hero-eyebrow"><span class="live-dot"></span><span data-ar="كيف يعمل ميور" data-en="How Meor Works">كيف يعمل ميور</span></div>
+      <h1 class="hero-title" data-ar="من الاكتشاف إلى التسجيل في دقائق" data-en="From discovery to registration in minutes">من الاكتشاف إلى التسجيل في دقائق</h1>
+      <p class="hero-sub" data-ar="أداة مجانية تماماً — لا تسجيل، لا قيود، لا رسوم. فقط ابحث وسجّل." data-en="Completely free — no sign-up, no limits, no fees. Just search and register.">أداة مجانية تماماً — لا تسجيل، لا قيود، لا رسوم. فقط ابحث وسجّل.</p>
     </div>
   </div>
-  <div class="section">
-    <div class="wrap">
-      <div class="plans-grid">
-        <div class="plan-card">
-          <div class="plan-name" data-ar="مجاني" data-en="FREE">مجاني</div>
-          <div class="plan-price">$0</div>
-          <div class="plan-price-note" data-ar="للأبد" data-en="Forever">للأبد</div>
-          <div class="plan-divider"></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="50 نتيجة يومياً" data-en="50 results/day">50 نتيجة يومياً</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="فلترة أساسية" data-en="Basic filtering">فلترة أساسية</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="واجهة عربية وإنجليزية" data-en="Arabic & English UI">واجهة عربية وإنجليزية</span></div>
-          <div class="plan-feat"><div class="feat-no">—</div><span style="color:var(--ink4)" data-ar="نقاط الذكاء الاصطناعي" data-en="AI scoring">نقاط الذكاء الاصطناعي</span></div>
-          <div class="plan-feat"><div class="feat-no">—</div><span style="color:var(--ink4)" data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</span></div>
-          <button class="plan-btn plan-btn-outline" onclick="openAuth()" data-ar="ابدأ مجاناً" data-en="Start free">ابدأ مجاناً</button>
-        </div>
-        <div class="plan-card featured">
-          <div class="plan-featured-label" data-ar="الأكثر شعبية" data-en="MOST POPULAR">الأكثر شعبية</div>
-          <div class="plan-name" data-ar="برو" data-en="PRO">برو</div>
-          <div class="plan-price" id="proPrice">$9<sup data-ar="/شهر" data-en="/mo">/شهر</sup></div>
-          <div class="plan-price-note" id="proNote" data-ar="يُدفع شهرياً" data-en="Billed monthly">يُدفع شهرياً</div>
-          <div class="plan-divider"></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="نتائج غير محدودة" data-en="Unlimited results">نتائج غير محدودة</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="نقاط الذكاء الاصطناعي" data-en="AI scoring">نقاط الذكاء الاصطناعي</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="فلترة متقدمة" data-en="Advanced filters">فلترة متقدمة</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="تصدير CSV" data-en="CSV export">تصدير CSV</span></div>
-          <div class="plan-feat"><div class="feat-no">—</div><span style="color:var(--ink4)" data-ar="تنبيهات واتساب" data-en="WhatsApp alerts">تنبيهات واتساب</span></div>
-          <button class="plan-btn plan-btn-primary" onclick="openAuth()" data-ar="ابدأ تجربة 7 أيام" data-en="Start 7-day trial">ابدأ تجربة 7 أيام</button>
-        </div>
-        <div class="plan-card">
-          <div class="plan-name" data-ar="بريميوم" data-en="PREMIUM">بريميوم</div>
-          <div class="plan-price" id="premPrice">$19<sup data-ar="/شهر" data-en="/mo">/شهر</sup></div>
-          <div class="plan-price-note" id="premNote" data-ar="يُدفع شهرياً" data-en="Billed monthly">يُدفع شهرياً</div>
-          <div class="plan-divider"></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="كل مميزات برو" data-en="Everything in Pro">كل مميزات برو</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span style="font-weight:700" data-ar="تنبيهات واتساب فورية" data-en="Instant WhatsApp alerts">تنبيهات واتساب فورية</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="تتبع MENA متقدم" data-en="Advanced MENA tracking">تتبع MENA متقدم</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="API 100 طلب/يوم" data-en="API 100 calls/day">API — 100 طلب/يوم</span></div>
-          <div class="plan-feat"><div class="feat-yes">✓</div><span data-ar="دعم أولوية" data-en="Priority support">دعم أولوية</span></div>
-          <button class="plan-btn plan-btn-primary" onclick="openAuth()" data-ar="ابدأ تجربة 7 أيام" data-en="Start 7-day trial">ابدأ تجربة 7 أيام</button>
-        </div>
-      </div>
-      <div id="compareBody"></div>
-      <div id="faqList" style="margin-bottom:60px"></div>
-    </div>
-  </div>
-</div>
 
-<!-- AUTH MODAL -->
-<div class="auth-overlay" id="authOverlay" onclick="authClickOutside(event)">
-  <div class="auth-card">
-    <button class="auth-close" onclick="closeAuth()">×</button>
-    <div class="auth-logo">مِيور | Meor</div>
-    <div class="auth-sub" data-ar="انضم إلى آلاف مستثمري الدومينات العرب" data-en="Join thousands of Arabic domain investors">انضم إلى آلاف مستثمري الدومينات العرب</div>
-    <div class="auth-tabs">
-      <button class="auth-tab on" id="tabSignup" onclick="switchTab('signup')" data-ar="إنشاء حساب" data-en="Sign up">إنشاء حساب</button>
-      <button class="auth-tab" id="tabLogin" onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in">تسجيل الدخول</button>
-    </div>
-    <div class="auth-error" id="authError"></div>
-    <div class="auth-success" id="authSuccess"></div>
-    <div class="auth-field">
-      <label class="auth-label" data-ar="البريد الإلكتروني" data-en="EMAIL">البريد الإلكتروني</label>
-      <input class="auth-input" type="email" id="authEmail" placeholder="your@email.com">
-    </div>
-    <div class="auth-field">
-      <label class="auth-label" data-ar="كلمة المرور" data-en="PASSWORD">كلمة المرور</label>
-      <input class="auth-input" type="password" id="authPassword"
-        data-ar-placeholder="6 أحرف على الأقل" data-en-placeholder="At least 6 characters"
-        placeholder="6 أحرف على الأقل">
-    </div>
-    <button class="auth-btn" id="authSubmitBtn" onclick="authSubmit()">
-      <span id="authBtnText" data-ar="إنشاء حساب مجاني" data-en="Create free account">إنشاء حساب مجاني</span>
-    </button>
-    <div class="auth-footer-text" id="authFooterText">
-      <span data-ar="لديك حساب؟" data-en="Already have an account?">لديك حساب؟</span>
-      <a onclick="switchTab('login')" data-ar="تسجيل الدخول" data-en="Log in"> تسجيل الدخول</a>
+  <div style="background:var(--white);border-bottom:1px solid var(--border);padding:52px 0">
+    <div class="wrap">
+      <div class="how-grid-4">
+        <div class="how-card"><div class="how-step" data-ar="الخطوة ١" data-en="STEP 1">الخطوة ١</div><span class="how-icon">🔍</span><h3 data-ar="اكتشف" data-en="Discover">اكتشف</h3><p data-ar="ابحث في قاعدة بيانات الدومينات المنتهية بفلاتر متقدمة — TLD وDA وTF والسبام." data-en="Search the expired domains database with advanced filters — TLD, DA, TF, spam.">ابحث في قاعدة بيانات الدومينات المنتهية بفلاتر متقدمة — TLD وDA وTF والسبام.</p></div>
+        <div class="how-card"><div class="how-step" data-ar="الخطوة ٢" data-en="STEP 2">الخطوة ٢</div><span class="how-icon">📊</span><h3 data-ar="حلّل" data-en="Analyze">حلّل</h3><p data-ar="اقرأ نقاط الذكاء الاصطناعي والباك لينكات وتاريخ الدومين في صفحة واحدة." data-en="Read AI score, backlinks, and domain history all in one page.">اقرأ نقاط الذكاء الاصطناعي والباك لينكات وتاريخ الدومين في صفحة واحدة.</p></div>
+        <div class="how-card"><div class="how-step" data-ar="الخطوة ٣" data-en="STEP 3">الخطوة ٣</div><span class="how-icon">⚡</span><h3 data-ar="سجّل" data-en="Register">سجّل</h3><p data-ar="اضغط تسجيل — تنتقل مباشرة لإتمام الشراء مع تحميل النطاق تلقائياً." data-en="Click register — go directly to checkout with the domain pre-loaded.">اضغط تسجيل — تنتقل مباشرة لإتمام الشراء مع تحميل النطاق تلقائياً.</p></div>
+        <div class="how-card"><div class="how-step" data-ar="الخطوة ٤" data-en="STEP 4">الخطوة ٤</div><span class="how-icon">💰</span><h3 data-ar="استثمر" data-en="Invest">استثمر</h3><p data-ar="أعد البيع أو ابنِ موقعاً على نطاق له تاريخ وباك لينكات حقيقية." data-en="Resell or build a site on a domain with real history and backlinks.">أعد البيع أو ابنِ موقعاً على نطاق له تاريخ وباك لينكات حقيقية.</p></div>
+      </div>
     </div>
   </div>
+
+  <div style="padding:52px 0;background:var(--bg)">
+    <div class="wrap">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px" data-ar="لماذا ميور مجاني؟" data-en="WHY IS MEOR FREE?">لماذا ميور مجاني؟</div>
+      <h2 style="font-size:clamp(20px,3vw,32px);font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-bottom:10px" data-ar="نكسب عندما تكسب أنت" data-en="We earn when you earn">نكسب عندما تكسب أنت</h2>
+      <p style="font-size:15px;color:var(--ink3);max-width:540px;line-height:1.65;margin-bottom:8px" data-ar="ميور لا تفرض أي رسوم. عندما تسجّل دوميناً عبر ميور، نحصل على عمولة صغيرة من المسجّل. مصلحتنا ومصلحتك واحدة." data-en="Meor charges you nothing. When you register a domain through Meor, we earn a small commission from the registrar. Our interests are aligned with yours.">ميور لا تفرض أي رسوم. عندما تسجّل دوميناً عبر ميور، نحصل على عمولة صغيرة من المسجّل. مصلحتنا ومصلحتك واحدة.</p>
+      <div class="feat-grid">
+        <div class="feat-item"><span class="feat-item-icon">🤖</span><h3 data-ar="نقاط ذكاء اصطناعي" data-en="AI Scoring">نقاط ذكاء اصطناعي</h3><p data-ar="درجة 0-100 تجمع TF وDA ونظافة الباك لينكات والسبام." data-en="0–100 combining TF, DA, backlink quality, and spam.">درجة 0-100 تجمع TF وDA ونظافة الباك لينكات والسبام.</p></div>
+        <div class="feat-item"><span class="feat-item-icon">🌍</span><h3 data-ar="843 امتداد مُراقَب" data-en="843 TLDs tracked">843 امتداد مُراقَب</h3><p data-ar=".ae و.sa و.eg و.السعودية و.مصر و.امارات — الأشمل في المنطقة." data-en=".ae .sa .eg .السعودية .مصر .امارات — widest MENA coverage.">.ae و.sa و.eg و.السعودية و.مصر و.امارات — الأشمل في المنطقة.</p></div>
+        <div class="feat-item"><span class="feat-item-icon">🔎</span><h3 data-ar="بلا تسجيل إطلاقاً" data-en="Zero sign-up">بلا تسجيل إطلاقاً</h3><p data-ar="لا بريد، لا كلمة مرور، لا بطاقة. افتح الموقع وابدأ." data-en="No email, no password, no card. Open the site and start.">لا بريد، لا كلمة مرور، لا بطاقة. افتح الموقع وابدأ.</p></div>
+        <div class="feat-item"><span class="feat-item-icon">📊</span><h3 data-ar="نتائج غير محدودة" data-en="Unlimited results">نتائج غير محدودة</h3><p data-ar="لا بايوول، لا حد يومي. تصفح كل الدومينات." data-en="No paywall, no daily cap. Browse everything.">لا بايوول، لا حد يومي. تصفح كل الدومينات.</p></div>
+        <div class="feat-item"><span class="feat-item-icon">🛡️</span><h3 data-ar="كشف السبام" data-en="Spam detection">كشف السبام</h3><p data-ar="كشف تلقائي للباك لينكات السامة وتاريخ PBN." data-en="Auto-detect toxic backlinks and PBN history.">كشف تلقائي للباك لينكات السامة وتاريخ PBN.</p></div>
+        <div class="feat-item"><span class="feat-item-icon">⚡</span><h3 data-ar="تحديث مستمر" data-en="Constantly updated">تحديث مستمر</h3><p data-ar="مقارنة ملفات المنطقة يومياً — ترى الدومين لحظة سقوطه." data-en="Zone files compared daily — see domains the moment they drop.">مقارنة ملفات المنطقة يومياً — ترى الدومين لحظة سقوطه.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <div class="wrap">
+      <h2 data-ar="جاهز للبحث؟" data-en="Ready to search?">جاهز للبحث؟</h2>
+      <p data-ar="مجاني. بلا تسجيل. ابدأ الآن." data-en="Free. No sign-up. Start now.">مجاني. بلا تسجيل. ابدأ الآن.</p>
+      <button class="btn-white-lg" onclick="go('tool')" data-ar="ابدأ البحث" data-en="Start Searching">ابدأ البحث</button>
+    </div>
+  </div>
+
+  <footer style="background:var(--white);border-top:1px solid var(--border);padding:40px 0 24px">
+    <div class="wrap">
+      <div class="footer-bottom" style="border-top:none;padding-top:0">
+        <span style="font-size:14px;font-weight:800;color:var(--ink)">مِيور | Meor</span>
+        <span style="font-size:11px;color:var(--ink5)" data-ar="خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد" data-en="Registration services provided by WildWestDomains.com — ICANN accredited registrar">خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد</span>
+        <span style="font-size:12px;color:var(--ink4)">© 2026 meor.com</span>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <script>
@@ -1378,23 +1385,12 @@ function go(page) {
   const nl = document.getElementById('nl-' + page);
   if (nl) nl.classList.add('active');
   window.scrollTo({top:0, behavior:'instant'});
-  if (page === 'tool' && DOMAINS.length > 0) fltRun();
+  if (page === 'tool' && DOMAINS.length) fltRun();
 }
 
 /* ═══════════════════════════════════
    HOMEPAGE SEARCH TABS
 ═══════════════════════════════════ */
-function switchSearchTab(tab) {
-  ['new','expired'].forEach(t => {
-    document.getElementById('stab-'+t).classList.toggle('on', t===tab);
-    document.getElementById('spane-'+t).classList.toggle('on', t===tab);
-  });
-  setTimeout(() => {
-    const el = document.getElementById(tab==='expired'?'expiredSearchInput':'newDomainInput');
-    if (el) el.focus();
-  }, 50);
-}
-
 function searchNewDomain() {
   const q = document.getElementById('newDomainInput').value.trim();
   const tld = document.getElementById('newDomainTld').value;
@@ -1406,41 +1402,6 @@ function searchNewDomain() {
 function setTld(tld) {
   document.getElementById('newDomainTld').value = tld;
   document.getElementById('newDomainInput').focus();
-}
-
-function homeExpiredSearch(q) {
-  q = (q || '').toLowerCase().trim();
-  const container = document.getElementById('homeExpiredResults');
-  container.style.display = 'block';
-
-  if (!DOMAINS.length) {
-    container.innerHTML = '<div class="home-results-empty">' + (lang==='ar'?'جار التحميل...':'Loading...') + '</div>';
-    return;
-  }
-
-  const matches = DOMAINS.filter(d =>
-    !q || d.name.toLowerCase().includes(q) || d.tld.includes(q)
-  ).slice(0, 8);
-
-  if (!matches.length) {
-    container.innerHTML = '<div class="home-results-empty">' + (lang==='ar'?'لا توجد نتائج':'No results') + '</div>';
-    return;
-  }
-
-  container.innerHTML = matches.map(d => `
-    <div class="home-result-item" onclick="loadDetail(${d.id})">
-      <div>
-        <div class="home-result-name">${d.name.replace(d.tld,'')}<span class="home-result-tld">${d.tld}</span></div>
-        <div class="home-result-meta">DA ${d.da} · TF ${d.tf} · ${d.bl.toLocaleString()} ${lang==='ar'?'رابط':'links'}</div>
-      </div>
-      <div class="home-result-right">
-        <span class="home-result-score ${sc(d.score)}">${d.score}</span>
-        <button class="home-result-register" onclick="event.stopPropagation();registerDomain('${d.name}')">${lang==='ar'?'سجّل الآن':'Register'}</button>
-      </div>
-    </div>
-  `).join('') + (DOMAINS.length > 8 ? `
-    <div class="home-results-more" onclick="go('tool')">${lang==='ar'?'← عرض كل '+DOMAINS.length+' نطاق':'View all '+DOMAINS.length+' domains →'}</div>
-  ` : '');
 }
 
 /* ═══════════════════════════════════
@@ -1727,75 +1688,6 @@ function renderFAQ() {
 function toggleFAQ(i){document.getElementById('faq'+i).classList.toggle('open')}
 
 /* ═══════════════════════════════════
-   AUTH
-═══════════════════════════════════ */
-const SURL='https://rtwxcljyetfdcgudcrye.supabase.co';
-const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0d3hjbGp5ZXRmZGNndWRjcnllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc2NzcsImV4cCI6MjA5MDIzMzY3N30._XSeTZgC4FNV8Kc3Y1yz__E94PSyYaT5u6JUNaHv3SI';
-let currentUser=null, authTab='signup';
-const FREE_LIMIT=50;
-
-async function authSignUp(e,p){const r=await fetch(SURL+'/auth/v1/signup',{method:'POST',headers:{'apikey':SKEY,'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});return r.json()}
-async function authSignIn(e,p){const r=await fetch(SURL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':SKEY,'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});return r.json()}
-async function authSignOut(){const t=localStorage.getItem('meor_token');if(t)await fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+t}});localStorage.removeItem('meor_token');localStorage.removeItem('meor_user');currentUser=null;updateNavState();closeUserMenu();applyPaywall()}
-
-function openAuth(){document.getElementById('authOverlay').classList.add('open');document.getElementById('authEmail').focus()}
-function closeAuth(){document.getElementById('authOverlay').classList.remove('open');document.getElementById('authError').classList.remove('show');document.getElementById('authSuccess').classList.remove('show');document.getElementById('authEmail').value='';document.getElementById('authPassword').value=''}
-function authClickOutside(e){if(e.target===document.getElementById('authOverlay'))closeAuth()}
-function switchTab(tab){
-  authTab=tab; const isSU=tab==='signup';
-  document.getElementById('tabSignup').classList.toggle('on',isSU);
-  document.getElementById('tabLogin').classList.toggle('on',!isSU);
-  document.getElementById('authBtnText').textContent=lang==='ar'?(isSU?'إنشاء حساب مجاني':'تسجيل الدخول'):(isSU?'Create free account':'Log in');
-  document.getElementById('authError').classList.remove('show');
-  document.getElementById('authSuccess').classList.remove('show');
-}
-async function authSubmit(){
-  const email=document.getElementById('authEmail').value.trim();
-  const password=document.getElementById('authPassword').value;
-  const btn=document.getElementById('authSubmitBtn');
-  const err=document.getElementById('authError'), suc=document.getElementById('authSuccess');
-  if(!email||!password){err.textContent=lang==='ar'?'يرجى ملء جميع الحقول':'Please fill all fields';err.classList.add('show');return}
-  if(password.length<6){err.textContent=lang==='ar'?'كلمة المرور 6 أحرف على الأقل':'Password must be at least 6 characters';err.classList.add('show');return}
-  btn.disabled=true; err.classList.remove('show'); suc.classList.remove('show');
-  try{
-    let data;
-    if(authTab==='signup'){data=await authSignUp(email,password);if(data.error)throw new Error(data.error.message);if(data.access_token){setUser(data);closeAuth()}else{suc.textContent=lang==='ar'?'تحقق من بريدك لتأكيد حسابك':'Check your email to confirm your account';suc.classList.add('show')}}
-    else{data=await authSignIn(email,password);if(data.error)throw new Error(data.error.message);if(!data.access_token)throw new Error('Invalid credentials');setUser(data);closeAuth()}
-  }catch(e){let m=e.message;if(m.includes('already'))m=lang==='ar'?'البريد مسجل مسبقاً':'Email already registered';if(m.includes('Invalid'))m=lang==='ar'?'البريد أو كلمة المرور غير صحيحة':'Invalid email or password';err.textContent=m;err.classList.add('show')}
-  btn.disabled=false;
-}
-function setUser(data){currentUser=data.user||{email:data.email};localStorage.setItem('meor_token',data.access_token);localStorage.setItem('meor_user',JSON.stringify(currentUser));updateNavState();applyPaywall()}
-function updateNavState(){
-  const nw=document.getElementById('navUserWrap');
-  const ns=document.getElementById('navSignIn');
-  const us=document.getElementById('utilSignIn');
-  const av=document.getElementById('navAvatar');
-  const em=document.getElementById('navUserEmail');
-  if(currentUser){if(nw)nw.style.display='block';if(ns)ns.style.display='none';if(us)us.style.display='none';const i=(currentUser.email||'U')[0].toUpperCase();if(av)av.textContent=i;if(em)em.textContent=currentUser.email||''}
-  else{if(nw)nw.style.display='none';if(ns)ns.style.display='';if(us)us.style.display=''}
-}
-function toggleUserMenu(){document.getElementById('navUserMenu').classList.toggle('open')}
-function closeUserMenu(){const m=document.getElementById('navUserMenu');if(m)m.classList.remove('open')}
-function applyPaywall(){
-  document.querySelectorAll('.paywall-overlay').forEach(el=>el.remove());
-  document.querySelectorAll('.tbl-row').forEach(r=>r.style.filter='');
-  if(currentUser) return;
-  const rows=document.querySelectorAll('.tbl-row');
-  if(rows.length<=FREE_LIMIT) return;
-  rows.forEach((r,i)=>{if(i>=FREE_LIMIT)r.style.filter='blur(4px)'});
-  const rb=document.getElementById('resultsBody'); if(!rb) return;
-  const ov=document.createElement('div'); ov.className='paywall-overlay';
-  ov.innerHTML=`<div class="paywall-card"><div class="paywall-title">${lang==='ar'?'أكثر من 50 نطاق متاح':'More than 50 domains available'}</div><div class="paywall-sub">${lang==='ar'?'سجّل مجاناً لرؤية جميع النتائج':'Sign up free to see all results'}</div><button class="paywall-btn" onclick="openAuth()">${lang==='ar'?'سجّل مجاناً — بلا بطاقة':'Sign up free — no credit card'}</button></div>`;
-  rb.parentElement.appendChild(ov);
-}
-function initAuth(){
-  const t=localStorage.getItem('meor_token'), u=localStorage.getItem('meor_user');
-  if(t&&u){try{currentUser=JSON.parse(u);updateNavState()}catch(e){localStorage.removeItem('meor_token');localStorage.removeItem('meor_user')}}
-}
-document.addEventListener('click',e=>{const w=document.getElementById('navUserWrap');if(w&&!w.contains(e.target))closeUserMenu()});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('authOverlay').classList.contains('open'))authSubmit();if(e.key==='Escape')closeAuth()});
-
-/* ═══════════════════════════════════
    SUPABASE DATA
 ═══════════════════════════════════ */
 async function fetchDomainsFromSupabase(){
@@ -1819,11 +1711,9 @@ async function fetchDomainsFromSupabase(){
     DOMAINS.length=0; live.forEach(d=>DOMAINS.push(d));
     fltLoadLiveTLDs();
     if(document.getElementById('page-tool').classList.contains('active')) fltRun();
-    applyPaywall();
+    
     const st=document.getElementById('stat-total'); if(st) st.textContent=live.length+'+';
     const sd=document.getElementById('stat-dropped'); if(sd) sd.textContent=live.filter(d=>d.status==='drop').length;
-    const homeQ=document.getElementById('expiredSearchInput');
-    if(homeQ&&homeQ.value) homeExpiredSearch(homeQ.value);
     console.log('Loaded '+live.length+' domains');
   }catch(e){
     console.log('Fetch error:',e.message);
@@ -1834,7 +1724,7 @@ async function fetchDomainsFromSupabase(){
 /* ═══════════════════════════════════
    INIT
 ═══════════════════════════════════ */
-initAuth();
+
 renderCompare();
 renderFAQ();
 updatePricing();
