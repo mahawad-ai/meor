@@ -53,8 +53,9 @@
    RESET
 ═══════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a,button,[onclick]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 a{color:inherit;text-decoration:none}
 button{font-family:var(--font);cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:var(--font)}
@@ -250,10 +251,9 @@ input,select,textarea{font-family:var(--font)}
   border:none;cursor:pointer;
   border-radius:0 var(--r-sm) var(--r-sm) 0;
   transition:background .15s;white-space:nowrap;
-  min-width:140px;
 }
 [dir=ltr] .search-btn{border-radius:var(--r-sm) 0 0 var(--r-sm)}
-.search-btn:hover{background:var(--btn-hover)}
+.search-btn:hover,.search-btn:active{background:var(--btn-hover)}
 .search-hint{
   font-size:12px;color:var(--ink4);
   padding:10px 16px 14px;
@@ -262,15 +262,17 @@ input,select,textarea{font-family:var(--font)}
 }
 .search-hint-label{font-weight:600;color:var(--ink3);}
 .hint-chip{
+  font-family:var(--font);
   font-size:11px;font-weight:600;
   color:var(--ink3);
   background:var(--bg);
   border:1px solid var(--border2);
   border-radius:var(--r-sm);
-  padding:2px 9px;cursor:pointer;
+  padding:3px 10px;cursor:pointer;
   transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
 }
-.hint-chip:hover{border-color:var(--border3);color:var(--ink);background:var(--white)}
+.hint-chip:hover,.hint-chip:active{border-color:var(--border3);color:var(--ink);background:var(--white)}
 
 /* INLINE EXPIRED RESULTS on homepage */
 .home-results{margin-top:0;display:none}
@@ -448,6 +450,7 @@ input,select,textarea{font-family:var(--font)}
 .filter-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .filter-group-label{font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:.06em;white-space:nowrap}
 .fchip{
+  font-family:var(--font);
   font-size:12px;font-weight:600;
   padding:5px 12px;border-radius:var(--r-sm);
   border:1px solid var(--border2);
@@ -455,7 +458,7 @@ input,select,textarea{font-family:var(--font)}
   cursor:pointer;transition:all .15s;white-space:nowrap;
   user-select:none;
 }
-.fchip:hover{border-color:var(--border3);color:var(--ink)}
+.fchip:hover,.fchip:active{border-color:var(--border3);color:var(--ink)}
 .fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .fchip.on-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
 .filter-divider{width:1px;height:20px;background:var(--border2);flex-shrink:0}
@@ -602,7 +605,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   padding:6px 14px;cursor:pointer;
   transition:background .15s;white-space:nowrap;
 }
-.reg-btn:hover{background:var(--btn-hover)}
+.reg-btn:hover,.reg-btn:active{background:var(--btn-hover)}
 
 /* ═══════════════════════════════════
    DETAIL PANEL
@@ -855,9 +858,18 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 /* ═══════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════ */
-/* ── SERVICES ── */
-.svc-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:all .18s;text-decoration:none;color:inherit}
-.svc-card:hover{border-color:var(--border3);background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.07);transform:translateY(-2px)}
+/* ── HAMBURGER MENU ── */
+.nav-ham{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:8px;border-radius:var(--r-sm);transition:background .15s}
+.nav-ham:hover{background:rgba(0,0,0,.05)}
+.nav-ham span{display:block;width:20px;height:2px;background:var(--ink2);border-radius:2px;transition:all .2s}
+.nav-mobile-menu{display:none;position:fixed;left:0;right:0;top:56px;bottom:0;background:var(--white);z-index:199;border-top:1px solid var(--border);padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.nav-mobile-menu.open{display:block;animation:slideDown .2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.nav-mobile-link{display:block;font-size:15px;font-weight:600;color:var(--ink2);padding:14px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:color .15s}
+.nav-mobile-link:hover{color:var(--ink)}
+.nav-mobile-link:last-child{border-bottom:none}
+.svc-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:border-color .18s,box-shadow .18s;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+.svc-card:hover,.svc-card:active{border-color:var(--border3);background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.07)}
 .svc-icon{font-size:24px;margin-bottom:8px}
 .svc-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .svc-price{font-size:11px;color:var(--ink4)}
@@ -907,6 +919,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   .util-bar{display:none}
   .nav-links{display:none}
   .nav-inner{padding:0 16px}
+  .nav-ham{display:flex}
 
   /* hero */
   .hero{padding:24px 0 20px}
@@ -944,12 +957,14 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   .factions{gap:6px;padding-top:10px}
   .fpresets{gap:4px}
 
-  /* table — 2 cols on phone */
-  .tbl-head,.tbl-row{grid-template-columns:1fr 40px 80px}
+  /* table — domain + score + register on phone */
+  .tbl-head,.tbl-row{grid-template-columns:1fr 44px 70px}
   .tbl-head>*:nth-child(n+4),.tbl-row>*:nth-child(n+4){display:none}
+  .tbl-head>*:nth-child(3),.tbl-row>*:nth-child(3){display:none} /* hide links col */
   .tbl-head>*:nth-child(1),.tbl-row>*:nth-child(1){display:block}
   .tbl-head>*:nth-child(2),.tbl-row>*:nth-child(2){display:flex}
-  .tbl-head>*:nth-child(3),.tbl-row>*:nth-child(3){display:flex}
+  /* show register button col */
+  .tbl-head>*:nth-child(7),.tbl-row>*:nth-child(7){display:flex}
   .tbl-row{padding:10px 12px}
   .d-name{font-size:13px}
   .reg-btn{font-size:11px;padding:5px 10px}
@@ -1000,14 +1015,22 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
     <div class="nav-links">
       <div class="nav-link active" id="nl-tool" onclick="go('tool')" data-ar="الرئيسية" data-en="Home">الرئيسية</div>
       <div class="nav-link" id="nl-how" onclick="go('how')" data-ar="كيف يعمل" data-en="How It Works">كيف يعمل</div>
-      
     </div>
-    <div class="nav-cta-group">
+    <div style="display:flex;align-items:center;gap:8px">
       <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
-      
+      <div class="nav-ham" id="navHam" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </div>
     </div>
   </div>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="navMobileMenu">
+  <div class="nav-mobile-link" onclick="go('tool');closeMobileMenu()" data-ar="🔍 البحث عن نطاقات" data-en="🔍 Search Domains">🔍 البحث عن نطاقات</div>
+  <div class="nav-mobile-link" onclick="go('how');closeMobileMenu()" data-ar="📖 كيف يعمل ميور" data-en="📖 How Meor Works">📖 كيف يعمل ميور</div>
+  <div class="nav-mobile-link" style="color:var(--gold);cursor:default;font-size:12px;padding:10px 4px;border-bottom:none" data-ar="خدمات التسجيل مقدّمة بواسطة WildWestDomains.com" data-en="Registration services by WildWestDomains.com">خدمات التسجيل مقدّمة بواسطة WildWestDomains.com</div>
+</div>
 
 <!-- ═══════════════════════════════════════════
      PAGE: TOOL (default active — the main app)
@@ -1045,12 +1068,12 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         </div>
         <div class="search-hint">
           <span class="search-hint-label" data-ar="امتدادات شائعة:" data-en="Popular:">امتدادات شائعة:</span>
-          <span class="hint-chip" onclick="setTld('.com')">.com</span>
-          <span class="hint-chip" onclick="setTld('.ae')">.ae</span>
-          <span class="hint-chip" onclick="setTld('.sa')">.sa</span>
-          <span class="hint-chip" onclick="setTld('.io')">.io</span>
-          <span class="hint-chip" onclick="setTld('.store')">.store</span>
-          <span class="hint-chip" onclick="setTld('.online')">.online</span>
+          <button class="hint-chip" onclick="setTld('.com')">.com</button>
+          <button class="hint-chip" onclick="setTld('.ae')">.ae</button>
+          <button class="hint-chip" onclick="setTld('.sa')">.sa</button>
+          <button class="hint-chip" onclick="setTld('.io')">.io</button>
+          <button class="hint-chip" onclick="setTld('.store')">.store</button>
+          <button class="hint-chip" onclick="setTld('.online')">.online</button>
         </div>
       </div>
     </div>
@@ -1122,16 +1145,16 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         <!-- TLD -->
         <div class="filter-group">
           <span class="filter-group-label" data-ar="الامتداد" data-en="TLD">الامتداد</span>
-          <div class="fchip on" data-tld="all" onclick="fltTLD(this)" data-ar="الكل" data-en="All">الكل</div>
-          <div class="fchip" data-tld=".com" onclick="fltTLD(this)">.com</div>
-          <div class="fchip" data-tld=".ae" onclick="fltTLD(this)">.ae</div>
-          <div class="fchip" data-tld=".sa" onclick="fltTLD(this)">.sa</div>
-          <div class="fchip" data-tld=".eg" onclick="fltTLD(this)">.eg</div>
-          <div class="fchip" data-tld=".io" onclick="fltTLD(this)">.io</div>
-          <div class="fchip" data-tld=".net" onclick="fltTLD(this)">.net</div>
-          <div class="fchip" data-tld=".السعودية" onclick="fltTLD(this)">.السعودية</div>
-          <div class="fchip" data-tld=".مصر" onclick="fltTLD(this)">.مصر</div>
-          <div class="fchip" data-tld=".امارات" onclick="fltTLD(this)">.امارات</div>
+          <button class="fchip on" data-tld="all" onclick="fltTLD(this)" data-ar="الكل" data-en="All">الكل</button>
+          <button class="fchip" data-tld=".com" onclick="fltTLD(this)">.com</button>
+          <button class="fchip" data-tld=".ae" onclick="fltTLD(this)">.ae</button>
+          <button class="fchip" data-tld=".sa" onclick="fltTLD(this)">.sa</button>
+          <button class="fchip" data-tld=".eg" onclick="fltTLD(this)">.eg</button>
+          <button class="fchip" data-tld=".io" onclick="fltTLD(this)">.io</button>
+          <button class="fchip" data-tld=".net" onclick="fltTLD(this)">.net</button>
+          <button class="fchip" data-tld=".السعودية" onclick="fltTLD(this)">.السعودية</button>
+          <button class="fchip" data-tld=".مصر" onclick="fltTLD(this)">.مصر</button>
+          <button class="fchip" data-tld=".امارات" onclick="fltTLD(this)">.امارات</button>
           <div id="tld-chips-live"></div>
         </div>
 
@@ -1140,10 +1163,10 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         <!-- STATUS -->
         <div class="filter-group">
           <span class="filter-group-label" data-ar="الحالة" data-en="Status">الحالة</span>
-          <div class="fchip on" data-st="all" onclick="fltST(this)" data-ar="الكل" data-en="All">الكل</div>
-          <div class="fchip" data-st="drop" onclick="fltST(this)" data-ar="سقط" data-en="Dropped">سقط</div>
-          <div class="fchip" data-st="pending" onclick="fltST(this)" data-ar="وشيك" data-en="Pending">وشيك</div>
-          <div class="fchip" data-st="expiring" onclick="fltST(this)" data-ar="ينتهي" data-en="Expiring">ينتهي</div>
+          <button class="fchip on" data-st="all" onclick="fltST(this)" data-ar="الكل" data-en="All">الكل</button>
+          <button class="fchip" data-st="drop" onclick="fltST(this)" data-ar="سقط" data-en="Dropped">سقط</button>
+          <button class="fchip" data-st="pending" onclick="fltST(this)" data-ar="وشيك" data-en="Pending">وشيك</button>
+          <button class="fchip" data-st="expiring" onclick="fltST(this)" data-ar="ينتهي" data-en="Expiring">ينتهي</button>
         </div>
 
         <div class="filter-divider"></div>
@@ -1151,11 +1174,11 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         <!-- BACKLINKS -->
         <div class="filter-group">
           <span class="filter-group-label" data-ar="روابط" data-en="Links">روابط</span>
-          <div class="fchip on-gold" data-bl="0" onclick="qBL(this,0)" data-ar="أي" data-en="Any">أي</div>
-          <div class="fchip" data-bl="100" onclick="qBL(this,100)">100+</div>
-          <div class="fchip" data-bl="500" onclick="qBL(this,500)">500+</div>
-          <div class="fchip" data-bl="1000" onclick="qBL(this,1000)">1K+</div>
-          <div class="fchip" data-bl="5000" onclick="qBL(this,5000)">5K+</div>
+          <button class="fchip on-gold" data-bl="0" onclick="qBL(this,0)" data-ar="أي" data-en="Any">أي</button>
+          <button class="fchip" data-bl="100" onclick="qBL(this,100)">100+</button>
+          <button class="fchip" data-bl="500" onclick="qBL(this,500)">500+</button>
+          <button class="fchip" data-bl="1000" onclick="qBL(this,1000)">1K+</button>
+          <button class="fchip" data-bl="5000" onclick="qBL(this,5000)">5K+</button>
         </div>
       </div>
 
@@ -1171,10 +1194,10 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
       <div class="filter-actions">
         <div class="filter-presets">
           <span class="filter-preset-label" data-ar="سريع:" data-en="Quick:">سريع:</span>
-          <div class="fchip" onclick="qPreset('clean')" data-ar="نظيف" data-en="Clean">نظيف</div>
-          <div class="fchip" onclick="qPreset('highda')" data-ar="DA عالي" data-en="High DA">DA عالي</div>
-          <div class="fchip" onclick="qPreset('mena')" data-ar="MENA" data-en="MENA">MENA</div>
-          <div class="fchip" onclick="qPreset('arabic')" data-ar="IDN عربي" data-en="Arabic IDN">IDN عربي</div>
+          <button class="fchip" onclick="qPreset('clean')" data-ar="نظيف" data-en="Clean">نظيف</button>
+          <button class="fchip" onclick="qPreset('highda')" data-ar="DA عالي" data-en="High DA">DA عالي</button>
+          <button class="fchip" onclick="qPreset('mena')" data-ar="MENA" data-en="MENA">MENA</button>
+          <button class="fchip" onclick="qPreset('arabic')" data-ar="IDN عربي" data-en="Arabic IDN">IDN عربي</button>
           <div class="filter-divider"></div>
           <div class="ftog-wrap" onclick="fltSw('hyp')"><div class="ftog" id="ft-hyp"></div><span class="ftog-label" data-ar="بلا هايفن" data-en="No hyphens">بلا هايفن</span></div>
           <div class="ftog-wrap" onclick="fltSw('num')"><div class="ftog" id="ft-num"></div><span class="ftog-label" data-ar="بلا أرقام" data-en="No numbers">بلا أرقام</span></div>
@@ -1386,6 +1409,7 @@ function go(page) {
   if (nl) nl.classList.add('active');
   window.scrollTo({top:0, behavior:'instant'});
   if (page === 'tool' && DOMAINS.length) fltRun();
+  if (typeof closeMobileMenu === 'function') closeMobileMenu();
 }
 
 /* ═══════════════════════════════════
@@ -1393,9 +1417,11 @@ function go(page) {
 ═══════════════════════════════════ */
 function searchNewDomain() {
   const q = document.getElementById('newDomainInput').value.trim();
-  const tld = document.getElementById('newDomainTld').value;
-  if (!q) return;
-  const clean = q.replace(/\./g,'').toLowerCase();
+  const tldEl = document.getElementById('newDomainTld');
+  // On mobile the select is hidden via CSS but still in DOM — read value safely
+  const tld = (tldEl && tldEl.offsetParent !== null) ? tldEl.value : (tldEl ? tldEl.value : '.com');
+  if (!q) { document.getElementById('newDomainInput').focus(); return; }
+  const clean = q.replace(/[^a-zA-Z0-9\u0600-\u06FF\-]/g,'').toLowerCase();
   registerDomain(clean + tld);
 }
 
@@ -1637,7 +1663,7 @@ function fltLoadLiveTLDs() {
   const staticTLDs=['all','.com','.net','.org','.ae','.sa','.eg','.ma','.السعودية','.مصر','.امارات','.io','.tech','.shop'];
   const live=[...new Set(DOMAINS.map(d=>d.tld))].filter(t=>!staticTLDs.includes(t));
   const container=document.getElementById('tld-chips-live');
-  if(container&&live.length>0) container.innerHTML=live.map(t=>`<div class="fchip" data-tld="${t}" onclick="fltTLD(this)">${t}</div>`).join('');
+  if(container&&live.length>0) container.innerHTML=live.map(t=>`<button class="fchip" data-tld="${t}" onclick="fltTLD(this)">${t}</button>`).join('');
 }
 
 /* ═══════════════════════════════════
@@ -1729,6 +1755,53 @@ renderCompare();
 renderFAQ();
 updatePricing();
 fetchDomainsFromSupabase();
+
+/* ═══════════════════════════
+   MOBILE MENU
+═══════════════════════════ */
+let mobileMenuOpen = false;
+
+function toggleMobileMenu() {
+  mobileMenuOpen = !mobileMenuOpen;
+  const menu = document.getElementById('navMobileMenu');
+  const ham = document.getElementById('navHam');
+  menu.classList.toggle('open', mobileMenuOpen);
+  // Animate hamburger to X
+  const spans = ham.querySelectorAll('span');
+  if (mobileMenuOpen) {
+    spans[0].style.transform = 'rotate(45deg) translate(4px,4px)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'rotate(-45deg) translate(4px,-4px)';
+  } else {
+    spans[0].style.transform = '';
+    spans[1].style.opacity = '';
+    spans[2].style.transform = '';
+  }
+}
+
+function closeMobileMenu() {
+  mobileMenuOpen = false;
+  const menu = document.getElementById('navMobileMenu');
+  const ham = document.getElementById('navHam');
+  menu.classList.remove('open');
+  if (ham) {
+    const spans = ham.querySelectorAll('span');
+    spans[0].style.transform = '';
+    spans[1].style.opacity = '';
+    spans[2].style.transform = '';
+  }
+}
+
+// Close menu on page navigation or outside click
+document.addEventListener('click', e => {
+  if (mobileMenuOpen) {
+    const ham = document.getElementById('navHam');
+    const menu = document.getElementById('navMobileMenu');
+    if (ham && !ham.contains(e.target) && menu && !menu.contains(e.target)) {
+      closeMobileMenu();
+    }
+  }
+});
 </script>
 </body>
 </html>
