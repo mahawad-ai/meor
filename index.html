@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مِيور | Meor — نطاقات منتهية، فرص حقيقية</title>
+<link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
+<link rel="alternate icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -1001,13 +1003,27 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 <!-- ═══ UTILITY BAR ═══ -->
 <div class="util-bar">
   <div class="util-inner">
-    <div class="util-brand">مِيور | <span>Meor</span></div>
+    <div class="util-brand" onclick="go('tool')" style="cursor:pointer">
+      <svg width="110" height="24" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 34 20 L 10 52 L 34 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="34" cy="20" r="4" fill="#B8982A"/>
+        <circle cx="10" cy="52" r="4" fill="#B8982A"/>
+        <circle cx="34" cy="84" r="4" fill="#B8982A"/>
+        <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+        <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
+        <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
+        <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
+        <path d="M 424 20 L 448 52 L 424 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="424" cy="20" r="4" fill="#B8982A"/>
+        <circle cx="448" cy="52" r="4" fill="#B8982A"/>
+        <circle cx="424" cy="84" r="4" fill="#B8982A"/>
+      </svg>
+    </div>
     <div class="util-right">
       <span id="utilLang" onclick="toggleLang()" style="cursor:pointer" data-ar="English" data-en="عربي">عربي</span>
       <div class="util-divider"></div>
       <a data-ar="مساعدة" data-en="Help">Help</a>
       <div class="util-divider"></div>
-      
     </div>
   </div>
 </div>
@@ -1015,6 +1031,23 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 <!-- ═══ NAV ═══ -->
 <nav class="nav">
   <div class="nav-inner">
+    <!-- LOGO -->
+    <div onclick="go('tool')" style="cursor:pointer;display:flex;align-items:center;flex-shrink:0;margin-left:0" id="nav-logo">
+      <svg width="130" height="34" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 34 20 L 10 52 L 34 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="34" cy="20" r="4" fill="#B8982A"/>
+        <circle cx="10" cy="52" r="4" fill="#B8982A"/>
+        <circle cx="34" cy="84" r="4" fill="#B8982A"/>
+        <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+        <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
+        <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
+        <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
+        <path d="M 424 20 L 448 52 L 424 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="424" cy="20" r="4" fill="#B8982A"/>
+        <circle cx="448" cy="52" r="4" fill="#B8982A"/>
+        <circle cx="424" cy="84" r="4" fill="#B8982A"/>
+      </svg>
+    </div>
     <div class="nav-links">
       <div class="nav-link active" id="nl-tool" onclick="go('tool')" data-ar="الرئيسية" data-en="Home">Home</div>
       <div class="nav-link" id="nl-how" onclick="go('how')" data-ar="كيف يعمل" data-en="How It Works">How It Works</div>
@@ -1030,6 +1063,22 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 
 <!-- MOBILE MENU -->
 <div class="nav-mobile-menu" id="navMobileMenu">
+  <div style="padding:8px 4px 16px;border-bottom:1px solid var(--border);margin-bottom:8px">
+    <svg width="120" height="32" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 34 20 L 10 52 L 34 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="34" cy="20" r="4" fill="#B8982A"/>
+      <circle cx="10" cy="52" r="4" fill="#B8982A"/>
+      <circle cx="34" cy="84" r="4" fill="#B8982A"/>
+      <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+      <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
+      <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
+      <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
+      <path d="M 424 20 L 448 52 L 424 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="424" cy="20" r="4" fill="#B8982A"/>
+      <circle cx="448" cy="52" r="4" fill="#B8982A"/>
+      <circle cx="424" cy="84" r="4" fill="#B8982A"/>
+    </svg>
+  </div>
   <div class="nav-mobile-link" onclick="go('tool');closeMobileMenu()" data-ar="🔍 البحث عن نطاقات" data-en="🔍 Search Domains">🔍 Search Domains</div>
   <div class="nav-mobile-link" onclick="go('how');closeMobileMenu()" data-ar="📖 كيف يعمل ميور" data-en="📖 How Meor Works">📖 How Meor Works</div>
   <div class="nav-mobile-link" style="color:var(--gold);cursor:default;font-size:15px;padding:10px 4px;border-bottom:none" data-ar="خدمات التسجيل مقدّمة بواسطة WildWestDomains.com" data-en="Registration services by WildWestDomains.com">Registration services by WildWestDomains.com</div>
@@ -1466,7 +1515,22 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   <footer style="background:var(--white);border-top:1px solid var(--border);padding:40px 0 24px">
     <div class="wrap">
       <div class="footer-bottom" style="border-top:none;padding-top:0">
-        <span style="font-size:17px;font-weight:800;color:var(--ink)">مِيور | Meor</span>
+        <span style="display:inline-block">
+          <svg width="100" height="26" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 34 20 L 10 52 L 34 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="34" cy="20" r="4" fill="#B8982A"/>
+            <circle cx="10" cy="52" r="4" fill="#B8982A"/>
+            <circle cx="34" cy="84" r="4" fill="#B8982A"/>
+            <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+            <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
+            <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
+            <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
+            <path d="M 424 20 L 448 52 L 424 84" fill="none" stroke="#B8982A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="424" cy="20" r="4" fill="#B8982A"/>
+            <circle cx="448" cy="52" r="4" fill="#B8982A"/>
+            <circle cx="424" cy="84" r="4" fill="#B8982A"/>
+          </svg>
+        </span>
         <span style="font-size:14px;color:var(--ink5)" data-ar="خدمات التسجيل مقدّمة بواسطة WildWestDomains.com — مسجّل ICANN معتمد" data-en="Registration services provided by WildWestDomains.com — ICANN accredited registrar">Registration services provided by WildWestDomains.com — ICANN accredited registrar</span>
         <span style="font-size:15px;color:var(--ink4)">© 2026 meor.com</span>
       </div>
