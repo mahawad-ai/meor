@@ -2034,36 +2034,32 @@ async function fetchDomainsFromSupabase(){
     const rows=await resp.json();
     if(!rows||!rows.length){if(rb)rb.innerHTML=`<div style="padding:48px;text-align:center;color:var(--ink4)">${lang==='ar'?'لا توجد بيانات بعد':'No data yet'}</div>`;return}
     const live=rows.map((r,i)=>{
-      // Normalize TLD — ensure it starts with a dot
-      const tld = r.tld ? (r.tld.startsWith('.') ? r.tld : '.'+r.tld) : '.com';
-      // Normalize domain name — remove TLD suffix if already included
-      let name = r.domain || '';
-      if (name.endsWith(tld)) {
-        name = name.slice(0, -tld.length); // strip the tld, we'll add it back in display
-      }
-      const fullName = name + tld; // always the canonical full domain
-      // Normalize status — handle numeric 0, string 'dropped', 'drop', null etc
+      const tld = r.tld || '.com';
+      // domain column already has full domain e.g. "food.qa"
+      // tld column has e.g. ".qa"
+      // Strip TLD from end of domain to get base name
+      let full = r.domain || '';
+      let base = full.endsWith(tld) ? full.slice(0, -tld.length) : full;
+      // Status — Supabase stores "dropped", map to our internal "drop"
       let status = 'drop';
-      const raw = r.status;
-      if (raw === 'pending') status = 'pending';
-      else if (raw === 'expiring') status = 'expiring';
-      else status = 'drop'; // 0, null, 'dropped', 'drop', anything else = dropped
+      if (r.status === 'pending') status = 'pending';
+      else if (r.status === 'expiring') status = 'expiring';
       return {
-        id: r.id||i,
-        name: fullName,       // full domain e.g. flouse.info
-        base: name,           // base without tld e.g. flouse
-        tld: tld,             // e.g. .info
-        year: r.first_seen_year||2020,
-        bl: r.backlinks||0,
-        da: r.moz_da||0,
-        tf: r.majestic_tf||0,
-        wb: r.wayback_snaps||0,
+        id:    r.id || i,
+        name:  full,    // full domain: food.qa
+        base:  base,    // base only:  food
+        tld:   tld,     // extension:  .qa
+        year:  r.first_seen_year || 2020,
+        bl:    r.backlinks || 0,
+        da:    r.moz_da || 0,
+        tf:    r.majestic_tf || 0,
+        wb:    r.wayback_snaps || 0,
         status: status,
-        score: r.meor_score||0,
-        spam: r.spam_score||0,
-        ar: r.ai_verdict||'لا يوجد تحليل بعد.',
-        en: r.ai_verdict_en||'No analysis yet.',
-        idn: r.is_arabic_idn||false
+        score: r.meor_score || 0,
+        spam:  r.spam_score || 0,
+        ar:    r.ai_verdict || 'لا يوجد تحليل بعد.',
+        en:    r.ai_verdict_en || 'No analysis yet.',
+        idn:   r.is_arabic_idn || false
       };
     });
     DOMAINS.length=0; live.forEach(d=>DOMAINS.push(d));
