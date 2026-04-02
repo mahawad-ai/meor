@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://meor.com/sitemap.xml
+
+# Block any sensitive files
+Disallow: /env
+Disallow: /env.txt
+Disallow: /.env
+Disallow: /env.example
