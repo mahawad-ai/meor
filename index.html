@@ -1671,9 +1671,9 @@ function toggleLang() {
 function sc(s) { return s>=75?'s-hi':s>=50?'s-md':'s-lo' }
 
 function stPill(s) {
-  if (s==='drop') return `<span class="status-tag tag-drop">${lang==='ar'?'سقط':'Dropped'}</span>`;
-  if (s==='pending') return `<span class="status-tag tag-pending">${lang==='ar'?'وشيك':'Pending'}</span>`;
-  return `<span class="status-tag tag-expiring">${lang==='ar'?'ينتهي':'Expiring'}</span>`;
+  if (s==='pending')  return `<span class="status-tag tag-pending">${lang==='ar'?'وشيك':'Pending'}</span>`;
+  if (s==='expiring') return `<span class="status-tag tag-expiring">${lang==='ar'?'ينتهي':'Expiring'}</span>`;
+  return `<span class="status-tag tag-drop">${lang==='ar'?'سقط':'Dropped'}</span>`;
 }
 
 function renderResults(list) {
@@ -1686,7 +1686,7 @@ function renderResults(list) {
   tb.innerHTML = list.map(d => `
     <div class="tbl-row${d.id===selId?' sel':''}" onclick="selectRow(${d.id})">
       <div>
-        <div class="d-name">${d.name.replace(d.tld,'')}<span class="d-tld">${d.tld}</span></div>
+        <div class="d-name">${d.base}<span class="d-tld">${d.tld}</span></div>
         <div class="d-meta">${lang==='ar'?'منذ':'Since'} ${d.year}</div>
       </div>
       <div><span class="score-pill ${sc(d.score)}">${d.score}</span></div>
@@ -1718,7 +1718,7 @@ function renderDetail(d) {
   const verdict = d.score>=75?(lang==='ar'?'شراء قوي':'Strong buy'):d.score>=50?(lang==='ar'?'تابع بحذر':'With caution'):(lang==='ar'?'تجنب':'Avoid');
   col.innerHTML = `
     <div class="dp-head"><span class="dp-label">✦ ${lang==='ar'?'تحليل':'ANALYSIS'}</span><div class="dp-close" onclick="this.closest('.detail-col').innerHTML=''">×</div></div>
-    <div class="dp-domain"><div class="dp-dname">${d.name.replace(d.tld,'')}<span class="dp-tld">${d.tld}</span></div><div class="dp-dmeta">${lang==='ar'?'منذ':'Since'} ${d.year}</div></div>
+    <div class="dp-domain"><div class="dp-dname">${d.base}<span class="dp-tld">${d.tld}</span></div><div class="dp-dmeta">${lang==='ar'?'منذ':'Since'} ${d.year}</div></div>
     <div style="padding:0 16px 14px">
       <div class="dp-score-block">
         <div class="dp-score-row">
@@ -1744,7 +1744,7 @@ function loadDetail(id) {
   const d = DOMAINS.find(x => x.id===id);
   if (!d) return;
   const nameEl = document.getElementById('dd-name');
-  if (nameEl) { nameEl.innerHTML = d.name.replace(d.tld,'') + `<span class="dd-tld">${d.tld}</span>`; }
+  if (nameEl) { nameEl.innerHTML = d.base + `<span class="dd-tld">${d.tld}</span>`; }
   const crumb = document.getElementById('dd-crumb-name'); if(crumb) crumb.textContent = d.name;
   const tldTag = document.getElementById('dd-tld-tag'); if(tldTag) tldTag.textContent = d.tld;
   const ageTag = document.getElementById('dd-age-tag'); if(ageTag) ageTag.textContent = (lang==='ar'?'منذ ':'Since ') + d.year;
@@ -1880,7 +1880,7 @@ function fltRun() {
     if(fltSws.num && /\d/.test(d.name)) return false;
     if(fltSws.idn && !d.idn) return false;
     // Domain length (character count of base name without TLD)
-    const base = d.name.replace(d.tld,'');
+    const base = d.base;
     if(lenMin>0 && base.length<lenMin) return false;
     if(lenMax>0 && base.length>lenMax) return false;
     // Dictionary word — use ai_verdict as proxy (has analysis = likely a real word)
@@ -2033,15 +2033,39 @@ async function fetchDomainsFromSupabase(){
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     const rows=await resp.json();
     if(!rows||!rows.length){if(rb)rb.innerHTML=`<div style="padding:48px;text-align:center;color:var(--ink4)">${lang==='ar'?'لا توجد بيانات بعد':'No data yet'}</div>`;return}
-    const live=rows.map((r,i)=>({
-      id:r.id||i, name:r.domain||'', tld:r.tld||'.com', year:r.first_seen_year||2020,
-      bl:r.backlinks||0, da:r.moz_da||0, tf:r.majestic_tf||0, wb:r.wayback_snaps||0,
-      status:r.status==='dropped'?'drop':(r.status||'drop'),
-      score:r.meor_score||0, spam:r.spam_score||0,
-      ar:r.ai_verdict||'لا يوجد تحليل بعد.',
-      en:r.ai_verdict_en||'No analysis yet.',
-      idn:r.is_arabic_idn||false
-    }));
+    const live=rows.map((r,i)=>{
+      // Normalize TLD — ensure it starts with a dot
+      const tld = r.tld ? (r.tld.startsWith('.') ? r.tld : '.'+r.tld) : '.com';
+      // Normalize domain name — remove TLD suffix if already included
+      let name = r.domain || '';
+      if (name.endsWith(tld)) {
+        name = name.slice(0, -tld.length); // strip the tld, we'll add it back in display
+      }
+      const fullName = name + tld; // always the canonical full domain
+      // Normalize status — handle numeric 0, string 'dropped', 'drop', null etc
+      let status = 'drop';
+      const raw = r.status;
+      if (raw === 'pending') status = 'pending';
+      else if (raw === 'expiring') status = 'expiring';
+      else status = 'drop'; // 0, null, 'dropped', 'drop', anything else = dropped
+      return {
+        id: r.id||i,
+        name: fullName,       // full domain e.g. flouse.info
+        base: name,           // base without tld e.g. flouse
+        tld: tld,             // e.g. .info
+        year: r.first_seen_year||2020,
+        bl: r.backlinks||0,
+        da: r.moz_da||0,
+        tf: r.majestic_tf||0,
+        wb: r.wayback_snaps||0,
+        status: status,
+        score: r.meor_score||0,
+        spam: r.spam_score||0,
+        ar: r.ai_verdict||'لا يوجد تحليل بعد.',
+        en: r.ai_verdict_en||'No analysis yet.',
+        idn: r.is_arabic_idn||false
+      };
+    });
     DOMAINS.length=0; live.forEach(d=>DOMAINS.push(d));
     fltLoadLiveTLDs();
     if(document.getElementById('page-tool').classList.contains('active')) fltRun();
