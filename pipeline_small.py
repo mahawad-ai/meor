@@ -1,10 +1,10 @@
 """
 meor.com — Pipeline 1: Small TLDs (runs every hour)
-Processes all approved TLDs under 50MB zone files.
-Skips large TLDs (net, org, info, biz) — handled by pipeline_large.py
+Processes all approved TLDs under 50MB.
+DNS-verifies all drops before inserting to Supabase.
 """
 
-import os, gzip, time, json, logging, requests, shutil
+import os, gzip, time, json, logging, requests, shutil, socket
 from datetime import datetime, date
 from pathlib import Path
 
@@ -34,8 +34,10 @@ CZDS_PASS    = os.getenv("CZDS_PASSWORD", "")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-LARGE_TLDS  = {"net", "org", "info", "biz", "mobi", "com"}
-MAX_SIZE_MB = 50
+LARGE_TLDS       = {"net", "org", "info", "biz", "mobi", "com"}
+MAX_SIZE_MB      = 50
+MAX_DROPS        = 200
+DNS_VERIFY_LIMIT = 100  # verify up to this many per TLD
 
 
 def get_token():
@@ -55,8 +57,7 @@ def get_token():
 def get_all_approved_tlds():
     ap = DATA_DIR / "approved_tlds.json"
     if ap.exists():
-        data = json.load(open(ap))
-        tlds = data.get("tlds", [])
+        tlds = json.load(open(ap)).get("tlds", [])
     else:
         tlds = []
     tlds = [t for t in tlds if t not in LARGE_TLDS]
@@ -70,19 +71,24 @@ def get_links(token):
             "https://czds-api.icann.org/czds/downloads/links",
             headers={"Authorization": f"Bearer {token}"}, timeout=30)
         r.raise_for_status()
-        return {link.split("/")[-1].replace(".zone", ""): link
-                for link in r.json()}
+        return {link.split("/")[-1].replace(".zone", ""): link for link in r.json()}
     except Exception as e:
         log.error(f"Failed to get links: {e}")
         return {}
 
 
+def dns_available(domain):
+    try:
+        socket.setdefaulttimeout(3)
+        socket.getaddrinfo(domain, None)
+        return False
+    except socket.gaierror:
+        return True
+    except:
+        return False
+
+
 def parse_zone(path, tld):
-    """
-    Parse zone file — returns set of BASE names WITHOUT the tld.
-    Zone lines: name.tld. IN NS ns1.example.com.
-    We strip trailing dot AND tld suffix so we always get just 'name'.
-    """
     domains = set()
     tld_suffix = f".{tld}"
     opener = gzip.open if str(path).endswith(".gz") else open
@@ -94,7 +100,6 @@ def parse_zone(path, tld):
                     d = p[0].rstrip(".").lower()
                     if not d:
                         continue
-                    # Strip tld suffix if present to get clean base name
                     if d.endswith(tld_suffix):
                         d = d[:-len(tld_suffix)]
                     if d:
@@ -123,7 +128,7 @@ def process_tld(tld, link, token):
                     f.write(chunk)
                     size += len(chunk)
                     if size > MAX_SIZE_MB * 1024 * 1024:
-                        log.warning(f"  .{tld} too large ({size/1048576:.0f}MB), skipping")
+                        log.warning(f"  .{tld} too large, skipping")
                         today_path.unlink(missing_ok=True)
                         return []
     except Exception as e:
@@ -135,26 +140,37 @@ def process_tld(tld, link, token):
         return []
 
     yesterday_domains = parse_zone(yesterday_path, tld)
-    dropped = yesterday_domains - today_domains
+    dropped = list(yesterday_domains - today_domains)
     if not dropped:
         return []
 
-    log.info(f"  .{tld} — {len(dropped):,} drops! 🎯")
-    ts = date.today().isoformat()
+    log.info(f"  .{tld} — {len(dropped):,} candidates, DNS verifying...")
+
     tld_suffix = f".{tld}"
+    verified = []
+    for base in dropped[:DNS_VERIFY_LIMIT]:
+        full_domain = f"{base}{tld_suffix}"
+        if dns_available(full_domain):
+            verified.append(base)
+        time.sleep(0.05)
+
+    if not verified:
+        return []
+
+    log.info(f"  .{tld} — {len(verified)} confirmed available 🎯")
+    ts = date.today().isoformat()
     results = []
-    for base in list(dropped)[:200]:
-        # base is clean (no tld) — build full domain safely, never doubled
+    for base in verified[:MAX_DROPS]:
         full_domain = f"{base}{tld_suffix}"
         results.append({
-            "domain": full_domain,
-            "tld": tld_suffix,
-            "name": base,
-            "drop_date": ts,
-            "source": "zone_file",
-            "status": "dropped",
-            "dns_verified": False,
-            "checked_at": datetime.utcnow().isoformat(),
+            "domain":        full_domain,
+            "tld":           tld_suffix,
+            "name":          base,
+            "drop_date":     ts,
+            "source":        "zone_file",
+            "status":        "dropped",
+            "dns_verified":  True,
+            "checked_at":    datetime.utcnow().isoformat(),
             "is_arabic_idn": False
         })
     return results
@@ -211,10 +227,10 @@ def main():
         all_drops.extend(drops)
         processed += 1
         if processed % 50 == 0:
-            log.info(f"Progress: {processed}/{len(tlds)} TLDs, {len(all_drops)} drops so far")
+            log.info(f"Progress: {processed}/{len(tlds)} TLDs, {len(all_drops)} drops")
 
-    log.info(f"\nProcessed: {processed} TLDs, Skipped: {skipped}")
-    log.info(f"Total drops: {len(all_drops)}")
+    log.info(f"\nProcessed: {processed}, Skipped: {skipped}")
+    log.info(f"Total verified drops: {len(all_drops)}")
 
     if all_drops:
         save_to_supabase(all_drops)
