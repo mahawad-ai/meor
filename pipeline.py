@@ -2,17 +2,14 @@
 meor.com — Fixed Domain Drop Pipeline
 Uses GitHub Actions cache to persist zone files between runs.
 """
-
 import os, gzip, time, json, logging, requests, shutil
 from datetime import datetime, date
 from pathlib import Path
-
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass
-
 try:
     from supabase import create_client
     SUPABASE_AVAILABLE = True
@@ -71,12 +68,9 @@ def get_todays_batch():
 def download_zone(tld, token):
     today_path     = CACHE_DIR / f"{tld}_today.txt.gz"
     yesterday_path = CACHE_DIR / f"{tld}_yesterday.txt.gz"
-
-    # Rotate today → yesterday
     if today_path.exists():
         shutil.copy2(today_path, yesterday_path)
         log.info(f"  .{tld} — rotated to yesterday")
-
     url = f"https://czds-api.icann.org/czds/downloads/{tld}.zone"
     log.info(f"  .{tld} — downloading...")
     try:
@@ -97,15 +91,29 @@ def download_zone(tld, token):
 
 
 def parse_zone(path):
+    """
+    Parse zone file — returns set of BASE domain names WITHOUT tld.
+    Zone file lines look like: name.tld. IN NS ns1.example.com.
+    We strip the trailing dot AND the tld suffix so we get just 'name'.
+    """
     domains = set()
     opener = gzip.open if str(path).endswith(".gz") else open
+    # Extract tld from filename e.g. "mobi_today.txt.gz" -> "mobi"
+    tld = path.name.split("_")[0]
+    tld_suffix = f".{tld}"
     try:
         with opener(path, "rt", encoding="utf-8", errors="ignore") as f:
             for line in f:
                 p = line.split()
                 if len(p) >= 4 and p[2].upper() == "IN" and p[3].upper() == "NS":
                     d = p[0].rstrip(".").lower()
-                    if d: domains.add(d)
+                    if not d:
+                        continue
+                    # Strip tld suffix if present to get clean base name
+                    if d.endswith(tld_suffix):
+                        d = d[:-len(tld_suffix)]
+                    if d:
+                        domains.add(d)
     except Exception as e:
         log.error(f"Parse error: {e}")
     log.info(f"  Parsed {len(domains):,} domains")
@@ -113,16 +121,33 @@ def parse_zone(path):
 
 
 def find_drops(tld, today, yesterday):
+    """
+    today and yesterday are sets of BASE names (without tld).
+    Dropped = in yesterday but not in today.
+    """
     dropped = yesterday - today
     if not dropped:
         log.info(f"  .{tld} — no drops")
         return []
     log.info(f"  .{tld} — {len(dropped):,} drops! 🎯")
     ts = date.today().isoformat()
-    return [{"domain": f"{n}.{tld}", "tld": f".{tld}", "name": n,
-             "drop_date": ts, "source": "zone_file", "status": "dropped",
-             "dns_verified": False, "checked_at": datetime.utcnow().isoformat(),
-             "is_arabic_idn": False} for n in list(dropped)[:500]]
+    tld_suffix = f".{tld}"
+    results = []
+    for base in list(dropped)[:500]:
+        # base is already clean (no tld) — build full domain safely
+        full_domain = f"{base}{tld_suffix}"
+        results.append({
+            "domain": full_domain,       # e.g. surfwrench.mobi
+            "tld": tld_suffix,           # e.g. .mobi
+            "name": base,                # e.g. surfwrench
+            "drop_date": ts,
+            "source": "zone_file",
+            "status": "dropped",
+            "dns_verified": False,
+            "checked_at": datetime.utcnow().isoformat(),
+            "is_arabic_idn": False
+        })
+    return results
 
 
 def dns_available(domain):
@@ -137,31 +162,34 @@ def poll_mena():
         log.info("  Seeding MENA domains...")
         seed_mena(known_path)
         return []
-
     drops = []
     ts = date.today().isoformat()
     lines = [l.strip() for l in open(known_path) if l.strip() and not l.startswith("#")]
     sample = lines[:300]
     log.info(f"  Polling {len(sample)} MENA domains...")
-
     for line in sample:
         domain = line.split(",")[0].strip()
         if dns_available(domain):
-            tld = "." + domain.split(".")[-1]
-            drops.append({"domain": domain, "tld": tld,
-                "name": domain.replace(tld, "").rstrip("."),
-                "drop_date": ts, "source": "dns_poll", "status": "dropped",
-                "dns_verified": True, "checked_at": datetime.utcnow().isoformat(),
-                "is_arabic_idn": any(ord(c) > 0x0600 for c in domain)})
+            tld_suffix = "." + domain.split(".")[-1]
+            base = domain[:-len(tld_suffix)] if domain.endswith(tld_suffix) else domain
+            drops.append({
+                "domain": domain,
+                "tld": tld_suffix,
+                "name": base,
+                "drop_date": ts,
+                "source": "dns_poll",
+                "status": "dropped",
+                "dns_verified": True,
+                "checked_at": datetime.utcnow().isoformat(),
+                "is_arabic_idn": any(ord(c) > 0x0600 for c in domain)
+            })
             log.info(f"  🎯 {domain}")
         time.sleep(0.05)
-
     dropped_set = {d["domain"] for d in drops}
     remaining = [l for l in lines if l.split(",")[0] not in dropped_set]
     with open(known_path, "w") as f:
         f.write("# MENA domains\n")
         for l in remaining: f.write(l + "\n")
-
     log.info(f"  MENA: {len(drops)} drops")
     return drops
 
@@ -225,7 +253,6 @@ def main():
     start = time.time()
     log.info(f"\n{'='*50}\nmeor.com Pipeline — {date.today()}\n{'='*50}")
     all_drops = []
-
     if not CZDS_USER or not CZDS_PASS:
         log.warning("No CZDS credentials")
     else:
@@ -241,16 +268,13 @@ def main():
                     continue
                 yest_d = parse_zone(yest_p)
                 all_drops.extend(find_drops(tld, today_d, yest_d))
-
     log.info("\nPolling MENA...")
     all_drops.extend(poll_mena())
-
     log.info(f"\nTotal drops: {len(all_drops)}")
     if all_drops:
         save_to_supabase(all_drops)
     else:
         log.info("  Zone files cached — drops will appear next run")
-
     log.info(f"\n✅ Done in {time.time()-start:.0f}s\n{'='*50}")
 
 

@@ -1,6 +1,6 @@
 """
 meor.com — Pipeline 2: Large TLDs (runs once daily)
-Processes .net, .org, .info, .biz, .mobi
+Processes .net, .org, .info, .biz, .mobi, .com
 These are large files (100MB-500MB) so run separately once per day.
 """
 
@@ -34,7 +34,7 @@ CZDS_PASS    = os.getenv("CZDS_PASSWORD", "")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-LARGE_TLDS = ["net", "org", "info", "biz", "mobi"]
+LARGE_TLDS = ["net", "org", "info", "biz", "mobi", "com"]
 
 
 def get_token():
@@ -49,6 +49,34 @@ def get_token():
     except Exception as e:
         log.error(f"Login failed: {e}")
         return None
+
+
+def parse_zone(path, tld):
+    """
+    Parse zone file — returns set of BASE names WITHOUT the tld.
+    Zone lines: name.tld. IN NS ns1.example.com.
+    Strip trailing dot AND tld suffix so we get just 'name'.
+    """
+    domains = set()
+    tld_suffix = f".{tld}"
+    opener = gzip.open if str(path).endswith(".gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                p = line.split()
+                if len(p) >= 4 and p[2].upper() == "IN" and p[3].upper() == "NS":
+                    d = p[0].rstrip(".").lower()
+                    if not d:
+                        continue
+                    # Strip tld suffix if present to get clean base name
+                    if d.endswith(tld_suffix):
+                        d = d[:-len(tld_suffix)]
+                    if d:
+                        domains.add(d)
+    except Exception as e:
+        log.error(f"Parse error: {e}")
+    log.info(f"  Parsed {len(domains):,} domains")
+    return domains
 
 
 def process_tld(tld, token):
@@ -71,7 +99,7 @@ def process_tld(tld, token):
             r.raise_for_status()
             downloaded = 0
             with open(today_path, "wb") as f:
-                for chunk in r.iter_content(1048576):  # 1MB chunks
+                for chunk in r.iter_content(1048576):
                     f.write(chunk)
                     downloaded += len(chunk)
                     if downloaded % (50 * 1048576) == 0:
@@ -81,16 +109,15 @@ def process_tld(tld, token):
         log.error(f"  .{tld} — failed: {e}")
         return []
 
-    # Parse
     log.info(f"  .{tld} — parsing today...")
-    today_domains = parse_zone(today_path)
+    today_domains = parse_zone(today_path, tld)
 
     if not yesterday_path.exists():
         log.info(f"  .{tld} — first run, cached for tomorrow")
         return []
 
     log.info(f"  .{tld} — parsing yesterday...")
-    yesterday_domains = parse_zone(yesterday_path)
+    yesterday_domains = parse_zone(yesterday_path, tld)
 
     dropped = yesterday_domains - today_domains
     if not dropped:
@@ -99,26 +126,23 @@ def process_tld(tld, token):
 
     log.info(f"  .{tld} — {len(dropped):,} drops! 🎯")
     ts = date.today().isoformat()
-    return [{"domain": f"{n}.{tld}", "tld": f".{tld}", "name": n,
-             "drop_date": ts, "source": "zone_file", "status": "dropped",
-             "dns_verified": False, "checked_at": datetime.utcnow().isoformat(),
-             "is_arabic_idn": False} for n in list(dropped)[:2000]]
-
-
-def parse_zone(path):
-    domains = set()
-    opener = gzip.open if str(path).endswith(".gz") else open
-    try:
-        with opener(path, "rt", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                p = line.split()
-                if len(p) >= 4 and p[2].upper() == "IN" and p[3].upper() == "NS":
-                    d = p[0].rstrip(".").lower()
-                    if d: domains.add(d)
-    except Exception as e:
-        log.error(f"Parse error: {e}")
-    log.info(f"  Parsed {len(domains):,} domains")
-    return domains
+    tld_suffix = f".{tld}"
+    results = []
+    for base in list(dropped)[:2000]:
+        # base is clean (no tld) — build full domain safely, never doubled
+        full_domain = f"{base}{tld_suffix}"
+        results.append({
+            "domain":        full_domain,
+            "tld":           tld_suffix,
+            "name":          base,
+            "drop_date":     ts,
+            "source":        "zone_file",
+            "status":        "dropped",
+            "dns_verified":  False,
+            "checked_at":    datetime.utcnow().isoformat(),
+            "is_arabic_idn": False
+        })
+    return results
 
 
 def save_to_supabase(drops):

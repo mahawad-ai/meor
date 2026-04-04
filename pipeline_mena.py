@@ -33,7 +33,6 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
 MENA_TLDS = ["ae", "sa", "eg", "ma", "jo", "qa", "kw", "bh", "om"]
 
-# Arabic IDN TLDs (punycode)
 ARABIC_IDN_TLDS = {
     "السعودية": "xn--mgberp4a5d4ar",
     "مصر": "xn--wgbh1c",
@@ -50,11 +49,11 @@ def dns_available(domain):
     try:
         socket.setdefaulttimeout(3)
         socket.getaddrinfo(domain, None)
-        return False  # resolves = registered
+        return False
     except socket.gaierror:
-        return True   # NXDOMAIN = available
+        return True
     except:
-        return False  # timeout = assume registered
+        return False
 
 
 def load_known_domains():
@@ -62,20 +61,15 @@ def load_known_domains():
     if not path.exists():
         log.info("No MENA domains file — will seed now")
         seed_from_multiple_sources(path)
-
     if not path.exists():
         return []
-
     lines = [l.strip() for l in open(path) if l.strip() and not l.startswith("#")]
     return lines
 
 
 def seed_from_multiple_sources(path):
-    """Seed MENA domain list from multiple free sources."""
     domains = set()
     headers = {"User-Agent": "meor.com/1.0 domain research tool"}
-
-    # Source 1: Wayback CDX
     for tld in MENA_TLDS:
         try:
             r = requests.get(
@@ -98,22 +92,15 @@ def seed_from_multiple_sources(path):
         except Exception as e:
             log.warning(f"  Wayback failed .{tld}: {e}")
         time.sleep(0.5)
-
-    # Source 2: Common Arabic business domain patterns
     common_words = [
-        "shop", "store", "online", "web", "digital", "tech", "media",
-        "news", "sport", "food", "travel", "hotel", "real", "estate",
-        "سيو", "عقار", "تسوق", "اخبار", "رياضة", "طعام", "سفر", "فندق",
-        "شركة", "خدمات", "تقنية", "اعلام", "عربي", "خليج", "مصر",
-        "dubai", "riyadh", "cairo", "doha", "kuwait", "bahrain",
-        "uae", "ksa", "egypt", "qatar", "oman", "jordan",
+        "shop","store","online","web","digital","tech","media","news","sport",
+        "food","travel","hotel","real","estate","dubai","riyadh","cairo","doha",
+        "kuwait","bahrain","uae","ksa","egypt","qatar","oman","jordan",
     ]
     for tld in MENA_TLDS:
         for word in common_words:
             domains.add(f"{word}.{tld}")
-
     log.info(f"Total seeded: {len(domains)} MENA domains")
-
     with open(path, "w", encoding="utf-8") as f:
         f.write("# MENA domains monitored by meor.com\n")
         for d in sorted(domains):
@@ -121,54 +108,46 @@ def seed_from_multiple_sources(path):
 
 
 def poll_batch(lines, batch_size=500):
-    """Poll a batch of domains, return drops."""
     drops = []
     ts = date.today().isoformat()
     sample = lines[:batch_size]
-
     log.info(f"Polling {len(sample)} MENA domains...")
-
     for line in sample:
         domain = line.split(",")[0].strip()
         if not domain: continue
-
         if dns_available(domain):
-            tld_part = domain.split(".")[-1]
-            tld = "." + tld_part
+            # Build tld and base safely
+            tld_part  = domain.split(".")[-1]
+            tld_suffix = f".{tld_part}"
+            # Strip tld from end to get base — never double
+            base = domain[:-len(tld_suffix)] if domain.endswith(tld_suffix) else domain
             is_idn = any(ord(c) > 0x0600 for c in domain)
             drops.append({
-                "domain":       domain,
-                "tld":          tld,
-                "name":         domain[:-(len(tld))].rstrip("."),
-                "drop_date":    ts,
-                "source":       "dns_poll",
-                "status":       "dropped",
-                "dns_verified": True,
-                "checked_at":   datetime.utcnow().isoformat(),
+                "domain":        domain,        # e.g. food.ae
+                "tld":           tld_suffix,    # e.g. .ae
+                "name":          base,          # e.g. food
+                "drop_date":     ts,
+                "source":        "dns_poll",
+                "status":        "dropped",
+                "dns_verified":  True,
+                "checked_at":    datetime.utcnow().isoformat(),
                 "is_arabic_idn": is_idn,
             })
             log.info(f"  🎯 Drop: {domain}")
-
         time.sleep(0.05)
-
     return drops, sample
 
 
 def update_known_domains(path, lines, drops, polled):
-    """Remove confirmed drops from known list, rotate polled to end."""
     dropped_set = {d["domain"] for d in drops}
     polled_set  = {l.split(",")[0] for l in polled}
-
-    # Keep unpolled lines first, then polled (rotates through the list)
-    unpolled  = [l for l in lines if l.split(",")[0] not in polled_set and l.split(",")[0] not in dropped_set]
+    unpolled   = [l for l in lines if l.split(",")[0] not in polled_set and l.split(",")[0] not in dropped_set]
     was_polled = [l for l in lines if l.split(",")[0] in polled_set and l.split(",")[0] not in dropped_set]
     updated = unpolled + was_polled
-
     with open(path, "w", encoding="utf-8") as f:
         f.write("# MENA domains monitored by meor.com\n")
         for l in updated:
             f.write(l + "\n")
-
     log.info(f"  Known domains: {len(updated)} remaining ({len(drops)} dropped)")
 
 
@@ -201,24 +180,17 @@ def main():
     log.info(f"\n{'='*50}")
     log.info(f"meor.com MENA Pipeline — {date.today()} {datetime.utcnow().strftime('%H:%M')} UTC")
     log.info(f"{'='*50}")
-
     known_path = DATA_DIR / "mena_known_domains.txt"
     lines = load_known_domains()
-
     if not lines:
         log.info("No domains to poll yet — seeded for next run")
         return
-
     log.info(f"Known MENA domains: {len(lines)}")
-
     drops, polled = poll_batch(lines, batch_size=500)
-
     log.info(f"\nMENA drops found: {len(drops)}")
     if drops:
         save_to_supabase(drops)
-
     update_known_domains(known_path, lines, drops, polled)
-
     log.info(f"✅ Done in {time.time()-start:.0f}s\n{'='*50}")
 
 
