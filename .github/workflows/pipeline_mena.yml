@@ -1,0 +1,43 @@
+name: MENA DNS Pipeline
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # every 30 minutes
+  workflow_dispatch:
+
+jobs:
+  mena-dns:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests python-dotenv supabase
+
+      - name: Restore MENA domain list cache
+        uses: actions/cache@v4
+        with:
+          path: data/mena_known_domains.txt
+          key: mena-domains-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            mena-domains-${{ runner.os }}-
+
+      - name: Ensure directories
+        run: mkdir -p data
+
+      - name: Run MENA pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python pipeline_mena.py
+
+      - name: Save MENA domain list
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: data/mena_known_domains.txt
+          key: mena-domains-${{ runner.os }}-${{ github.run_id }}
