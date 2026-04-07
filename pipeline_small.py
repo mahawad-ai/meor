@@ -55,12 +55,44 @@ def get_token():
 
 
 def get_all_approved_tlds():
+    # Hardcoded list — no file dependency, always works
+    ALL_TLDS = [
+        "ac","academy","accountants","actor","agency","airforce","apartments",
+        "auction","audio","band","bar","bargains","bike","bingo","black","blue",
+        "boutique","build","builders","business","buzz","cab","cafe","camera",
+        "camp","capital","cards","care","careers","cash","catering","center",
+        "chat","cheap","church","city","claims","cleaning","clinic","clothing",
+        "coach","codes","coffee","community","company","computer","condos",
+        "construction","consulting","contact","contractors","cool","credit",
+        "cruises","dance","deals","delivery","democrat","dental","design",
+        "diamonds","digital","direct","directory","discount","dog","domains",
+        "education","email","energy","engineering","equipment","estate","events",
+        "exchange","expert","exposed","fail","farm","finance","financial","fish",
+        "fitness","flights","florist","football","foundation","fund","furniture",
+        "gallery","gold","graphics","gripe","guide","guru","healthcare","holdings",
+        "holiday","homes","horse","host","house","immo","industries","insure",
+        "international","investments","jewelry","kitchen","land","law","lease",
+        "legal","life","lighting","limited","limo","loans","maison","management",
+        "marketing","media","memorial","money","mortgage","network","news","ninja",
+        "online","parts","photo","photography","photos","pictures","pink","pizza",
+        "place","plumbing","plus","press","productions","properties","property",
+        "recipes","red","remodeling","rent","rentals","repair","report",
+        "restaurant","reviews","rip","rocks","run","sale","salon","school",
+        "services","shoes","show","singles","social","solar","solutions","style",
+        "supplies","supply","support","surgery","systems","tax","taxi","team",
+        "technology","tennis","tips","tools","tours","town","toys","training",
+        "tv","university","vacations","ventures","video","vision","voyage",
+        "watch","website","wiki","works","wtf","zone","store","tech","shop","site",
+    ]
+    # Also merge from file if exists
     ap = DATA_DIR / "approved_tlds.json"
     if ap.exists():
-        tlds = json.load(open(ap)).get("tlds", [])
-    else:
-        tlds = []
-    tlds = [t for t in tlds if t not in LARGE_TLDS]
+        try:
+            extra = json.load(open(ap)).get("tlds", [])
+            ALL_TLDS = list(set(ALL_TLDS + extra))
+        except Exception as e:
+            log.warning(f"Could not load approved_tlds.json: {e}")
+    tlds = [t for t in ALL_TLDS if t not in LARGE_TLDS]
     log.info(f"Processing {len(tlds)} small TLDs this run")
     return tlds
 
