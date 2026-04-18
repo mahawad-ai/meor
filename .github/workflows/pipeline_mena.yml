@@ -2,12 +2,14 @@ name: MENA DNS Pipeline
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # every 30 minutes
+    - cron: '0 8 * * *'   # 8am UTC daily (after zone pipeline finishes)
   workflow_dispatch:
 
 jobs:
   mena-dns:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,13 +20,14 @@ jobs:
       - name: Install dependencies
         run: pip install requests python-dotenv supabase
 
-      - name: Restore MENA domain list cache
-        uses: actions/cache@v4
+      # Restore watchlist from previous run so we maintain state
+      - name: Restore MENA watchlist cache
+        uses: actions/cache/restore@v4
         with:
-          path: data/mena_known_domains.txt
-          key: mena-domains-${{ runner.os }}-${{ github.run_id }}
+          path: data/mena_watchlist.txt
+          key: mena-watchlist-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
-            mena-domains-${{ runner.os }}-
+            mena-watchlist-${{ runner.os }}-
 
       - name: Ensure directories
         run: mkdir -p data
@@ -35,9 +38,10 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python pipeline_mena.py
 
-      - name: Save MENA domain list
+      # Save updated watchlist (with rotation applied) for next run
+      - name: Save MENA watchlist cache
         if: always()
-        uses: actions/cache@v4
+        uses: actions/cache/save@v4
         with:
-          path: data/mena_known_domains.txt
-          key: mena-domains-${{ runner.os }}-${{ github.run_id }}
+          path: data/mena_watchlist.txt
+          key: mena-watchlist-${{ runner.os }}-${{ github.run_id }}

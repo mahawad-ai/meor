@@ -1,0 +1,55 @@
+name: Zone File Drop Detection
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 6am UTC daily — after most registrars publish zone files
+  workflow_dispatch:       # allow manual trigger
+
+jobs:
+  detect-drops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180   # .com zone file can take a while
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests python-dotenv supabase
+
+      - name: Set date env vars
+        run: |
+          echo "TODAY=$(date -u +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "YESTERDAY=$(date -u -d 'yesterday' +%Y-%m-%d)" >> $GITHUB_ENV
+
+      # Restore yesterday's zone files so we can diff against today's download
+      - name: Restore zone cache (yesterday's files)
+        uses: actions/cache/restore@v4
+        with:
+          path: zone_cache
+          # Try exact match for yesterday's date first, then any older cache
+          key: zone-${{ runner.os }}-${{ env.YESTERDAY }}
+          restore-keys: |
+            zone-${{ runner.os }}-
+
+      - name: Ensure directories
+        run: mkdir -p zone_cache data
+
+      - name: Run zone pipeline
+        env:
+          CZDS_USERNAME: ${{ secrets.CZDS_USERNAME }}
+          CZDS_PASSWORD: ${{ secrets.CZDS_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python pipeline_zones.py
+
+      # Save today's downloaded zone files for tomorrow's diff
+      - name: Save zone cache (today's files for tomorrow)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: zone_cache
+          key: zone-${{ runner.os }}-${{ env.TODAY }}
