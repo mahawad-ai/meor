@@ -1,0 +1,18 @@
+# Credentials — never commit these
+.env
+env.txt
+*.env
+
+# Zone file cache (large binary files, managed by GitHub Actions cache)
+zone_cache/
+zone_cache_large/
+
+# Pipeline data output
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
