@@ -15,7 +15,7 @@ Why no DNS verification here:
   wrongly discard real drops. The enrichment pipeline checks DNS 24h later.
 """
 
-import os, gzip, time, json, logging, requests, shutil
+import os, gzip, time, json, logging, requests, shutil, subprocess, tempfile
 from datetime import datetime, date
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -131,43 +131,62 @@ def download_zone(tld, url, token, max_mb=None):
 
 # ── Parse & Diff ──────────────────────────────────────────────────────────────
 
-def parse_zone(path, tld):
+def extract_names_to_sorted_file(zone_path, tld, out_path):
     """
-    Parse a gzipped zone file.
-    Returns set of BASE names (no TLD suffix) from NS records only.
-    NS records indicate registered second-level domains.
+    Stream-parse a gzip zone file and write sorted base names to out_path.
+    Uses external sort (subprocess) so memory usage stays flat regardless
+    of file size — critical for .com (4GB+ compressed, 175M+ domains).
     """
-    names   = set()
     tld_dot = f".{tld}"
-    opener  = gzip.open if str(path).endswith(".gz") else open
+    opener  = gzip.open if str(zone_path).endswith(".gz") else open
 
+    # Write all NS base-names to a temp unsorted file, then sort externally
+    unsorted = out_path.with_suffix(".unsorted")
     try:
-        with opener(path, "rt", encoding="utf-8", errors="ignore") as f:
-            for line in f:
+        with opener(zone_path, "rt", encoding="utf-8", errors="ignore") as zf, \
+             open(unsorted, "w") as uf:
+            for line in zf:
                 parts = line.split()
-                # NS record = registered domain: name.tld. IN NS ns1.example.com.
                 if len(parts) >= 4 and parts[2].upper() == "IN" and parts[3].upper() == "NS":
                     name = parts[0].rstrip(".").lower()
                     if name.endswith(tld_dot):
                         name = name[: -len(tld_dot)]
                     if name:
-                        names.add(name)
-    except Exception as e:
-        log.error(f"  Parse error ({path.name}): {e}")
+                        uf.write(name + "\n")
 
-    return names
+        # External sort — uses disk, not RAM; handles hundreds of millions of lines
+        subprocess.run(
+            ["sort", "-u", str(unsorted), "-o", str(out_path)],
+            check=True,
+        )
+    finally:
+        unsorted.unlink(missing_ok=True)
 
 
-def detect_drops(tld, today_path, yesterday_path, max_drops):
+def detect_drops_streaming(tld, today_path, yesterday_path, max_drops):
     """
-    Diff yesterday's names against today's.
-    Returns list of drop records ready for Supabase insert.
+    Find dropped domains using sorted file comparison (comm -23).
+    Memory usage is O(1) — safe for .com and any size zone file.
+    dropped = in yesterday but not in today.
     """
-    log.info(f"  .{tld} parsing...")
-    today_names     = parse_zone(today_path, tld)
-    yesterday_names = parse_zone(yesterday_path, tld)
+    log.info(f"  .{tld} extracting & sorting names...")
 
-    dropped = list(yesterday_names - today_names)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp     = Path(tmp)
+        today_s = tmp / "today_sorted.txt"
+        yest_s  = tmp / "yesterday_sorted.txt"
+
+        extract_names_to_sorted_file(today_path,     tld, today_s)
+        extract_names_to_sorted_file(yesterday_path, tld, yest_s)
+
+        # comm -23: lines only in file1 (yesterday) = dropped
+        result = subprocess.run(
+            ["comm", "-23", str(yest_s), str(today_s)],
+            capture_output=True, text=True, check=True,
+        )
+
+    dropped = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
     if not dropped:
         log.info(f"  .{tld} — no drops detected")
         return []
@@ -186,7 +205,65 @@ def detect_drops(tld, today_path, yesterday_path, max_drops):
             "drop_date":     ts,
             "source":        "zone_file",
             "status":        "dropped",
-            "dns_verified":  False,   # enrichment verifies 24h later
+            "dns_verified":  False,
+            "checked_at":    now,
+            "is_arabic_idn": any(ord(c) > 0x0600 for c in base),
+        }
+        for base in dropped[:max_drops]
+    ]
+
+
+def parse_zone(path, tld):
+    """In-memory parse for small TLDs only (< MAX_FILE_MB)."""
+    names   = set()
+    tld_dot = f".{tld}"
+    opener  = gzip.open if str(path).endswith(".gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                parts = line.split()
+                if len(parts) >= 4 and parts[2].upper() == "IN" and parts[3].upper() == "NS":
+                    name = parts[0].rstrip(".").lower()
+                    if name.endswith(tld_dot):
+                        name = name[: -len(tld_dot)]
+                    if name:
+                        names.add(name)
+    except Exception as e:
+        log.error(f"  Parse error ({path.name}): {e}")
+    return names
+
+
+def detect_drops(tld, today_path, yesterday_path, max_drops, large=False):
+    """
+    Route to streaming (large TLDs) or in-memory (small TLDs) comparison.
+    """
+    if large:
+        return detect_drops_streaming(tld, today_path, yesterday_path, max_drops)
+
+    log.info(f"  .{tld} parsing...")
+    today_names     = parse_zone(today_path, tld)
+    yesterday_names = parse_zone(yesterday_path, tld)
+    dropped         = list(yesterday_names - today_names)
+
+    if not dropped:
+        log.info(f"  .{tld} — no drops detected")
+        return []
+
+    log.info(f"  .{tld} — {len(dropped):,} drops 🎯 (capped at {max_drops})")
+
+    ts      = date.today().isoformat()
+    now     = datetime.utcnow().isoformat()
+    tld_dot = f".{tld}"
+
+    return [
+        {
+            "domain":        f"{base}{tld_dot}",
+            "tld":           tld_dot,
+            "name":          base,
+            "drop_date":     ts,
+            "source":        "zone_file",
+            "status":        "dropped",
+            "dns_verified":  False,
             "checked_at":    now,
             "is_arabic_idn": any(ord(c) > 0x0600 for c in base),
         }
@@ -214,7 +291,7 @@ def save_drops(sb, drops):
 
 # ── Per-TLD orchestration ─────────────────────────────────────────────────────
 
-def process_tld(tld, url, token, max_mb, max_drops):
+def process_tld(tld, url, token, max_mb, max_drops, large=False):
     """Full pipeline for one TLD. Returns list of drop records."""
     today_path, yesterday_path = download_zone(tld, url, token, max_mb)
     if not today_path:
@@ -222,7 +299,7 @@ def process_tld(tld, url, token, max_mb, max_drops):
     if not yesterday_path:
         log.info(f"  .{tld} — first run, cached for tomorrow")
         return []
-    return detect_drops(tld, today_path, yesterday_path, max_drops)
+    return detect_drops(tld, today_path, yesterday_path, max_drops, large=large)
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -246,10 +323,10 @@ def main():
 
     # ── Large TLDs: sequential (huge files) ──────────────────────────────────
     large = {t: u for t, u in links.items() if t in LARGE_TLDS}
-    log.info(f"\nLarge TLDs ({len(large)}): processing sequentially...")
+    log.info(f"\nLarge TLDs ({len(large)}): processing sequentially (streaming sort)...")
     for tld, url in large.items():
         log.info(f"\nProcessing .{tld}...")
-        drops = process_tld(tld, url, token, max_mb=None, max_drops=MAX_DROPS_LARGE)
+        drops = process_tld(tld, url, token, max_mb=None, max_drops=MAX_DROPS_LARGE, large=True)
         if drops:
             saved = save_drops(sb, drops)
             total_saved += saved
