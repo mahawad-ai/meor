@@ -1668,7 +1668,7 @@ function toggleLang() {
 /* ═══════════════════════════════════
    RESULTS
 ═══════════════════════════════════ */
-function sc(s) { return s>=75?'s-hi':s>=50?'s-md':'s-lo' }
+function sc(s) { return s>=65?'s-hi':s>=40?'s-md':'s-lo' }
 
 function stPill(s) {
   if (s==='pending')  return `<span class="status-tag tag-pending">${lang==='ar'?'وشيك':'Pending'}</span>`;
@@ -1714,8 +1714,8 @@ function selectRow(id) {
 function renderDetail(d) {
   const col = document.getElementById('detailCol');
   if (!col || !d) return;
-  const vc = d.score>=75?'var(--green)':d.score>=50?'var(--amber)':'var(--red)';
-  const verdict = d.score>=75?(lang==='ar'?'شراء قوي':'Strong buy'):d.score>=50?(lang==='ar'?'تابع بحذر':'With caution'):(lang==='ar'?'تجنب':'Avoid');
+  const vc = d.score>=65?'var(--green)':d.score>=40?'var(--amber)':'var(--red)';
+  const verdict = d.score>=65?(lang==='ar'?'شراء قوي':'Strong buy'):d.score>=40?(lang==='ar'?'تابع بحذر':'With caution'):(lang==='ar'?'تجنب':'Avoid');
   col.innerHTML = `
     <div class="dp-head"><span class="dp-label">✦ ${lang==='ar'?'تحليل':'ANALYSIS'}</span><div class="dp-close" onclick="this.closest('.detail-col').innerHTML=''">×</div></div>
     <div class="dp-domain"><div class="dp-dname">${d.base}<span class="dp-tld">${d.tld}</span></div><div class="dp-dmeta">${lang==='ar'?'منذ':'Since'} ${d.year}</div></div>
@@ -1749,7 +1749,7 @@ function loadDetail(id) {
   const tldTag = document.getElementById('dd-tld-tag'); if(tldTag) tldTag.textContent = d.tld;
   const ageTag = document.getElementById('dd-age-tag'); if(ageTag) ageTag.textContent = (lang==='ar'?'منذ ':'Since ') + d.year;
   const sn = document.getElementById('dd-score-n');
-  if (sn) { sn.textContent = d.score; sn.style.color = d.score>=75?'var(--green)':d.score>=50?'var(--amber)':'var(--red)'; }
+  if (sn) { sn.textContent = d.score; sn.style.color = d.score>=65?'var(--green)':d.score>=40?'var(--amber)':'var(--red)'; }
   const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   setEl('dd-tf', d.tf); setEl('dd-cf', Math.round(d.tf*.9)); setEl('dd-da', d.da);
   setEl('dd-bl', d.bl.toLocaleString()); setEl('dd-rd', Math.round(d.bl/15));
@@ -2028,7 +2028,7 @@ async function fetchDomainsFromSupabase(){
   const rb=document.getElementById('resultsBody');
   if(rb) rb.innerHTML=`<div style="padding:48px;text-align:center;color:var(--ink4);font-size:17px">${lang==='ar'?'جار تحميل البيانات...':'Loading data...'}</div>`;
   try{
-    const url=SURL+'/rest/v1/dropped_domains?select=id,domain,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn&order=created_at.desc&limit=500';
+    const url=SURL+'/rest/v1/dropped_domains?select=id,domain,name,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn&meor_score=not.is.null&order=meor_score.desc&limit=1000';
     const resp=await fetch(url,{headers:{'apikey':SKEY,'Authorization':'Bearer '+SKEY}});
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     const rows=await resp.json();

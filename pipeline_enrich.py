@@ -101,21 +101,23 @@ def get_pagerank_batch(domains):
 def get_wayback_data(domain):
     """
     Get Wayback Machine data for a domain:
-    - First seen year
+    - First seen year (any snapshot including parked/redirects)
     - Number of snapshots
     """
     try:
         url = "http://web.archive.org/cdx/search/cdx"
-        params = {
+        # No statuscode filter — capture parked pages, redirects, everything
+        # This dramatically increases hit rate for new gTLD domains
+        first_params = {
             "url": domain,
             "output": "json",
             "fl": "timestamp",
             "limit": 1,
             "from": "19900101",
-            "to": "20250101",
-            "filter": "statuscode:200",
+            "to": "20260101",
+            "collapse": "timestamp:6",  # deduplicate by month
         }
-        r = requests.get(url, params=params,
+        r = requests.get(url, params=first_params,
                          headers={"User-Agent": "meor.com/1.0"},
                          timeout=10)
         if r.status_code == 200 and r.text.strip():
@@ -124,15 +126,20 @@ def get_wayback_data(domain):
                 first_ts = data[1][0]  # timestamp like 20081205120000
                 first_year = int(first_ts[:4])
 
-                # Get count
-                count_params = {**params, "limit": 9999, "fl": "timestamp"}
-                count_params.pop("from", None)
+                # Get total snapshot count (collapsed by month to avoid inflated counts)
+                count_params = {
+                    "url": domain,
+                    "output": "json",
+                    "fl": "timestamp",
+                    "limit": 9999,
+                    "collapse": "timestamp:6",
+                }
                 rc = requests.get(url, params=count_params,
                                   headers={"User-Agent": "meor.com/1.0"},
                                   timeout=10)
                 count = max(0, len(rc.json()) - 1) if rc.status_code == 200 else 0
                 return first_year, count
-    except Exception as e:
+    except Exception:
         pass
     return None, 0
 
@@ -157,27 +164,28 @@ def calc_meor_score(opr_score, first_year, wayback_count, dns_verified):
     Calculate a 0-100 composite score for meor.com display.
 
     Components:
-    - OPR score (0-10) → 40% weight → 0-40 points
-    - Domain age → 30% weight → 0-30 points
-    - Wayback snapshots → 20% weight → 0-20 points
-    - DNS verified → 10% weight → 0-10 points
+    - Domain age      → 0-35 pts  (primary signal — most meaningful for expired domains)
+    - Wayback archive → 0-30 pts  (logarithmic: 10 snaps=13pts, 100 snaps=24pts, 1000=36pts)
+    - OPR score       → 0-25 pts  (secondary — most dropped domains score 0-2)
+    - DNS verified    → 0-10 pts  (availability confirmation)
     """
+    import math
     score = 0
 
-    # OPR component (0-10 scale → 0-40 points)
-    opr_points = min(40, (opr_score / 10) * 40)
-    score += opr_points
-
-    # Age component
+    # Age component (most reliable signal)
     if first_year:
-        age = 2025 - first_year
-        age_points = min(30, age * 2)  # 2 points per year, max 30
+        age = max(0, 2025 - first_year)
+        age_points = min(35, age * 2.5)  # 2.5 pts/year, caps at 14 years
         score += age_points
 
-    # Wayback component
-    if wayback_count:
-        wb_points = min(20, wayback_count / 50)  # 1 point per 50 snapshots, max 20
+    # Wayback component (logarithmic — 1 snap vs 1000 snaps matters a lot)
+    if wayback_count and wayback_count > 0:
+        wb_points = min(30, math.log10(wayback_count + 1) * 12)
         score += wb_points
+
+    # OPR component (reduced weight — most dropped domains have low OPR)
+    opr_points = min(25, (opr_score / 10) * 25)
+    score += opr_points
 
     # DNS verified
     if dns_verified:
@@ -247,16 +255,17 @@ def main():
         # Calculate meor score
         meor_score = calc_meor_score(opr_score, first_year, wb_count, dns_ok)
 
-        # Build AI verdict based on score
-        if meor_score >= 75:
-            verdict_ar = f"دومين قوي — نقاط OPR {opr_score}/10. يستحق التسجيل الفوري."
-            verdict_en = f"Strong domain — OPR score {opr_score}/10. Worth registering immediately."
-        elif meor_score >= 50:
-            verdict_ar = f"دومين متوسط — نقاط OPR {opr_score}/10. راجع التاريخ قبل التسجيل."
-            verdict_en = f"Average domain — OPR score {opr_score}/10. Review history before registering."
+        # Build AI verdict based on composite signals
+        age = (2025 - first_year) if first_year else 0
+        if meor_score >= 65:
+            verdict_ar = f"دومين قوي — عمره {age} {'سنة' if age==1 else 'سنوات'} مع {wb_count} لقطة ويباك. يستحق التسجيل."
+            verdict_en = f"Strong domain — {age} years old with {wb_count} Wayback snapshots. Worth registering."
+        elif meor_score >= 40:
+            verdict_ar = f"دومين متوسط — عمره {age} {'سنة' if age==1 else 'سنوات'} مع {wb_count} لقطة ويباك. راجع التاريخ قبل التسجيل."
+            verdict_en = f"Average domain — {age} years old with {wb_count} Wayback snapshots. Review before registering."
         else:
-            verdict_ar = f"دومين ضعيف — نقاط OPR {opr_score}/10. لا يُنصح بالتسجيل."
-            verdict_en = f"Weak domain — OPR score {opr_score}/10. Not recommended."
+            verdict_ar = f"دومين ضعيف — تاريخ محدود ({wb_count} لقطة ويباك). أولوية منخفضة."
+            verdict_en = f"Weak domain — limited history ({wb_count} Wayback snapshots). Lower priority."
 
         updates = {
             "meor_score":      meor_score,
