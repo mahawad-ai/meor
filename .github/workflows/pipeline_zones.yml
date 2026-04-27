@@ -23,20 +23,21 @@ jobs:
       - name: Set date env vars
         run: |
           echo "TODAY=$(date -u +%Y-%m-%d)" >> $GITHUB_ENV
-          echo "YESTERDAY=$(date -u -d 'yesterday' +%Y-%m-%d)" >> $GITHUB_ENV
 
-      # Restore yesterday's zone files so we can diff against today's download
-      - name: Restore zone cache (yesterday's files)
+      # Restore yesterday's names cache
+      # Cache stores only compressed sorted-names files (~1-2GB total)
+      # NOT raw zone files — that was causing 10GB limit failures
+      - name: Restore zone names cache
         uses: actions/cache/restore@v4
         with:
           path: zone_cache
-          # Try exact match for yesterday's date first, then any older cache
-          key: zone-${{ runner.os }}-${{ env.YESTERDAY }}
+          # Exact key never matches (today's not saved yet) — always uses fallback
+          key: zone-names-${{ runner.os }}-${{ env.TODAY }}
           restore-keys: |
-            zone-${{ runner.os }}-
+            zone-names-${{ runner.os }}-
 
-      - name: Ensure directories
-        run: mkdir -p zone_cache data
+      - name: Ensure cache directory exists
+        run: mkdir -p zone_cache
 
       - name: Run zone pipeline
         env:
@@ -46,10 +47,11 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python pipeline_zones.py
 
-      # Save today's downloaded zone files for tomorrow's diff
-      - name: Save zone cache (today's files for tomorrow)
+      # Save today's names cache for tomorrow's diff
+      # Only .names.gz files are in zone_cache now — much smaller than before
+      - name: Save zone names cache
         if: always()
         uses: actions/cache/save@v4
         with:
           path: zone_cache
-          key: zone-${{ runner.os }}-${{ env.TODAY }}
+          key: zone-names-${{ runner.os }}-${{ env.TODAY }}

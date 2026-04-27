@@ -615,6 +615,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 .s-hi{background:var(--green-bg);color:var(--green)}
 .s-md{background:var(--amber-bg);color:var(--amber)}
 .s-lo{background:var(--red-bg);color:var(--red)}
+.s-pending{background:var(--bg);color:var(--ink4);border:1px solid var(--border2);font-size:13px}
 
 /* Status tags */
 .status-tag{font-size:14px;font-weight:700;padding:3px 8px;border-radius:var(--r-sm)}
@@ -666,6 +667,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 .dp-score-good{color:var(--green)}
 .dp-score-mid{color:var(--amber)}
 .dp-score-bad{color:var(--red)}
+.dp-score-pending{color:var(--ink4);font-size:28px}
 .dp-bar{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:4px}
 .dp-bar-fill{height:100%;border-radius:3px;transition:width .5s}
 .dp-verdict{font-size:14px;font-weight:700}
@@ -1668,7 +1670,7 @@ function toggleLang() {
 /* ═══════════════════════════════════
    RESULTS
 ═══════════════════════════════════ */
-function sc(s) { return s>=65?'s-hi':s>=40?'s-md':'s-lo' }
+function sc(s) { if(s==null) return 's-pending'; return s>=65?'s-hi':s>=40?'s-md':'s-lo' }
 
 function stPill(s) {
   if (s==='pending')  return `<span class="status-tag tag-pending">${lang==='ar'?'وشيك':'Pending'}</span>`;
@@ -1689,7 +1691,7 @@ function renderResults(list) {
         <div class="d-name">${d.base}<span class="d-tld">${d.tld}</span></div>
         <div class="d-meta">${lang==='ar'?'منذ':'Since'} ${d.year}</div>
       </div>
-      <div><span class="score-pill ${sc(d.score)}">${d.score}</span></div>
+      <div><span class="score-pill ${sc(d.score)}">${d.score!=null?d.score:'—'}</span></div>
       <div class="tbl-val">${d.bl.toLocaleString()}</div>
       <div class="tbl-val">${d.da} / ${d.tf}</div>
       <div>${stPill(d.status)}</div>
@@ -1714,20 +1716,21 @@ function selectRow(id) {
 function renderDetail(d) {
   const col = document.getElementById('detailCol');
   if (!col || !d) return;
-  const vc = d.score>=65?'var(--green)':d.score>=40?'var(--amber)':'var(--red)';
-  const verdict = d.score>=65?(lang==='ar'?'شراء قوي':'Strong buy'):d.score>=40?(lang==='ar'?'تابع بحذر':'With caution'):(lang==='ar'?'تجنب':'Avoid');
+  const scored = d.score != null;
+  const vc = !scored?'var(--ink4)':d.score>=65?'var(--green)':d.score>=40?'var(--amber)':'var(--red)';
+  const verdict = !scored?(lang==='ar'?'قيد التحليل':'Scoring in progress'):d.score>=65?(lang==='ar'?'شراء قوي':'Strong buy'):d.score>=40?(lang==='ar'?'تابع بحذر':'With caution'):(lang==='ar'?'تجنب':'Avoid');
   col.innerHTML = `
     <div class="dp-head"><span class="dp-label">✦ ${lang==='ar'?'تحليل':'ANALYSIS'}</span><div class="dp-close" onclick="this.closest('.detail-col').innerHTML=''">×</div></div>
     <div class="dp-domain"><div class="dp-dname">${d.base}<span class="dp-tld">${d.tld}</span></div><div class="dp-dmeta">${lang==='ar'?'منذ':'Since'} ${d.year}</div></div>
     <div style="padding:0 16px 14px">
       <div class="dp-score-block">
         <div class="dp-score-row">
-          <div class="dp-score-num dp-score-${d.score>=75?'good':d.score>=50?'mid':'bad'}">${d.score}</div>
+          <div class="dp-score-num dp-score-${!scored?'pending':d.score>=75?'good':d.score>=50?'mid':'bad'}">${scored?d.score:'—'}</div>
           <div style="flex:1"><div class="dp-bar"><div class="dp-bar-fill" style="width:${d.score}%;background:${vc}"></div></div><div class="dp-verdict" style="color:${vc}">${verdict}</div></div>
         </div>
       </div>
     </div>
-    <div class="dp-section"><div class="dp-section-label">✦ ${lang==='ar'?'رأي الذكاء الاصطناعي':'AI VERDICT'}</div><div class="dp-ai">${lang==='ar'?d.ar:d.en}</div></div>
+    <div class="dp-section"><div class="dp-section-label">✦ ${lang==='ar'?'رأي الذكاء الاصطناعي':'AI VERDICT'}</div><div class="dp-ai" style="${!scored?'color:var(--ink4);font-style:italic':''}">${!scored?(lang==='ar'?'جارٍ تحليل هذا النطاق — عد لاحقاً.':'Analysis in progress — check back shortly.'):(lang==='ar'?d.ar:d.en)}</div></div>
     <div class="dp-section"><div class="dp-section-label">${lang==='ar'?'المقاييس':'METRICS'}</div>
       <div class="dp-metric"><span class="dp-mk">Trust Flow</span><span class="dp-mv" style="color:var(--green)">${d.tf}</span></div>
       <div class="dp-metric"><span class="dp-mk">Domain Authority</span><span class="dp-mv">${d.da}</span></div>
@@ -1749,7 +1752,7 @@ function loadDetail(id) {
   const tldTag = document.getElementById('dd-tld-tag'); if(tldTag) tldTag.textContent = d.tld;
   const ageTag = document.getElementById('dd-age-tag'); if(ageTag) ageTag.textContent = (lang==='ar'?'منذ ':'Since ') + d.year;
   const sn = document.getElementById('dd-score-n');
-  if (sn) { sn.textContent = d.score; sn.style.color = d.score>=65?'var(--green)':d.score>=40?'var(--amber)':'var(--red)'; }
+  if (sn) { sn.textContent = d.score!=null?d.score:'—'; sn.style.color = d.score==null?'var(--ink4)':d.score>=65?'var(--green)':d.score>=40?'var(--amber)':'var(--red)'; }
   const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   setEl('dd-tf', d.tf); setEl('dd-cf', Math.round(d.tf*.9)); setEl('dd-da', d.da);
   setEl('dd-bl', d.bl.toLocaleString()); setEl('dd-rd', Math.round(d.bl/15));
@@ -2028,7 +2031,7 @@ async function fetchDomainsFromSupabase(){
   const rb=document.getElementById('resultsBody');
   if(rb) rb.innerHTML=`<div style="padding:48px;text-align:center;color:var(--ink4);font-size:17px">${lang==='ar'?'جار تحميل البيانات...':'Loading data...'}</div>`;
   try{
-    const url=SURL+'/rest/v1/dropped_domains?select=id,domain,name,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn&meor_score=not.is.null&order=meor_score.desc&limit=1000';
+    const url=SURL+'/rest/v1/dropped_domains?select=id,domain,name,tld,first_seen_year,backlinks,moz_da,majestic_tf,wayback_snaps,status,meor_score,spam_score,ai_verdict,ai_verdict_en,is_arabic_idn,drop_date&order=meor_score.desc.nullslast,drop_date.desc&limit=2000';
     const resp=await fetch(url,{headers:{'apikey':SKEY,'Authorization':'Bearer '+SKEY}});
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     const rows=await resp.json();
@@ -2055,7 +2058,7 @@ async function fetchDomainsFromSupabase(){
         tf:    r.majestic_tf || 0,
         wb:    r.wayback_snaps || 0,
         status: status,
-        score: r.meor_score || 0,
+        score: r.meor_score ?? null,
         spam:  r.spam_score || 0,
         ar:    r.ai_verdict || 'لا يوجد تحليل بعد.',
         en:    r.ai_verdict_en || 'No analysis yet.',

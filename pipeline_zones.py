@@ -4,18 +4,28 @@ Runs once daily at 6am UTC via GitHub Actions.
 
 How it works:
   1. Fetch list of approved TLDs from CZDS API
-  2. For each TLD, download today's zone file
-  3. Rotate: today → yesterday (cached from previous run)
-  4. Parse both files; domains in yesterday but not today = dropped
-  5. Insert all drops to Supabase — NO DNS verification at this stage.
+  2. For each TLD, download today's zone file to a temp location
+  3. Extract + sort domain names from zone file
+  4. Diff sorted names against cached yesterday's names → drops
+  5. Update cache with today's names (for tomorrow's diff)
+  6. Insert all drops to Supabase
+
+Cache strategy (v2 — names-only):
+  Previous approach stored raw zone gz files (4.3GB for .com alone), causing
+  the GitHub Actions 10GB cache limit to be exceeded on alternate days → 0 drops.
+
+  New approach: cache only gzip-compressed sorted names files per TLD.
+    zone_cache/{tld}.names.gz  →  sorted domain base names from yesterday
+  This keeps total cache size ~1-2GB regardless of how many TLDs we track.
+  Raw zone files are downloaded to temp, processed, and deleted immediately.
 
 Why no DNS verification here:
-  Zone file absence IS proof of a drop. When a domain leaves the zone
-  file its DNS record stays cached for 24-48h, so dns_available() would
-  wrongly discard real drops. The enrichment pipeline checks DNS 24h later.
+  Zone file absence IS proof of a drop. DNS stays cached 24-48h after zone
+  removal, so dns_available() would wrongly discard real drops. The enrichment
+  pipeline checks DNS 24h later.
 """
 
-import os, gzip, time, json, logging, requests, shutil, subprocess, tempfile
+import os, gzip as gz_mod, time, logging, requests, shutil, subprocess, tempfile
 from datetime import datetime, date
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -35,19 +45,17 @@ log = logging.getLogger("meor.zones")
 
 BASE_DIR  = Path(__file__).parent
 CACHE_DIR = BASE_DIR / "zone_cache"
-DATA_DIR  = BASE_DIR / "data"
 CACHE_DIR.mkdir(exist_ok=True)
-DATA_DIR.mkdir(exist_ok=True)
 
 CZDS_USER    = os.getenv("CZDS_USERNAME", "")
 CZDS_PASS    = os.getenv("CZDS_PASSWORD", "")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-# Large TLDs processed sequentially (files can be 1GB+)
+# Large TLDs use external sort (disk-based) to avoid OOM on 175M+ domains
 LARGE_TLDS      = {"com", "net", "org", "info", "biz", "mobi"}
-MAX_FILE_MB     = 80       # skip small TLDs larger than this
-MAX_DROPS_LARGE = 5000     # cap per large TLD
+MAX_FILE_MB     = 80       # skip small TLDs larger than this (spam farms)
+MAX_DROPS_LARGE = 5000     # cap per large TLD to avoid Supabase write overload
 MAX_DROPS_SMALL = 500      # cap per small TLD
 WORKERS         = 5        # concurrent downloads for small TLDs
 
@@ -87,116 +95,120 @@ def get_approved_links(token):
 
 def download_zone(tld, url, token, max_mb=None):
     """
-    Download zone file to zone_cache/{tld}_today.txt.gz.
-    Before downloading, rotate any existing today → yesterday.
-
-    Returns (today_path, yesterday_path) — yesterday_path is None on first run.
-    Returns (None, None) on download failure or size limit exceeded.
+    Download zone file to a temp file in zone_cache.
+    Returns Path to temp gz file, or None on failure.
+    Caller is responsible for deleting the temp file after processing.
     """
-    today_path     = CACHE_DIR / f"{tld}_today.txt.gz"
-    yesterday_path = CACHE_DIR / f"{tld}_yesterday.txt.gz"
-
-    # Rotate: today becomes yesterday before we download the new today
-    if today_path.exists():
-        shutil.copy2(today_path, yesterday_path)
-        log.info(f"  .{tld} rotated to yesterday")
-
-    headers = {"Authorization": f"Bearer {token}"}
+    tmp_path = CACHE_DIR / f"{tld}.zone.tmp.gz"
+    headers  = {"Authorization": f"Bearer {token}"}
     try:
         with requests.get(url, headers=headers, stream=True, timeout=300) as r:
             if r.status_code in (403, 404):
                 log.warning(f"  .{tld} not approved (HTTP {r.status_code})")
-                return None, None
+                return None
             r.raise_for_status()
 
             downloaded = 0
-            with open(today_path, "wb") as f:
-                for chunk in r.iter_content(1 << 20):  # 1MB chunks
+            with open(tmp_path, "wb") as f:
+                for chunk in r.iter_content(1 << 20):   # 1MB chunks
                     f.write(chunk)
                     downloaded += len(chunk)
                     if max_mb and downloaded > max_mb * 1024 * 1024:
                         log.warning(f"  .{tld} exceeds {max_mb}MB limit, skipping")
-                        today_path.unlink(missing_ok=True)
-                        return None, None
+                        tmp_path.unlink(missing_ok=True)
+                        return None
+
+        size_mb = tmp_path.stat().st_size / 1048576
+        log.info(f"  .{tld} downloaded ({size_mb:.1f}MB)")
+        return tmp_path
 
     except Exception as e:
         log.error(f"  .{tld} download failed: {e}")
-        today_path.unlink(missing_ok=True)
-        return None, None
-
-    size_mb = today_path.stat().st_size / 1048576
-    log.info(f"  .{tld} downloaded ({size_mb:.1f}MB)")
-    return today_path, (yesterday_path if yesterday_path.exists() else None)
+        tmp_path.unlink(missing_ok=True)
+        return None
 
 
-# ── Parse & Diff ──────────────────────────────────────────────────────────────
+# ── Parse & Sort ──────────────────────────────────────────────────────────────
 
-def extract_names_to_sorted_file(zone_path, tld, out_path):
+def parse_zone_to_sorted(zone_path, tld, out_path, external_sort=True):
     """
-    Stream-parse a gzip zone file and write sorted base names to out_path.
-    Uses external sort (subprocess) so memory usage stays flat regardless
-    of file size — critical for .com (4GB+ compressed, 175M+ domains).
+    Parse zone file and write sorted unique base names to out_path (plain text).
+
+    external_sort=True  → uses `sort -u` subprocess (O(1) RAM, required for .com)
+    external_sort=False → in-memory sort (fine for small TLDs)
     """
     tld_dot = f".{tld}"
-    opener  = gzip.open if str(zone_path).endswith(".gz") else open
+    opener  = gz_mod.open if str(zone_path).endswith(".gz") else open
 
-    # Write all NS base-names to a temp unsorted file, then sort externally
-    unsorted = out_path.with_suffix(".unsorted")
-    try:
-        with opener(zone_path, "rt", encoding="utf-8", errors="ignore") as zf, \
-             open(unsorted, "w") as uf:
-            for line in zf:
-                parts = line.split()
-                if len(parts) >= 4 and parts[2].upper() == "IN" and parts[3].upper() == "NS":
-                    name = parts[0].rstrip(".").lower()
-                    if name.endswith(tld_dot):
-                        name = name[: -len(tld_dot)]
-                    if name:
-                        uf.write(name + "\n")
+    if external_sort:
+        unsorted = out_path.with_suffix(".unsorted")
+        try:
+            with opener(zone_path, "rt", encoding="utf-8", errors="ignore") as zf, \
+                 open(unsorted, "w") as uf:
+                for line in zf:
+                    parts = line.split()
+                    if len(parts) >= 4 and parts[2].upper() == "IN" and parts[3].upper() == "NS":
+                        name = parts[0].rstrip(".").lower()
+                        if name.endswith(tld_dot):
+                            name = name[: -len(tld_dot)]
+                        if name:
+                            uf.write(name + "\n")
+            subprocess.run(
+                ["sort", "-u", str(unsorted), "-o", str(out_path)],
+                check=True,
+            )
+        finally:
+            unsorted.unlink(missing_ok=True)
+    else:
+        names = set()
+        try:
+            with opener(zone_path, "rt", encoding="utf-8", errors="ignore") as zf:
+                for line in zf:
+                    parts = line.split()
+                    if len(parts) >= 4 and parts[2].upper() == "IN" and parts[3].upper() == "NS":
+                        name = parts[0].rstrip(".").lower()
+                        if name.endswith(tld_dot):
+                            name = name[: -len(tld_dot)]
+                        if name:
+                            names.add(name)
+        except Exception as e:
+            log.error(f"  Parse error ({zone_path.name}): {e}")
+        with open(out_path, "w") as f:
+            for name in sorted(names):
+                f.write(name + "\n")
 
-        # External sort — uses disk, not RAM; handles hundreds of millions of lines
-        subprocess.run(
-            ["sort", "-u", str(unsorted), "-o", str(out_path)],
-            check=True,
-        )
-    finally:
-        unsorted.unlink(missing_ok=True)
+
+# ── Cache helpers ─────────────────────────────────────────────────────────────
+
+def names_cache_path(tld):
+    """Path to cached sorted names file for this TLD."""
+    return CACHE_DIR / f"{tld}.names.gz"
 
 
-def detect_drops_streaming(tld, today_path, yesterday_path, max_drops):
-    """
-    Find dropped domains using sorted file comparison (comm -23).
-    Memory usage is O(1) — safe for .com and any size zone file.
-    dropped = in yesterday but not in today.
-    """
-    log.info(f"  .{tld} extracting & sorting names...")
+def load_cached_names(tld, dest_path):
+    """Decompress cached names to dest_path. Returns True if cache existed."""
+    cache = names_cache_path(tld)
+    if not cache.exists():
+        return False
+    with gz_mod.open(cache, "rb") as f_in, open(dest_path, "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
+    return True
 
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp     = Path(tmp)
-        today_s = tmp / "today_sorted.txt"
-        yest_s  = tmp / "yesterday_sorted.txt"
 
-        extract_names_to_sorted_file(today_path,     tld, today_s)
-        extract_names_to_sorted_file(yesterday_path, tld, yest_s)
+def save_names_cache(tld, sorted_path):
+    """Gzip-compress sorted_path into the cache."""
+    cache = names_cache_path(tld)
+    with open(sorted_path, "rb") as f_in, gz_mod.open(cache, "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
 
-        # comm -23: lines only in file1 (yesterday) = dropped
-        result = subprocess.run(
-            ["comm", "-23", str(yest_s), str(today_s)],
-            capture_output=True, text=True, check=True,
-        )
 
-    dropped = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+# ── Drop detection ────────────────────────────────────────────────────────────
 
-    if not dropped:
-        log.info(f"  .{tld} — no drops detected")
-        return []
-
-    log.info(f"  .{tld} — {len(dropped):,} drops 🎯 (capped at {max_drops})")
-
+def build_drops(tld, dropped_names, max_drops):
+    """Build Supabase-ready records from a list of dropped base names."""
     ts      = date.today().isoformat()
     now     = datetime.utcnow().isoformat()
     tld_dot = f".{tld}"
-
     return [
         {
             "domain":        f"{base}{tld_dot}",
@@ -209,66 +221,77 @@ def detect_drops_streaming(tld, today_path, yesterday_path, max_drops):
             "checked_at":    now,
             "is_arabic_idn": any(ord(c) > 0x0600 for c in base),
         }
-        for base in dropped[:max_drops]
+        for base in dropped_names[:max_drops]
     ]
 
 
-def parse_zone(path, tld):
-    """In-memory parse for small TLDs only (< MAX_FILE_MB)."""
-    names   = set()
-    tld_dot = f".{tld}"
-    opener  = gzip.open if str(path).endswith(".gz") else open
+def process_tld(tld, url, token, max_mb=None, max_drops=500, large=False):
+    """
+    Full pipeline for one TLD:
+      1. Download zone to temp file
+      2. Parse + sort names
+      3. Diff against cached names  →  dropped = in cache but not today
+      4. Update cache with today's names
+      5. Delete raw zone file
+      6. Return drop records
+
+    Cache stores only gzip-compressed sorted names (~600MB for .com vs 8GB+
+    for raw zone files) — this is the key fix for the alternating-0 bug.
+    """
+    zone_tmp = None
     try:
-        with opener(path, "rt", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                parts = line.split()
-                if len(parts) >= 4 and parts[2].upper() == "IN" and parts[3].upper() == "NS":
-                    name = parts[0].rstrip(".").lower()
-                    if name.endswith(tld_dot):
-                        name = name[: -len(tld_dot)]
-                    if name:
-                        names.add(name)
+        zone_tmp = download_zone(tld, url, token, max_mb)
+        if not zone_tmp:
+            return []
+
+        if large:
+            log.info(f"  .{tld} extracting & sorting (external sort)...")
+
+        # Use a temp directory for sorting scratch space
+        with tempfile.TemporaryDirectory(dir=CACHE_DIR) as _tmp:
+            tmp       = Path(_tmp)
+            today_srt = tmp / "today.txt"
+            yest_srt  = tmp / "yesterday.txt"
+
+            # Parse + sort today's zone
+            parse_zone_to_sorted(zone_tmp, tld, today_srt, external_sort=large)
+
+            # Raw zone no longer needed — delete immediately to free disk
+            zone_tmp.unlink(missing_ok=True)
+            zone_tmp = None
+
+            # Diff against cached names from yesterday
+            dropped_names = []
+            has_cache = load_cached_names(tld, yest_srt)
+
+            if has_cache:
+                result = subprocess.run(
+                    ["comm", "-23", str(yest_srt), str(today_srt)],
+                    capture_output=True, text=True, check=True,
+                )
+                dropped_names = [
+                    l.strip() for l in result.stdout.splitlines() if l.strip()
+                ]
+            else:
+                log.info(f"  .{tld} — no cache yet, caching for tomorrow")
+
+            # Always update cache with today's sorted names
+            save_names_cache(tld, today_srt)
+
+        if not dropped_names:
+            if has_cache:
+                log.info(f"  .{tld} — no drops detected")
+            return []
+
+        log.info(f"  .{tld} — {len(dropped_names):,} drops 🎯 (capped at {max_drops})")
+        return build_drops(tld, dropped_names, max_drops)
+
     except Exception as e:
-        log.error(f"  Parse error ({path.name}): {e}")
-    return names
-
-
-def detect_drops(tld, today_path, yesterday_path, max_drops, large=False):
-    """
-    Route to streaming (large TLDs) or in-memory (small TLDs) comparison.
-    """
-    if large:
-        return detect_drops_streaming(tld, today_path, yesterday_path, max_drops)
-
-    log.info(f"  .{tld} parsing...")
-    today_names     = parse_zone(today_path, tld)
-    yesterday_names = parse_zone(yesterday_path, tld)
-    dropped         = list(yesterday_names - today_names)
-
-    if not dropped:
-        log.info(f"  .{tld} — no drops detected")
+        log.error(f"  .{tld} failed: {e}")
         return []
-
-    log.info(f"  .{tld} — {len(dropped):,} drops 🎯 (capped at {max_drops})")
-
-    ts      = date.today().isoformat()
-    now     = datetime.utcnow().isoformat()
-    tld_dot = f".{tld}"
-
-    return [
-        {
-            "domain":        f"{base}{tld_dot}",
-            "tld":           tld_dot,
-            "name":          base,
-            "drop_date":     ts,
-            "source":        "zone_file",
-            "status":        "dropped",
-            "dns_verified":  False,
-            "checked_at":    now,
-            "is_arabic_idn": any(ord(c) > 0x0600 for c in base),
-        }
-        for base in dropped[:max_drops]
-    ]
+    finally:
+        if zone_tmp and zone_tmp.exists():
+            zone_tmp.unlink(missing_ok=True)
 
 
 # ── Supabase ──────────────────────────────────────────────────────────────────
@@ -287,19 +310,6 @@ def save_drops(sb, drops):
         except Exception as e:
             log.error(f"  Supabase batch error: {e}")
     return saved
-
-
-# ── Per-TLD orchestration ─────────────────────────────────────────────────────
-
-def process_tld(tld, url, token, max_mb, max_drops, large=False):
-    """Full pipeline for one TLD. Returns list of drop records."""
-    today_path, yesterday_path = download_zone(tld, url, token, max_mb)
-    if not today_path:
-        return []
-    if not yesterday_path:
-        log.info(f"  .{tld} — first run, cached for tomorrow")
-        return []
-    return detect_drops(tld, today_path, yesterday_path, max_drops, large=large)
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -321,12 +331,15 @@ def main():
 
     total_saved = 0
 
-    # ── Large TLDs: sequential (huge files) ──────────────────────────────────
+    # ── Large TLDs: sequential (external sort needed for .com) ───────────────
     large = {t: u for t, u in links.items() if t in LARGE_TLDS}
-    log.info(f"\nLarge TLDs ({len(large)}): processing sequentially (streaming sort)...")
+    log.info(f"\nLarge TLDs ({len(large)}): processing sequentially...")
     for tld, url in large.items():
         log.info(f"\nProcessing .{tld}...")
-        drops = process_tld(tld, url, token, max_mb=None, max_drops=MAX_DROPS_LARGE, large=True)
+        drops = process_tld(
+            tld, url, token,
+            max_mb=None, max_drops=MAX_DROPS_LARGE, large=True,
+        )
         if drops:
             saved = save_drops(sb, drops)
             total_saved += saved
@@ -338,7 +351,10 @@ def main():
 
     def run_small(item):
         tld, url = item
-        return tld, process_tld(tld, url, token, max_mb=MAX_FILE_MB, max_drops=MAX_DROPS_SMALL)
+        return tld, process_tld(
+            tld, url, token,
+            max_mb=MAX_FILE_MB, max_drops=MAX_DROPS_SMALL, large=False,
+        )
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         futures = {pool.submit(run_small, item): item[0] for item in small.items()}
@@ -352,7 +368,7 @@ def main():
             except Exception as e:
                 log.error(f"  Worker error: {e}")
 
-    # ── Log run ───────────────────────────────────────────────────────────────
+    # ── Summary ───────────────────────────────────────────────────────────────
     elapsed = time.time() - start
     log.info(f"\n{'='*60}")
     log.info(f"Total drops saved: {total_saved:,} in {elapsed/60:.1f} min")
