@@ -30,7 +30,8 @@
 <link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
 <link rel="alternate icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 
 /* ═══════════════════════════════════
@@ -64,7 +65,8 @@
   --blue-light:  #2980B9;
 
   /* Typography */
-  --font:        'Cairo', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font:        'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  --font-ar:     'Noto Sans Arabic', 'Open Sans', Arial, sans-serif;
 
   /* Layout */
   --max:         1200px;
@@ -1036,74 +1038,61 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 
 /* ── HERO V2 — dark, dramatic ── */
 .hero-v2 {
-  background: linear-gradient(140deg, #070C1A 0%, #0D1426 55%, #140A24 100%);
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
   padding: 60px 0 52px;
   position: relative;
-  overflow: hidden;
-}
-.hero-v2::before {
-  content: '';
-  position: absolute;
-  top: -180px; right: -180px;
-  width: 560px; height: 560px;
-  background: radial-gradient(circle, rgba(245,158,11,.09) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-v2::after {
-  content: '';
-  position: absolute;
-  bottom: -120px; left: -120px;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(99,102,241,.06) 0%, transparent 70%);
-  pointer-events: none;
 }
 .hero-live-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(245,158,11,.12);
-  border: 1px solid rgba(245,158,11,.28);
+  background: var(--gold-bg);
+  border: 1px solid #E8D98A;
   border-radius: 100px;
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 700;
-  color: #F59E0B;
+  color: var(--gold);
   letter-spacing: .08em;
   text-transform: uppercase;
   margin-bottom: 28px;
   cursor: default;
 }
 .hero-v2-title {
-  font-size: clamp(34px, 5.2vw, 66px);
-  font-weight: 900;
-  color: #F0F4FC;
-  letter-spacing: -.03em;
-  line-height: 1.1;
+  font-size: clamp(34px, 5.2vw, 62px);
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -.02em;
+  line-height: 1.15;
   margin-bottom: 20px;
   max-width: 760px;
 }
-.hero-v2-accent { color: #F59E0B; }
+.hero-v2-accent { color: var(--gold); }
 .hero-v2-sub {
   font-size: 18px;
-  color: rgba(240,244,252,.55);
+  color: var(--ink3);
   margin-bottom: 36px;
   max-width: 520px;
   line-height: 1.75;
 }
-.hero-v2-sub strong { color: rgba(240,244,252,.9); }
+.hero-v2-sub strong { color: var(--ink); }
 .hero-v2-search {
   display: flex;
-  background: #fff;
-  border-radius: 10px;
+  background: var(--white);
+  border-radius: 6px;
   overflow: hidden;
   max-width: 640px;
-  box-shadow: 0 0 0 2px rgba(245,158,11,.35), 0 24px 64px rgba(0,0,0,.5);
+  border: 1.5px solid var(--border2);
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  transition: border-color .2s;
 }
+.hero-v2-search:focus-within { border-color: var(--gold); }
 .hero-v2-search input {
   flex: 1;
   border: none;
   outline: none;
-  padding: 18px 20px;
+  padding: 16px 20px;
   font-size: 17px;
   font-family: var(--font);
   color: var(--ink);
@@ -1112,11 +1101,11 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 }
 .hero-v2-search input::placeholder { color: var(--ink4); }
 .hero-v2-btn {
-  background: #D97706;
-  color: #fff;
+  background: var(--btn);
+  color: var(--btn-text);
   font-family: var(--font);
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 700;
   padding: 0 28px;
   border: none;
   cursor: pointer;
@@ -1124,7 +1113,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   transition: background .15s;
   flex-shrink: 0;
 }
-.hero-v2-btn:hover { background: #B45309; }
+.hero-v2-btn:hover { background: var(--btn-hover); }
 .hero-tld-row {
   display: flex;
   align-items: center;
@@ -1134,26 +1123,26 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 }
 .hero-tld-label {
   font-size: 13px;
-  color: rgba(240,244,252,.35);
+  color: var(--ink4);
   font-weight: 500;
 }
 .hero-tld-chip {
   font-family: var(--font);
   font-size: 13px;
-  font-weight: 700;
-  color: rgba(240,244,252,.55);
-  background: rgba(240,244,252,.06);
-  border: 1px solid rgba(240,244,252,.12);
-  border-radius: 6px;
+  font-weight: 600;
+  color: var(--ink3);
+  background: var(--white);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
   padding: 4px 12px;
   cursor: pointer;
   transition: all .15s;
   -webkit-tap-highlight-color: transparent;
 }
 .hero-tld-chip:hover {
-  background: rgba(245,158,11,.15);
-  border-color: rgba(245,158,11,.4);
-  color: #F59E0B;
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-bg);
 }
 .hero-proof {
   display: flex;
@@ -1162,17 +1151,17 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   flex-wrap: wrap;
   margin-top: 28px;
   font-size: 13px;
-  color: rgba(240,244,252,.35);
-  font-weight: 600;
+  color: var(--ink4);
+  font-weight: 500;
 }
 .hero-proof-item { display: flex; align-items: center; gap: 6px; }
 .hero-proof-item .check {
   width: 16px; height: 16px;
-  background: rgba(245,158,11,.15);
-  border: 1px solid rgba(245,158,11,.3);
+  background: var(--green-bg);
+  border: 1px solid rgba(42,125,79,.2);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 9px; color: #F59E0B; flex-shrink: 0;
+  font-size: 9px; color: var(--green); flex-shrink: 0;
 }
 
 /* ── SECOND CTA (expired domains tab) ── */
@@ -1182,11 +1171,11 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   gap: 8px;
   font-family: var(--font);
   font-size: 15px;
-  font-weight: 700;
-  color: rgba(240,244,252,.7);
-  background: rgba(240,244,252,.06);
-  border: 1px solid rgba(240,244,252,.14);
-  border-radius: 8px;
+  font-weight: 600;
+  color: var(--ink3);
+  background: var(--white);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
   padding: 10px 20px;
   cursor: pointer;
   transition: all .15s;
@@ -1194,22 +1183,22 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   text-decoration: none;
 }
 .expired-cta-btn:hover {
-  color: #F59E0B;
-  border-color: rgba(245,158,11,.35);
-  background: rgba(245,158,11,.07);
+  color: var(--ink);
+  border-color: var(--border3);
+  background: var(--bg);
 }
 
 /* ── LIVE DROP TICKER ── */
 .ticker-wrap {
-  background: #D97706;
+  background: var(--gold-bg);
   display: flex;
   align-items: center;
-  height: 38px;
+  height: 36px;
   overflow: hidden;
-  border-bottom: 1px solid rgba(0,0,0,.12);
+  border-bottom: 1px solid #E8D98A;
 }
 .ticker-label {
-  background: #92400E;
+  background: var(--gold);
   color: #fff;
   font-size: 11px;
   font-weight: 800;
@@ -1237,10 +1226,10 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 .ticker-inner:hover { animation-play-state: paused; }
 .ticker-item {
   font-size: 13px;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 600;
+  color: var(--ink2);
   padding: 0 20px;
-  border-right: 1px solid rgba(255,255,255,.25);
+  border-right: 1px solid #E8D98A;
   height: 100%;
   display: flex;
   align-items: center;
@@ -1248,12 +1237,14 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   cursor: default;
   white-space: nowrap;
 }
-.ticker-item .t-tld { opacity: .65; font-weight: 600; }
+.ticker-item .t-tld { color: var(--gold); font-weight: 700; }
 .ticker-item .t-score {
   font-size: 11px;
-  background: rgba(255,255,255,.2);
+  background: rgba(184,152,42,.15);
+  color: var(--gold);
   border-radius: 4px;
   padding: 1px 5px;
+  font-weight: 700;
 }
 @keyframes tickerRoll {
   0%   { transform: translateX(0); }
@@ -1344,7 +1335,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         <circle cx="34" cy="20" r="4" fill="#B8982A"/>
         <circle cx="10" cy="52" r="4" fill="#B8982A"/>
         <circle cx="34" cy="84" r="4" fill="#B8982A"/>
-        <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+        <text x="50" y="66" font-family="'Noto Sans Arabic','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
         <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
         <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
         <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
@@ -1373,7 +1364,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
         <circle cx="34" cy="20" r="4" fill="#B8982A"/>
         <circle cx="10" cy="52" r="4" fill="#B8982A"/>
         <circle cx="34" cy="84" r="4" fill="#B8982A"/>
-        <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+        <text x="50" y="66" font-family="'Noto Sans Arabic','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
         <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
         <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
         <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
@@ -1404,7 +1395,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
       <circle cx="34" cy="20" r="4" fill="#B8982A"/>
       <circle cx="10" cy="52" r="4" fill="#B8982A"/>
       <circle cx="34" cy="84" r="4" fill="#B8982A"/>
-      <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+      <text x="50" y="66" font-family="'Noto Sans Arabic','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
       <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
       <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
       <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
@@ -1893,7 +1884,7 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
             <circle cx="34" cy="20" r="4" fill="#B8982A"/>
             <circle cx="10" cy="52" r="4" fill="#B8982A"/>
             <circle cx="34" cy="84" r="4" fill="#B8982A"/>
-            <text x="50" y="66" font-family="'Cairo','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
+            <text x="50" y="66" font-family="'Noto Sans Arabic','Noto Naskh Arabic',serif" font-size="44" font-weight="800" fill="#1D1D1B" letter-spacing="-1">مِيور</text>
             <line x1="198" y1="14" x2="198" y2="78" stroke="#B8982A" stroke-width="1.5"/>
             <text x="212" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" fill="#1D1D1B" letter-spacing="-2.5">Meor</text>
             <text x="330" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="300" fill="#9B9590" letter-spacing="-1">.com</text>
