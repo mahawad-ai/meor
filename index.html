@@ -2310,10 +2310,11 @@ async function fetchDomainsFromSupabase(){
       if (r.status === 'pending') status = 'pending';
       else if (r.status === 'expiring') status = 'expiring';
       return {
-        id:    r.id || i,
-        name:  full,    // full domain: food.qa
-        base:  base,    // base only:  food
-        tld:   tld,     // extension:  .qa
+        id:     r.id || i,
+        domain: full,   // full domain: food.qa  ← used by registerDomain()
+        name:   full,   // alias kept for compatibility
+        base:   base,   // base only:  food
+        tld:    tld,    // extension:  .qa
         year:  r.first_seen_year || 2020,
         bl:    r.backlinks || 0,
         da:    r.moz_da || 0,
