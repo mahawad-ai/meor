@@ -88,6 +88,12 @@ def get_approved_links(token):
         tld = url.split("/")[-1].replace(".zone", "")
         links[tld] = url
     log.info(f"Approved TLDs available: {len(links)}")
+    # Explicitly log whether large TLDs are approved
+    for t in LARGE_TLDS:
+        if t in links:
+            log.info(f"  ✓ .{t} is approved and will be processed")
+        else:
+            log.warning(f"  ✗ .{t} NOT in approved list — skipping")
     return links
 
 
@@ -153,8 +159,9 @@ def parse_zone_to_sorted(zone_path, tld, out_path, external_sort=True):
                             name = name[: -len(tld_dot)]
                         if name:
                             uf.write(name + "\n")
+            # Use the same directory for sort temp files to avoid /tmp space issues
             subprocess.run(
-                ["sort", "-u", str(unsorted), "-o", str(out_path)],
+                ["sort", "-u", "-T", str(unsorted.parent), str(unsorted), "-o", str(out_path)],
                 check=True,
             )
         finally:
@@ -287,7 +294,9 @@ def process_tld(tld, url, token, max_mb=None, max_drops=500, large=False):
         return build_drops(tld, dropped_names, max_drops)
 
     except Exception as e:
-        log.error(f"  .{tld} failed: {e}")
+        import traceback
+        log.error(f"  .{tld} FAILED: {e}")
+        log.error(traceback.format_exc())
         return []
     finally:
         if zone_tmp and zone_tmp.exists():
