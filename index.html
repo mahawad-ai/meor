@@ -1079,34 +1079,61 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
 .hero-v2-sub strong { color: var(--ink); }
 .hero-v2-search {
   display: flex;
+  align-items: stretch;
   background: var(--white);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  max-width: 640px;
-  border: 1.5px solid var(--border2);
-  box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  transition: border-color .2s;
+  max-width: 680px;
+  border: 2px solid var(--border2);
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  transition: border-color .2s, box-shadow .2s;
 }
-.hero-v2-search:focus-within { border-color: var(--gold); }
+.hero-v2-search:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 4px 24px rgba(184,152,42,.15);
+}
 .hero-v2-search input {
   flex: 1;
   border: none;
   outline: none;
-  padding: 16px 20px;
-  font-size: 17px;
+  padding: 20px 24px;
+  font-size: 18px;
   font-family: var(--font);
   color: var(--ink);
   background: transparent;
   min-width: 0;
 }
 .hero-v2-search input::placeholder { color: var(--ink4); }
+.hero-tld-divider {
+  width: 1px;
+  background: var(--border2);
+  margin: 10px 0;
+  flex-shrink: 0;
+}
+.hero-tld-select {
+  border: none;
+  outline: none;
+  background: var(--bg);
+  color: var(--ink2);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 80px;
+  border-left: 1px solid var(--border2);
+  border-right: 1px solid var(--border2);
+  appearance: auto;
+}
+.hero-tld-select:focus { outline: none; background: var(--gold-bg); }
 .hero-v2-btn {
   background: var(--btn);
   color: var(--btn-text);
   font-family: var(--font);
   font-size: 16px;
   font-weight: 700;
-  padding: 0 28px;
+  padding: 0 32px;
   border: none;
   cursor: pointer;
   white-space: nowrap;
@@ -1140,9 +1167,14 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   -webkit-tap-highlight-color: transparent;
 }
 .hero-tld-chip:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: var(--gold-bg);
+  border-color: var(--border3);
+  color: var(--ink);
+  background: var(--bg);
+}
+.hero-tld-chip.active {
+  border-color: var(--btn);
+  color: var(--white);
+  background: var(--btn);
 }
 .hero-proof {
   display: flex;
@@ -1441,10 +1473,11 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
       <div class="hero-v2-search">
         <input type="text" id="newDomainInput"
           data-ar-placeholder="اكتب اسم النطاق الذي تريده..."
-          data-en-placeholder="Search for a new domain name..."
-          placeholder="Search for a new domain name..."
+          data-en-placeholder="Type a domain name..."
+          placeholder="Type a domain name..."
           onkeydown="if(event.key==='Enter')searchNewDomain()">
-        <select id="newDomainTld" style="display:none">
+        <div class="hero-tld-divider"></div>
+        <select id="newDomainTld" class="hero-tld-select">
           <option>.com</option><option>.ae</option><option>.sa</option>
           <option>.net</option><option>.org</option><option>.io</option>
           <option>.store</option><option>.online</option>
@@ -1453,10 +1486,10 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
           data-ar="تحقق من التوفر" data-en="Check Availability">Check Availability</button>
       </div>
 
-      <!-- TLD chips -->
+      <!-- TLD quick-pick chips -->
       <div class="hero-tld-row">
-        <span class="hero-tld-label" data-ar="الأكثر طلباً:" data-en="Popular:">Popular:</span>
-        <button class="hero-tld-chip" onclick="setTld('.com')">.com</button>
+        <span class="hero-tld-label" data-ar="اختر الامتداد:" data-en="Quick pick:">Quick pick:</span>
+        <button class="hero-tld-chip active" onclick="setTld('.com')">.com</button>
         <button class="hero-tld-chip" onclick="setTld('.ae')">.ae</button>
         <button class="hero-tld-chip" onclick="setTld('.sa')">.sa</button>
         <button class="hero-tld-chip" onclick="setTld('.io')">.io</button>
@@ -1949,30 +1982,22 @@ function go(page) {
 ═══════════════════════════════════ */
 function searchNewDomain() {
   const q = document.getElementById('newDomainInput').value.trim();
-  const tldEl = document.getElementById('newDomainTld');
-  // On mobile the select is hidden via CSS but still in DOM — read value safely
-  const tld = (tldEl && tldEl.offsetParent !== null) ? tldEl.value : (tldEl ? tldEl.value : '.com');
   if (!q) { document.getElementById('newDomainInput').focus(); return; }
-  const clean = q.replace(/[^a-zA-Z0-9\u0600-\u06FF\-]/g,'').toLowerCase();
+  const tld = document.getElementById('newDomainTld').value || '.com';
+  // Strip any TLD the user may have typed, then append selected TLD
+  const clean = q.replace(/.[a-zA-Z]+$/, '').replace(/[^a-zA-Z0-9؀-ۿ-]/g,'').toLowerCase();
+  if (!clean) { document.getElementById('newDomainInput').focus(); return; }
   registerDomain(clean + tld);
 }
 
 function setTld(tld) {
+  // Update the visible select in the search bar
   const sel = document.getElementById('newDomainTld');
   if (sel) sel.value = tld;
-  // Highlight active chip
-  document.querySelectorAll('.hint-chip').forEach(c => {
-    c.style.background = '';
-    c.style.color = '';
-    c.style.borderColor = '';
-  });
-  // Find the clicked chip and highlight it
-  document.querySelectorAll('.hint-chip').forEach(c => {
-    if (c.textContent.trim() === tld) {
-      c.style.background = 'var(--ink)';
-      c.style.color = '#fff';
-      c.style.borderColor = 'var(--ink)';
-    }
+  // Highlight the active chip
+  document.querySelectorAll('.hero-tld-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.hero-tld-chip').forEach(c => {
+    if (c.textContent.trim() === tld) c.classList.add('active');
   });
   document.getElementById('newDomainInput').focus();
 }
