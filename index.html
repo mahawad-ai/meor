@@ -1976,7 +1976,7 @@ function searchNewDomain() {
   if (!q) { document.getElementById('newDomainInput').focus(); return; }
   const tld = document.getElementById('newDomainTld').value || '.com';
   // Strip any TLD the user may have typed, then append selected TLD
-  const clean = q.replace(/.[a-zA-Z]+$/, '').replace(/[^a-zA-Z0-9؀-ۿ-]/g,'').toLowerCase();
+  const clean = q.replace(/\.[a-zA-Z]{2,6}$/, '').replace(/[^a-zA-Z0-9\u0600-\u06FF-]/g,'').toLowerCase();
   if (!clean) { document.getElementById('newDomainInput').focus(); return; }
   registerDomain(clean + tld);
 }
