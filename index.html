@@ -1958,7 +1958,7 @@ function renderResults(list) {
       <div class="tbl-val">${d.da} / ${d.tf}</div>
       <div>${stPill(d.status)}</div>
       <div class="tbl-val">${d.wb}</div>
-      <div><button class="reg-btn" onclick="event.stopPropagation();registerDomain('${d.name}')">${lang==='ar'?'سجّل':'Register'}</button></div>
+      <div><button class="reg-btn" onclick="event.stopPropagation();registerDomain('${d.domain}')">${lang==='ar'?'سجّل':'Register'}</button></div>
     </div>`).join('');
   if (list.length) renderDetail(list[0]);
 }
@@ -2000,7 +2000,7 @@ function renderDetail(d) {
       <div class="dp-metric"><span class="dp-mk">${lang==='ar'?'السبام':'Spam'}</span><span class="dp-mv" style="color:${d.spam<15?'var(--green)':'var(--red)'}">${d.spam}%</span></div>
     </div>
     <div class="dp-actions">
-      <button class="dp-btn dp-btn-primary" onclick="registerDomain('${d.name}')">${lang==='ar'?'سجّل هذا النطاق':'Register This Domain'}</button>
+      <button class="dp-btn dp-btn-primary" onclick="registerDomain('${d.domain}')">${lang==='ar'?'سجّل هذا النطاق':'Register This Domain'}</button>
       <button class="dp-btn dp-btn-sec" onclick="loadDetail(${d.id})">${lang==='ar'?'عرض التفاصيل الكاملة':'View full details'}</button>
     </div>`;
 }
@@ -2025,7 +2025,7 @@ function loadDetail(id) {
   if(aiEl){ const txt = lang==='ar'?d.ar:d.en; const parts = txt.split('.'); aiEl.innerHTML = `<strong>${parts[0]}.</strong> ${parts.slice(1).join('.')}`; }
   // Update register button onclick
   const regBtns = document.querySelectorAll('#dd-register-btn, #sidebar-reg-btn');
-  regBtns.forEach(btn => btn.onclick = () => registerDomain(d.name));
+  regBtns.forEach(btn => btn.onclick = () => registerDomain(d.domain));
   go('detail');
 }
 
