@@ -963,8 +963,9 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   .search-btn{border-radius:var(--r-sm)!important;width:100%;min-width:auto;padding:12px}
   .search-box{border-radius:var(--r-sm)}
   /* new hero search bar on mobile */
-  #newDomainInput{font-size:16px!important;padding:15px 8px!important}
-  #newDomainInput+select+button{font-size:15px!important;padding:15px 20px!important}
+  #newDomainInput{font-size:16px!important;padding:15px 16px!important}
+  .hero-tld-select{font-size:16px!important;padding:12px 16px!important;width:100%!important;border-left:none!important;border-right:none!important;border-top:1px solid var(--border2)!important;border-bottom:1px solid var(--border2)!important}
+  .hero-v2-btn{font-size:16px!important;padding:15px 20px!important;width:100%}
 
   /* services — 2 col on mobile */
   .svc-grid{grid-template-columns:repeat(2,1fr)!important}
@@ -1348,7 +1349,8 @@ input[type=range]{width:100%;accent-color:var(--ink);height:3px;cursor:pointer}
   .hero-v2-sub { font-size: 16px; margin-bottom: 24px; }
   .hero-v2-search { flex-direction: column; border-radius: 10px; }
   .hero-v2-search input { padding: 15px 16px; font-size: 16px; }
-  .hero-v2-btn { padding: 14px 20px; border-radius: 0 0 10px 10px; }
+  .hero-tld-divider { display: none; }
+  .hero-v2-btn { padding: 14px 20px; border-radius: 0 0 8px 8px; width: 100%; }
   .hero-proof { gap: 14px; margin-top: 20px; }
   .stats-inner-v2 { flex-wrap: wrap; }
   .stat-v2 { flex: 1 1 45%; border: none!important; padding: 14px 12px; }
@@ -1945,14 +1947,11 @@ function registerDomain(domainName) {
   if (!domainName) return;
   const url = 'https://www.secureserver.net/products/domain-registration/find?plid=600707&domainToCheck='
     + encodeURIComponent(domainName);
-  // Use anchor element click — works on mobile (window.open blocked as popup)
-  const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  // window.open called synchronously inside a user-gesture handler works on
+  // iOS Safari and Android Chrome. If the browser blocks it anyway (rare),
+  // fall back to navigating the current tab.
+  const w = window.open(url, '_blank', 'noopener,noreferrer');
+  if (!w) window.location.href = url;
 }
 
 /* ═══════════════════════════════════
