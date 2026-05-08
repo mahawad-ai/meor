@@ -1,10 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /assessment
+Disallow: /assessment.html
+Disallow: /api/
 
-# Sitemap location
-Sitemap: https://meor.com/sitemap.xml
-
-# Block any sensitive files
+# Block env files
 Disallow: /env
 Disallow: /env.txt
 Disallow: /.env

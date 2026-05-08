@@ -1,24 +1,15 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/index.html" }
+    { "source": "/assessment", "destination": "/assessment.html" },
+    { "source": "/services",   "destination": "/services.html" }
   ],
   "headers": [
     {
-      "source": "/sitemap.xml",
+      "source": "/(.*)",
       "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/xml; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/robots.txt",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options",        "value": "DENY" },
+        { "key": "Referrer-Policy",        "value": "strict-origin-when-cross-origin" }
       ]
     }
   ]

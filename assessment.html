@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessment — meor</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ─────────────────────────────────────────────────── */
+:root {
+  --bg:        #F9F9F8;
+  --surface:   #FFFFFF;
+  --ink:       #0F0F0F;
+  --ink-2:     #4A4A4A;
+  --ink-3:     #909090;
+  --border:    #E5E5E5;
+  --border-2:  #D0D0D0;
+  --green:     #18794E;
+  --green-bg:  #EDFBF1;
+  --green-mid: #86EFAC;
+  --r-sm:      8px;
+  --r-lg:      12px;
+  --font:      'Inter', system-ui, -apple-system, sans-serif;
+  --font-ar:   'Noto Sans Arabic', system-ui, sans-serif;
+  --ease:      200ms ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+html[lang="ar"] body { font-family: var(--font-ar); }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── TOP BAR ─────────────────────────────────────────────────── */
+.top-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.brand {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1;
+}
+.brand-dot { color: var(--green); }
+.lang-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: border-color var(--ease), color var(--ease);
+  min-height: 32px;
+  font-family: inherit;
+}
+.lang-btn:hover { border-color: var(--green); color: var(--green); }
+.progress-track {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width 300ms ease;
+}
+.step-label {
+  font-size: 12px;
+  color: var(--ink-3);
+  padding: 8px 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── MAIN ────────────────────────────────────────────────────── */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 48px 24px 120px;
+}
+.step-wrap {
+  width: 100%;
+  max-width: 640px;
+}
+#step-content { outline: none; }
+
+/* ── STEP HEADER ─────────────────────────────────────────────── */
+.step-header { margin-bottom: 32px; }
+.step-title {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.step-sub {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+/* ── OPTION CARDS (industry, scale, budget, timeline) ─────────── */
+.options { display: flex; flex-direction: column; gap: 10px; }
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.opt-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color var(--ease), background var(--ease);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: start;
+  min-height: 44px;
+  width: 100%;
+  font-family: inherit;
+}
+.opt-card:hover { border-color: var(--border-2); }
+.opt-card.selected {
+  border-color: var(--green);
+  background: var(--green-bg);
+}
+.opt-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-2);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: border-color var(--ease), background var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.opt-card.selected .opt-check {
+  border-color: var(--green);
+  background: var(--green);
+}
+.opt-check-icon {
+  display: none;
+  width: 10px;
+  height: 10px;
+}
+.opt-card.selected .opt-check-icon { display: block; }
+.opt-body { flex: 1; }
+.opt-name {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.opt-desc {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+/* Scale options in a row */
+.options-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+/* Single-line option cards (budget, timeline) */
+.opt-card.compact { padding: 13px 16px; align-items: center; }
+
+/* ── PAIN STEP ───────────────────────────────────────────────── */
+.pain-textarea-wrap { margin-bottom: 28px; }
+.field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.pain-textarea {
+  width: 100%;
+  min-height: 108px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  resize: vertical;
+  line-height: 1.6;
+  transition: border-color var(--ease);
+}
+.pain-textarea:focus { border-color: var(--green); }
+.pain-textarea::placeholder { color: var(--ink-3); }
+.pain-divider {
+  font-size: 13px;
+  color: var(--ink-3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pain-divider::before, .pain-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.checkboxes { display: flex; flex-direction: column; gap: 8px; }
+.chk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: var(--surface);
+  transition: border-color var(--ease), background var(--ease);
+  text-align: start;
+  font-family: inherit;
+  min-height: 44px;
+  width: 100%;
+}
+.chk-item:hover { border-color: var(--border-2); }
+.chk-item.checked { border-color: var(--green); background: var(--green-bg); }
+.chk-box {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-2);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--ease), background var(--ease);
+}
+.chk-item.checked .chk-box {
+  border-color: var(--green);
+  background: var(--green);
+}
+.chk-icon { display: none; width: 11px; height: 11px; }
+.chk-item.checked .chk-icon { display: block; }
+.chk-text { font-size: 14px; color: var(--ink); line-height: 1.4; }
+
+/* ── VOLUME SLIDER ───────────────────────────────────────────── */
+.vol-display {
+  font-size: 52px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.vol-sublabel {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-bottom: 28px;
+}
+.slider-wrap { margin-bottom: 20px; }
+.range-input {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(to right, var(--green) 0%, var(--green) var(--pct, 25%), var(--border) var(--pct, 25%), var(--border) 100%);
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--green);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: border-color var(--ease);
+}
+.range-input::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--green);
+  cursor: pointer;
+}
+.range-input:focus::-webkit-slider-thumb { border-color: var(--ink); }
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.vol-helper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  min-height: 60px;
+  transition: opacity var(--ease);
+}
+
+/* ── QUALIFY (2 question groups) ─────────────────────────────── */
+.qualify-group { margin-bottom: 32px; }
+.qualify-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* ── INSIGHT CARD ────────────────────────────────────────────── */
+.insight-card {
+  background: var(--green-bg);
+  border: 1px solid #A7F3C0;
+  border-radius: var(--r-lg);
+  padding: 24px 24px 20px;
+  margin-bottom: 36px;
+}
+.insight-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.insight-headline {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.insight-body {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+/* ── CONTACT FORM ────────────────────────────────────────────── */
+.contact-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+.field-group { margin-bottom: 16px; }
+.field-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color var(--ease);
+  min-height: 44px;
+}
+.field-input:focus { border-color: var(--green); }
+.field-input::placeholder { color: var(--ink-3); }
+.field-input.invalid { border-color: #E53E3E; }
+.field-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  resize: vertical;
+  min-height: 88px;
+  line-height: 1.6;
+  transition: border-color var(--ease);
+}
+.field-textarea:focus { border-color: var(--green); }
+.field-textarea::placeholder { color: var(--ink-3); }
+.submit-error {
+  font-size: 14px;
+  color: #E53E3E;
+  margin-top: 10px;
+  display: none;
+}
+
+/* ── DONE STATE ──────────────────────────────────────────────── */
+.done-wrap {
+  text-align: center;
+  padding: 48px 0;
+}
+.done-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--green-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: var(--green);
+}
+.done-icon svg { width: 26px; height: 26px; }
+.done-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin-bottom: 14px;
+}
+.done-body {
+  font-size: 16px;
+  color: var(--ink-2);
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 20px;
+}
+.done-ref {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 6px 14px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* ── FOOTER BAR ──────────────────────────────────────────────── */
+.foot-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 10;
+}
+.foot-back {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: border-color var(--ease), color var(--ease);
+  min-height: 44px;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.foot-back:hover { border-color: var(--border-2); color: var(--ink); }
+.foot-back svg { width: 14px; height: 14px; }
+.foot-back.hidden { visibility: hidden; pointer-events: none; }
+.foot-time {
+  font-size: 13px;
+  color: var(--ink-3);
+  flex: 1;
+  text-align: center;
+}
+.foot-cont {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  min-height: 44px;
+  transition: opacity var(--ease);
+}
+.foot-cont:disabled { opacity: 0.38; cursor: not-allowed; }
+.foot-cont:not(:disabled):hover { opacity: 0.88; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 540px) {
+  .top-bar { padding: 12px 16px 0; }
+  main { padding: 32px 16px 100px; }
+  .step-title { font-size: 22px; }
+  .options-grid { grid-template-columns: 1fr; }
+  .options-row { grid-template-columns: 1fr; }
+  .foot-bar { padding: 12px 16px; }
+  .foot-time { display: none; }
+  .vol-display { font-size: 42px; }
+  .insight-card { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="top-bar" role="banner">
+  <div class="top-row">
+    <a href="/" class="brand" aria-label="Back to meor home">meor<span class="brand-dot">.</span></a>
+    <button class="lang-btn" id="lang-btn" aria-label="Switch to Arabic">العربية</button>
+  </div>
+  <div class="progress-track" role="none">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+  <p class="step-label" id="step-label" aria-live="polite" aria-atomic="true">Step 1 of 5</p>
+</header>
+
+<!-- STEP CONTENT -->
+<main>
+  <div class="step-wrap">
+    <div id="step-content" tabindex="-1" aria-live="polite" aria-atomic="false"></div>
+  </div>
+</main>
+
+<!-- FOOTER BAR -->
+<div class="foot-bar" id="foot-bar" role="navigation" aria-label="Step navigation">
+  <button class="foot-back hidden" id="back-btn" aria-label="Go back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+    <span id="back-label">Back</span>
+  </button>
+  <span class="foot-time" id="foot-time">Takes about 2 minutes</span>
+  <button class="foot-cont" id="cont-btn" disabled>
+    <span id="cont-label">Continue</span>
+  </button>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────────────────────────────────── */
+const SUBMIT_URL = '/api/submit';
+
+/* ─────────────────────────────────────────────────────────────────────
+   STEP IDs
+───────────────────────────────────────────────────────────────────── */
+const S = { INDUSTRY:0, SCALE:1, PAIN:2, VOLUME:3, QUALIFY:4, CONTACT:5 };
+
+/* ─────────────────────────────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────────────────────────────── */
+let lang = localStorage.getItem('meor_lang') || 'en';
+let stepIdx = 0;
+let isDone = false;
+
+const state = {
+  industry: null,
+  scale: null,
+  painText: '',
+  pains: [],
+  volume: 50,
+  budget: null,
+  timeline: null,
+  name: '',
+  business: '',
+  whatsapp: '',
+  notes: ''
+};
+
+/* ─────────────────────────────────────────────────────────────────────
+   COPY
+───────────────────────────────────────────────────────────────────── */
+const T = {
+  en: {
+    langBtn: 'العربية',
+    stepOf: (n,t) => `Step ${n} of ${t}`,
+    back: 'Back',
+    timeEst: 'Takes about 2 minutes',
+    continue: 'Continue',
+    getInsight: 'Get my insight',
+    sending: 'Sending...',
+
+    /* Step 1 */
+    indTitle: 'Which best describes your business?',
+    indSub: "We'll tailor everything that follows to what you actually do — no generic questions.",
+    industries: [
+      { id:'clinic',     name:'Clinic or medical practice',    desc:'Dental, medical, dermatology, similar' },
+      { id:'ecom',       name:'E-commerce or online shop',     desc:'Instagram, WhatsApp, or website-based' },
+      { id:'restaurant', name:'Restaurant, café, or food',     desc:'Dine-in, delivery, or both' },
+      { id:'realestate', name:'Real estate or brokerage',      desc:'Sales, rentals, or development' },
+      { id:'factory',    name:'Factory or manufacturing',      desc:'Workshop, production, industrial' },
+    ],
+
+    /* Step 1.5 */
+    scaleTitle: 'How big is your operation?',
+    scaleSub: "We'll tailor everything that follows to what you actually do — no generic questions.",
+    scales: [
+      { id:'small', name:'Small (5–30 people)' },
+      { id:'mid',   name:'Mid-size (30–150 people)' },
+      { id:'large', name:'Larger (150+)' },
+    ],
+
+    /* Step 2 — pain */
+    painHeaders: {
+      clinic:     "What's slowing your clinic down?",
+      ecom:       "What's slowing your shop down?",
+      restaurant: "What's slowing your restaurant down?",
+      realestate: "What's slowing your brokerage down?",
+      'factory-small': "What's slowing your workshop down?",
+      'factory-mid':   "What's slowing your factory down?",
+    },
+    painSub: "Tell us in your own words. The recommendations below are just prompts — pick any that fit, or skip them entirely.",
+    painLabel: 'In your own words, what\'s slowing your business down most right now?',
+    painPlaceholder: 'Be as specific as you want — the more detail, the sharper our recommendation.',
+    painDivider: 'Common patterns we hear (optional)',
+    checkboxLists: {
+      clinic: [
+        'Receptionist is buried in WhatsApp messages all day',
+        'Patients message after hours and we miss them',
+        'No-shows are costing us real money',
+        'We rarely ask patients for Google reviews',
+        'Foreign patients are hard to handle in their language',
+        "We can't track which campaigns actually bring patients in",
+      ],
+      ecom: [
+        'Instagram and WhatsApp DMs are out of control',
+        'Customers ask the same product questions over and over',
+        "We lose orders because we don't respond fast enough",
+        'Cart abandonment — people ask, then disappear',
+        'Hard to follow up after orders ship',
+        'We don\'t systematically ask for reviews',
+      ],
+      restaurant: [
+        'WhatsApp orders are chaotic and prone to mistakes',
+        'Reservation requests come at all hours',
+        'Customers ask about menu, hours, location all day',
+        'We struggle to respond to bad reviews quickly',
+        'Repeat customer follow-up barely happens',
+        'Coordinating with delivery platforms is exhausting',
+      ],
+      realestate: [
+        'Lead inquiries pile up before we can qualify them',
+        'Buyers ask the same property questions repeatedly',
+        'Hard to keep listing descriptions fresh and consistent',
+        'We lose leads to faster-responding competitors',
+        'Hard to follow up with past clients for referrals',
+        'After-hours inquiries from serious buyers go cold',
+      ],
+      'factory-small': [
+        'Customer quotes take days to put together',
+        'Order status updates eat up the office time',
+        'WhatsApp orders from clients get lost or miscounted',
+        'Vendor and supplier coordination is all manual',
+        "Hard to track which jobs are actually profitable",
+        "We can't keep up with new client inquiries",
+      ],
+      'factory-mid': [
+        'Sales team spends hours on repetitive client questions',
+        'Production status updates require constant manual chasing',
+        'Quote and proposal generation is a bottleneck',
+        'Documentation and SOPs are scattered, hard to find',
+        'Maintenance and downtime tracking is mostly on paper',
+        "Hard to onboard new clients without senior staff time",
+      ],
+    },
+
+    /* Step 3 */
+    volTitle: 'How many messages or calls hit your team in a typical day?',
+    volSub: 'Across WhatsApp, Instagram, calls, emails — your best guess is fine.',
+    volLabel: 'Daily inbound volume',
+    helpers: [
+      { max:25,  text:'Manageable. We can still help — but the value comes more from quality than scale.' },
+      { max:75,  text:'This is where most businesses we work with sit. Real time savings start here.' },
+      { max:150, text:"You're past the point where one person can keep up. Automation is no longer optional." },
+      { max:201, text:"At this volume, you're likely losing real revenue every week from missed messages." },
+    ],
+
+    /* Step 4 */
+    qualTitle: 'A couple of practical questions.',
+    qualSub: "No wrong answers. This helps us know if we're a fit before we waste your time.",
+    budgetLabel: 'When you think about solving this, you\'re thinking:',
+    budgets: [
+      { id:'explore', name:'Just exploring' },
+      { id:'light',   name:'Have something small set aside' },
+      { id:'real',    name:'Ready to invest properly' },
+      { id:'unsure',  name:'Need to understand cost first' },
+    ],
+    timelineLabel: 'When would you want this live?',
+    timelines: [
+      { id:'asap', name:'Yesterday' },
+      { id:'30',   name:'Within a month' },
+      { id:'90',   name:'Within 3 months' },
+      { id:'no',   name:'No rush' },
+    ],
+
+    /* Step 5 */
+    insightTitle: "Here's what we think — and how to keep talking.",
+    insightTag: 'Based on your answers',
+    contactTitle: 'Where should we reach you?',
+    fields: {
+      name:      { label:'Your name', placeholder:'Your name', required:true },
+      business:  { label:'Business name', placeholder:'Business name', required:true },
+      whatsapp:  { label:'WhatsApp number', placeholder:'+20 10x xxx xxxx', required:true },
+      notes:     { label:'Anything else? (optional)', placeholder:'A specific situation, deadline, or anything that helps us prepare.', required:false },
+    },
+    submitErr: 'Something went wrong. Please try again.',
+
+    /* Done */
+    doneTitle: "Got it. We'll be in touch.",
+    doneBody: "We review every submission ourselves — no automated chatbot. Expect a personal message on WhatsApp within 24 hours, in your language.",
+
+    indNames: {
+      clinic:'clinic', ecom:'e-commerce business',
+      restaurant:'restaurant', realestate:'brokerage', factory:'factory'
+    },
+  },
+
+  ar: {
+    langBtn: 'English',
+    stepOf: (n,t) => `الخطوة ${n} من ${t}`,
+    back: 'رجوع',
+    timeEst: 'تستغرق دقيقتين تقريباً',
+    continue: 'متابعة',
+    getInsight: 'احصل على تقييمي',
+    sending: 'جارٍ الإرسال...',
+
+    indTitle: 'ما الذي يصف نشاطك بشكل أفضل؟',
+    indSub: 'سنخصص كل ما يلي بناءً على نوع نشاطك — بدون أسئلة عامة.',
+    industries: [
+      { id:'clinic',     name:'عيادة أو مركز طبي',           desc:'أسنان، طب عام، جلدية، وما شابه' },
+      { id:'ecom',       name:'تجارة إلكترونية أو متجر أونلاين', desc:'بيع عبر إنستغرام، واتساب، أو موقع' },
+      { id:'restaurant', name:'مطعم، كافيه، أو طعام',         desc:'صالة، توصيل، أو الاثنين' },
+      { id:'realestate', name:'عقارات أو وساطة',              desc:'بيع، إيجار، أو تطوير' },
+      { id:'factory',    name:'مصنع أو ورشة',                 desc:'إنتاج، تصنيع، صناعي' },
+    ],
+
+    scaleTitle: 'ما حجم العملية؟',
+    scaleSub: 'سنخصص كل ما يلي بناءً على نوع نشاطك — بدون أسئلة عامة.',
+    scales: [
+      { id:'small', name:'صغيرة (5–30 شخص)' },
+      { id:'mid',   name:'متوسطة (30–150 شخص)' },
+      { id:'large', name:'كبيرة (150+)' },
+    ],
+
+    painHeaders: {
+      clinic:     'ما الذي يبطئ عيادتك؟',
+      ecom:       'ما الذي يبطئ متجرك؟',
+      restaurant: 'ما الذي يبطئ مطعمك؟',
+      realestate: 'ما الذي يبطئ مكتبك العقاري؟',
+      'factory-small': 'ما الذي يبطئ ورشتك؟',
+      'factory-mid':   'ما الذي يبطئ مصنعك؟',
+    },
+    painSub: 'أخبرنا بكلماتك الخاصة. الخيارات أدناه مجرد اقتراحات — اختر ما يناسبك، أو تجاوزها تماماً.',
+    painLabel: 'بكلماتك الخاصة، ما الذي يبطئ نشاطك أكثر شيء حالياً؟',
+    painPlaceholder: 'كن محدداً قدر ما تريد — كلما زادت التفاصيل، كانت توصيتنا أدق.',
+    painDivider: 'أنماط شائعة نسمعها (اختياري)',
+    checkboxLists: {
+      clinic: [
+        'موظف الاستقبال غارق في رسائل واتساب طوال اليوم',
+        'مرضى يراسلون بعد ساعات العمل ونفقدهم',
+        'حالات عدم الحضور تكلفنا مالاً حقيقياً',
+        'نادراً ما نطلب تقييمات على جوجل',
+        'صعوبة التعامل مع المرضى الأجانب بلغتهم',
+        'لا نعرف أي حملة إعلانية تجلب لنا مرضى فعلاً',
+      ],
+      ecom: [
+        'رسائل إنستغرام وواتساب خارجة عن السيطرة',
+        'العملاء يسألون نفس الأسئلة عن المنتجات مراراً',
+        'نخسر طلبات لأننا لا نرد بسرعة كافية',
+        'العميل يسأل ثم يختفي قبل إتمام الشراء',
+        'صعوبة المتابعة بعد الشحن',
+        'لا نطلب تقييمات بشكل منهجي',
+      ],
+      restaurant: [
+        'طلبات الواتساب فوضوية وعرضة للأخطاء',
+        'طلبات الحجز تأتي في أي وقت',
+        'العملاء يسألون عن المنيو والموعد والموقع طوال اليوم',
+        'صعوبة الرد على التقييمات السلبية بسرعة',
+        'متابعة العملاء الدائمين شبه معدومة',
+        'التنسيق مع تطبيقات التوصيل مرهق',
+      ],
+      realestate: [
+        'استفسارات العملاء تتراكم قبل أن نتمكن من تأهيلها',
+        'المشترون يسألون نفس أسئلة العقارات مراراً',
+        'صعوبة تحديث أوصاف العقارات بشكل متناسق',
+        'نخسر عملاء لمنافسين يردون أسرع',
+        'صعوبة المتابعة مع العملاء السابقين للترشيحات',
+        'استفسارات ما بعد الدوام من مشترين جادين تذهب سدى',
+      ],
+      'factory-small': [
+        'تجهيز عروض الأسعار يأخذ أياماً',
+        'تحديثات حالة الطلب تستهلك وقت المكتب',
+        'طلبات الواتساب من العملاء تضيع أو تُعدّ بشكل خاطئ',
+        'التنسيق مع الموردين كله يدوي',
+        'صعوبة تتبع أي وظائف فعلاً مربحة',
+        'لا نواكب الاستفسارات الجديدة من العملاء',
+      ],
+      'factory-mid': [
+        'فريق المبيعات يقضي ساعات في أسئلة العملاء المتكررة',
+        'تحديثات الإنتاج تتطلب متابعة يدوية مستمرة',
+        'إعداد العروض والمقترحات هو عنق الزجاجة',
+        'الوثائق وإجراءات التشغيل متفرقة وصعبة الإيجاد',
+        'تتبع الصيانة والتعطل غالباً على الورق',
+        'صعوبة استقبال عملاء جدد دون وقت من كبار الموظفين',
+      ],
+    },
+
+    volTitle: 'كم رسالة أو مكالمة تصل فريقك في يوم عادي؟',
+    volSub: 'عبر واتساب وإنستغرام والمكالمات والإيميل — تخمينك جيد.',
+    volLabel: 'حجم الرسائل اليومي',
+    helpers: [
+      { max:25,  text:'يمكن إدارته. نقدر نساعد — لكن القيمة تكون من الجودة أكثر من الحجم.' },
+      { max:75,  text:'هنا يقع معظم عملائنا. توفير الوقت الحقيقي يبدأ من هنا.' },
+      { max:150, text:'تجاوزت النقطة التي يستطيع شخص واحد فيها المواكبة. الأتمتة لم تعد اختياراً.' },
+      { max:201, text:'بهذا الحجم، أنت على الأرجح تخسر إيرادات حقيقية كل أسبوع من الرسائل الفائتة.' },
+    ],
+
+    qualTitle: 'سؤالان عمليان.',
+    qualSub: 'لا توجد إجابة خاطئة. هذا يساعدنا على معرفة إن كنا مناسبين قبل أن نضيع وقتك.',
+    budgetLabel: 'عندما تفكر في الحل، أنت تفكر:',
+    budgets: [
+      { id:'explore', name:'مجرد استكشاف' },
+      { id:'light',   name:'لدي ميزانية صغيرة' },
+      { id:'real',    name:'مستعد للاستثمار بشكل صحيح' },
+      { id:'unsure',  name:'أحتاج فهم التكلفة أولاً' },
+    ],
+    timelineLabel: 'متى تريد التشغيل؟',
+    timelines: [
+      { id:'asap', name:'بالأمس' },
+      { id:'30',   name:'خلال شهر' },
+      { id:'90',   name:'خلال 3 أشهر' },
+      { id:'no',   name:'لا استعجال' },
+    ],
+
+    insightTitle: 'هذا ما نراه — وكيف نكمل الحديث.',
+    insightTag: 'بناءً على إجاباتك',
+    contactTitle: 'كيف نتواصل معك؟',
+    fields: {
+      name:     { label:'اسمك', placeholder:'اسمك', required:true },
+      business: { label:'اسم النشاط', placeholder:'اسم النشاط', required:true },
+      whatsapp: { label:'رقم الواتساب', placeholder:'+20 10x xxx xxxx', required:true },
+      notes:    { label:'أي شيء آخر؟ (اختياري)', placeholder:'موقف معين، موعد نهائي، أو أي شيء يساعدنا في التحضير.', required:false },
+    },
+    submitErr: 'حدث خطأ. حاول مجدداً.',
+
+    doneTitle: 'تم. سنتواصل معك.',
+    doneBody: 'نراجع كل طلب بأنفسنا — بدون روبوت تلقائي. توقع رسالة شخصية على واتساب خلال 24 ساعة، بلغتك.',
+
+    indNames: {
+      clinic:'عيادة', ecom:'متجر', restaurant:'مطعم', realestate:'مكتب عقاري', factory:'مصنع'
+    },
+  }
+};
+
+/* ─────────────────────────────────────────────────────────────────────
+   STEP SEQUENCE
+───────────────────────────────────────────────────────────────────── */
+function getSeq() {
+  return state.industry === 'factory'
+    ? [S.INDUSTRY, S.SCALE, S.PAIN, S.VOLUME, S.QUALIFY, S.CONTACT]
+    : [S.INDUSTRY, S.PAIN, S.VOLUME, S.QUALIFY, S.CONTACT];
+}
+function totalSteps() { return getSeq().length; }
+function curStep()    { return getSeq()[stepIdx]; }
+function dispStep()   { return stepIdx + 1; }
+
+/* ─────────────────────────────────────────────────────────────────────
+   VALIDATION
+───────────────────────────────────────────────────────────────────── */
+function isValid() {
+  switch (curStep()) {
+    case S.INDUSTRY: return !!state.industry;
+    case S.SCALE:    return !!state.scale;
+    case S.PAIN:     return state.painText.trim().length > 0 || state.pains.length > 0;
+    case S.VOLUME:   return true;
+    case S.QUALIFY:  return !!state.budget && !!state.timeline;
+    case S.CONTACT:  return state.name.trim() && state.business.trim() && state.whatsapp.trim().length >= 6;
+  }
+  return false;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   RENDER
+───────────────────────────────────────────────────────────────────── */
+function render() {
+  if (isDone) return;
+  const c = T[lang];
+  const total = totalSteps();
+  const disp  = dispStep();
+  const pct   = (disp / total) * 100;
+
+  /* progress */
+  document.getElementById('progress-fill').style.width = pct + '%';
+  const pb = document.querySelector('.progress-track');
+  pb.setAttribute('aria-valuenow', disp);
+  pb.setAttribute('aria-valuemax', total);
+  pb.setAttribute('aria-label', c.stepOf(disp, total));
+  document.getElementById('step-label').textContent = c.stepOf(disp, total);
+
+  /* lang button */
+  document.getElementById('lang-btn').textContent = c.langBtn;
+
+  /* step content */
+  const el = document.getElementById('step-content');
+  el.innerHTML = buildStepHTML(curStep());
+  wireStep(curStep());
+
+  /* footer */
+  document.getElementById('back-label').textContent = c.back;
+  document.getElementById('foot-time').textContent  = c.timeEst;
+  const contLabel = curStep() === S.CONTACT ? c.getInsight : c.continue;
+  document.getElementById('cont-label').textContent = contLabel;
+  document.getElementById('cont-btn').disabled = !isValid();
+  const backBtn = document.getElementById('back-btn');
+  backBtn.classList.toggle('hidden', stepIdx === 0);
+  backBtn.setAttribute('aria-hidden', stepIdx === 0);
+
+  /* focus step content for screen readers */
+  el.focus({ preventScroll: true });
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   BUILD STEP HTML
+───────────────────────────────────────────────────────────────────── */
+function buildStepHTML(step) {
+  const c = T[lang];
+  switch (step) {
+    case S.INDUSTRY: return buildIndustryHTML(c);
+    case S.SCALE:    return buildScaleHTML(c);
+    case S.PAIN:     return buildPainHTML(c);
+    case S.VOLUME:   return buildVolumeHTML(c);
+    case S.QUALIFY:  return buildQualifyHTML(c);
+    case S.CONTACT:  return buildContactHTML(c);
+  }
+  return '';
+}
+
+function optCardHTML(item, selected, showDesc) {
+  const sel = selected ? 'selected' : '';
+  const desc = showDesc && item.desc ? `<div class="opt-desc">${item.desc}</div>` : '';
+  return `
+    <button class="opt-card ${sel}" data-id="${item.id}" aria-pressed="${!!selected}">
+      <div class="opt-check" aria-hidden="true">
+        <svg class="opt-check-icon" viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="1 5 4 8 11 1"/>
+        </svg>
+      </div>
+      <div class="opt-body">
+        <div class="opt-name">${item.name}</div>
+        ${desc}
+      </div>
+    </button>`;
+}
+
+function buildIndustryHTML(c) {
+  const items = c.industries.map(ind =>
+    optCardHTML(ind, state.industry === ind.id, true)
+  ).join('');
+  return `
+    <div class="step-header">
+      <h2 class="step-title">${c.indTitle}</h2>
+      <p class="step-sub">${c.indSub}</p>
+    </div>
+    <div class="options-grid" role="group" aria-label="${c.indTitle}">${items}</div>`;
+}
+
+function buildScaleHTML(c) {
+  const items = c.scales.map(s =>
+    `<button class="opt-card compact ${state.scale === s.id ? 'selected' : ''}" data-id="${s.id}" aria-pressed="${state.scale === s.id}">
+      <div class="opt-check" aria-hidden="true">
+        <svg class="opt-check-icon" viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 5 4 8 11 1"/></svg>
+      </div>
+      <div class="opt-body"><div class="opt-name">${s.name}</div></div>
+    </button>`
+  ).join('');
+  return `
+    <div class="step-header">
+      <h2 class="step-title">${c.scaleTitle}</h2>
+      <p class="step-sub">${c.scaleSub}</p>
+    </div>
+    <div class="options-row" role="group" aria-label="${c.scaleTitle}">${items}</div>`;
+}
+
+function buildPainHTML(c) {
+  const key = state.industry === 'factory'
+    ? (state.scale === 'small' ? 'factory-small' : 'factory-mid')
+    : state.industry;
+  const header  = c.painHeaders[key] || c.painHeaders.clinic;
+  const checks  = c.checkboxLists[key] || c.checkboxLists.clinic;
+  const chkHTML = checks.map((text, i) => {
+    const checked = state.pains.includes(i);
+    return `<button class="chk-item ${checked ? 'checked' : ''}" data-idx="${i}" aria-pressed="${checked}">
+      <div class="chk-box" aria-hidden="true">
+        <svg class="chk-icon" viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 5 4 8 11 1"/></svg>
+      </div>
+      <span class="chk-text">${text}</span>
+    </button>`;
+  }).join('');
+  return `
+    <div class="step-header">
+      <h2 class="step-title">${header}</h2>
+      <p class="step-sub">${c.painSub}</p>
+    </div>
+    <div class="pain-textarea-wrap">
+      <label class="field-label" for="pain-text">${c.painLabel}</label>
+      <textarea id="pain-text" class="pain-textarea" placeholder="${c.painPlaceholder}" aria-label="${c.painLabel}">${state.painText}</textarea>
+    </div>
+    <div class="pain-divider" aria-hidden="true">${c.painDivider}</div>
+    <div class="checkboxes" role="group" aria-label="${c.painDivider}">${chkHTML}</div>`;
+}
+
+function buildVolumeHTML(c) {
+  const v   = state.volume;
+  const pct = (v / 200) * 100;
+  const disp = v >= 200 ? '200+' : String(v);
+  const helper = c.helpers.find(h => v < h.max) || c.helpers[c.helpers.length - 1];
+  return `
+    <div class="step-header">
+      <h2 class="step-title">${c.volTitle}</h2>
+      <p class="step-sub">${c.volSub}</p>
+    </div>
+    <div class="vol-display" id="vol-display" aria-live="polite" aria-atomic="true">${disp}</div>
+    <p class="vol-sublabel">${c.volLabel}</p>
+    <div class="slider-wrap">
+      <input
+        type="range" id="vol-slider" class="range-input"
+        min="0" max="200" step="5" value="${v}"
+        style="--pct:${pct}%"
+        aria-label="${c.volLabel}"
+        aria-valuemin="0" aria-valuemax="200" aria-valuenow="${v}"
+        aria-valuetext="${disp}"
+      >
+      <div class="range-labels" aria-hidden="true"><span>0</span><span>200+</span></div>
+    </div>
+    <div class="vol-helper" id="vol-helper" aria-live="polite">${helper.text}</div>`;
+}
+
+function buildQualifyHTML(c) {
+  const bHTML = c.budgets.map(b =>
+    `<button class="opt-card compact ${state.budget === b.id ? 'selected' : ''}" data-budget="${b.id}" aria-pressed="${state.budget === b.id}">
+      <div class="opt-check" aria-hidden="true">
+        <svg class="opt-check-icon" viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 5 4 8 11 1"/></svg>
+      </div>
+      <div class="opt-body"><div class="opt-name">${b.name}</div></div>
+    </button>`
+  ).join('');
+  const tHTML = c.timelines.map(t =>
+    `<button class="opt-card compact ${state.timeline === t.id ? 'selected' : ''}" data-timeline="${t.id}" aria-pressed="${state.timeline === t.id}">
+      <div class="opt-check" aria-hidden="true">
+        <svg class="opt-check-icon" viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 5 4 8 11 1"/></svg>
+      </div>
+      <div class="opt-body"><div class="opt-name">${t.name}</div></div>
+    </button>`
+  ).join('');
+  return `
+    <div class="step-header">
+      <h2 class="step-title">${c.qualTitle}</h2>
+      <p class="step-sub">${c.qualSub}</p>
+    </div>
+    <div class="qualify-group">
+      <p class="qualify-label">${c.budgetLabel}</p>
+      <div class="options" role="group" aria-label="${c.budgetLabel}">${bHTML}</div>
+    </div>
+    <div class="qualify-group">
+      <p class="qualify-label">${c.timelineLabel}</p>
+      <div class="options-grid" role="group" aria-label="${c.timelineLabel}">${tHTML}</div>
+    </div>`;
+}
+
+function buildContactHTML(c) {
+  const insight = buildInsight(lang);
+  const f = c.fields;
+  return `
+    <div class="step-header">
+      <h2 class="step-title">${c.insightTitle}</h2>
+    </div>
+    <div class="insight-card" role="region" aria-label="${c.insightTag}" aria-live="polite">
+      <div class="insight-tag">${c.insightTag}</div>
+      <div class="insight-headline">${insight.headline}</div>
+      <div class="insight-body">${insight.body}</div>
+    </div>
+    <div class="contact-title">${c.contactTitle}</div>
+    <div class="field-group">
+      <label class="field-label" for="f-name">${f.name.label}</label>
+      <input type="text" id="f-name" class="field-input" placeholder="${f.name.placeholder}" autocomplete="name" value="${esc(state.name)}">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="f-biz">${f.business.label}</label>
+      <input type="text" id="f-biz" class="field-input" placeholder="${f.business.placeholder}" autocomplete="organization" value="${esc(state.business)}">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="f-wa">${f.whatsapp.label}</label>
+      <input type="tel" id="f-wa" class="field-input" placeholder="${f.whatsapp.placeholder}" autocomplete="tel" value="${esc(state.whatsapp)}">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="f-notes">${f.notes.label}</label>
+      <textarea id="f-notes" class="field-textarea" placeholder="${f.notes.placeholder}">${esc(state.notes)}</textarea>
+    </div>
+    <p class="submit-error" id="submit-error" role="alert"></p>`;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   WIRE STEP (event listeners + state restore)
+───────────────────────────────────────────────────────────────────── */
+function wireStep(step) {
+  switch (step) {
+    case S.INDUSTRY: wireIndustry(); break;
+    case S.SCALE:    wireScale();    break;
+    case S.PAIN:     wirePain();     break;
+    case S.VOLUME:   wireVolume();   break;
+    case S.QUALIFY:  wireQualify();  break;
+    case S.CONTACT:  wireContact();  break;
+  }
+}
+
+function wireIndustry() {
+  document.querySelectorAll('[data-id]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = state.industry;
+      state.industry = btn.dataset.id;
+      if (prev !== state.industry) { state.scale = null; state.pains = []; state.painText = ''; }
+      render();
+    });
+    btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
+  });
+}
+
+function wireScale() {
+  document.querySelectorAll('[data-id]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prev = state.scale;
+      state.scale = btn.dataset.id;
+      if (prev !== state.scale) state.pains = [];
+      render();
+    });
+  });
+}
+
+function wirePain() {
+  const ta = document.getElementById('pain-text');
+  ta.addEventListener('input', () => {
+    state.painText = ta.value;
+    syncContBtn();
+  });
+  document.querySelectorAll('.chk-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      const pos = state.pains.indexOf(idx);
+      if (pos === -1) state.pains.push(idx);
+      else state.pains.splice(pos, 1);
+      btn.classList.toggle('checked', state.pains.includes(idx));
+      btn.setAttribute('aria-pressed', state.pains.includes(idx));
+      const chk = btn.querySelector('.chk-box');
+      chk.style.background = state.pains.includes(idx) ? 'var(--green)' : '';
+      chk.style.borderColor = state.pains.includes(idx) ? 'var(--green)' : '';
+      syncContBtn();
+    });
+  });
+}
+
+function wireVolume() {
+  const slider = document.getElementById('vol-slider');
+  const c = T[lang];
+  function update() {
+    state.volume = parseInt(slider.value);
+    const pct    = (state.volume / 200) * 100;
+    const disp   = state.volume >= 200 ? '200+' : String(state.volume);
+    slider.style.setProperty('--pct', pct + '%');
+    slider.setAttribute('aria-valuenow', state.volume);
+    slider.setAttribute('aria-valuetext', disp);
+    document.getElementById('vol-display').textContent = disp;
+    const helper = c.helpers.find(h => state.volume < h.max) || c.helpers[c.helpers.length - 1];
+    document.getElementById('vol-helper').textContent = helper.text;
+  }
+  slider.addEventListener('input', update);
+  slider.addEventListener('keydown', e => {
+    if (['ArrowLeft','ArrowDown'].includes(e.key)) { e.preventDefault(); slider.value = Math.max(0, parseInt(slider.value) - 5); update(); }
+    if (['ArrowRight','ArrowUp'].includes(e.key))  { e.preventDefault(); slider.value = Math.min(200, parseInt(slider.value) + 5); update(); }
+  });
+}
+
+function wireQualify() {
+  document.querySelectorAll('[data-budget]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.budget = btn.dataset.budget;
+      document.querySelectorAll('[data-budget]').forEach(b => {
+        const sel = b.dataset.budget === state.budget;
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel);
+      });
+      syncContBtn();
+    });
+  });
+  document.querySelectorAll('[data-timeline]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.timeline = btn.dataset.timeline;
+      document.querySelectorAll('[data-timeline]').forEach(b => {
+        const sel = b.dataset.timeline === state.timeline;
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel);
+      });
+      syncContBtn();
+    });
+  });
+}
+
+function wireContact() {
+  const bind = (id, key) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => { state[key] = el.value; syncContBtn(); });
+  };
+  bind('f-name', 'name'); bind('f-biz', 'business'); bind('f-wa', 'whatsapp'); bind('f-notes', 'notes');
+}
+
+function syncContBtn() {
+  document.getElementById('cont-btn').disabled = !isValid();
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   INSIGHT GENERATION
+───────────────────────────────────────────────────────────────────── */
+function buildInsight(l) {
+  const v      = state.volume;
+  const pc     = state.pains.length;
+  const hasText = state.painText.trim().length > 0;
+  const LIMIT  = 140;
+
+  function trunc(s) {
+    s = s.trim();
+    return s.length <= LIMIT ? s : s.substring(0, LIMIT).trimEnd() + '…';
+  }
+
+  if (l === 'en') {
+    const c  = T.en;
+    const pre = hasText ? `You told us: “${trunc(state.painText)}” — that’s the kind of detail we build around. ` : '';
+    const iname = c.indNames[state.industry] || 'business';
+    if (v < 25) return {
+      headline: `For a ${iname} at your volume, the highest-leverage move is consistency, not scale.`,
+      body: pre + (pc > 0 ? `You also flagged ${pc} common pattern${pc > 1 ? 's' : ''}. ` : '') + 'The right approach is a focused agent that handles the top 1–2 issues reliably, not a broad system. We would typically explore a single-purpose solution that pays for itself within 60 days.'
+    };
+    if (v < 75) return {
+      headline: 'Your situation is exactly where we see the strongest ROI for businesses like yours.',
+      body: pre + (pc > 0 ? `Combined with the ${pc} pattern${pc > 1 ? 's' : ''} you flagged and your daily volume, ` : 'Your daily volume ') + 'puts you in the range where automation typically saves 15–25 hours per week of staff time. Most clients in this band recover their setup cost within 30–60 days.'
+    };
+    if (v < 150) return {
+      headline: 'You are operating beyond what manual handling can sustain. This is urgent.',
+      body: pre + 'At your volume' + (pc > 0 ? ` across ${pc} area${pc > 1 ? 's' : ''}` : '') + ', you are almost certainly losing leads or customers weekly to slow response times. The right system here pays back in weeks, not months — but the wrong system makes things worse. We will need to scope carefully.'
+    };
+    return {
+      headline: 'Your volume puts you in territory where most off-the-shelf tools break.',
+      body: pre + 'At this scale' + (pc > 0 ? ` with ${pc} pain area${pc > 1 ? 's' : ''}` : '') + ', the solution has to be properly architected — not a no-code chatbot. We work with businesses at this scale carefully and won’t quote until we have understood your operations in depth.'
+    };
+  } else {
+    const pre = hasText ? `أخبرتنا: «${trunc(state.painText)}» — هذا النوع من التفاصيل الذي نبني عليه. ` : '';
+    if (v < 25) return {
+      headline: 'بحجم عملك الحالي، الخطوة الأكثر فاعلية هي الاتساق، وليس الحجم.',
+      body: pre + (pc > 0 ? `أشرت أيضاً إلى ${pc} نمط شائع. ` : '') + 'النهج الصحيح هو وكيل ذكي مركّز على أهم 1–2 من المشكلات بشكل موثوق، وليس نظاماً شاملاً. عادةً نبحث في حل أحادي الغرض يسترد تكلفته خلال 60 يوماً.'
+    };
+    if (v < 75) return {
+      headline: 'وضعك بالضبط حيث نرى أعلى عائد على الاستثمار للأعمال المشابهة.',
+      body: pre + (pc > 0 ? `مع ${pc} نمط أشرت إليه و` : '') + 'حجم رسائلك اليومي يضعك في النطاق الذي توفر فيه الأتمتة 15–25 ساعة أسبوعياً. معظم عملائنا في هذا النطاق يستردون تكلفة الإعداد خلال 30–60 يوماً.'
+    };
+    if (v < 150) return {
+      headline: 'أنت تعمل بحجم تجاوز ما يمكن للمعالجة اليدوية إدارته. الأمر عاجل.',
+      body: pre + 'بحجمك' + (pc > 0 ? ` عبر ${pc} نقطة ألم` : '') + '، أنت بالتأكيد تخسر عملاء أسبوعياً بسبب بطء الاستجابة. النظام الصحيح هنا يسترد تكلفته خلال أسابيع — والخاطئ يفاقم المشكلة. نحتاج لتحديد النطاق بعناية.'
+    };
+    return {
+      headline: 'حجم عملك في نطاق تنهار فيه معظم الأدوات الجاهزة.',
+      body: pre + 'بهذا الحجم' + (pc > 0 ? ` مع ${pc} نقطة ألم` : '') + '، الحل يجب أن يُصمّم معمارياً بشكل صحيح — وليس روبوت no-code. نتعامل مع أعمال بهذا الحجم بحذر ولن نقدّم عرض سعر قبل فهم عملياتك بعمق.'
+    };
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────────────────────────────── */
+document.getElementById('cont-btn').addEventListener('click', () => {
+  if (curStep() === S.CONTACT) { submitForm(); return; }
+  stepIdx = Math.min(stepIdx + 1, getSeq().length - 1);
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+document.getElementById('back-btn').addEventListener('click', () => {
+  if (stepIdx > 0) { stepIdx--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   LANGUAGE TOGGLE
+───────────────────────────────────────────────────────────────────── */
+document.getElementById('lang-btn').addEventListener('click', () => {
+  lang = lang === 'en' ? 'ar' : 'en';
+  localStorage.setItem('meor_lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+  render();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   FORM SUBMISSION
+───────────────────────────────────────────────────────────────────── */
+async function submitForm() {
+  const btn = document.getElementById('cont-btn');
+  const c   = T[lang];
+  btn.disabled = true;
+  document.getElementById('cont-label').textContent = c.sending;
+
+  try {
+    const res = await fetch(SUBMIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...state, language: lang })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showDone(data.ref);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    document.getElementById('cont-label').textContent = c.getInsight;
+    const errEl = document.getElementById('submit-error');
+    if (errEl) { errEl.textContent = c.submitErr; errEl.style.display = 'block'; }
+  }
+}
+
+function showDone(ref) {
+  isDone = true;
+  const c = T[lang];
+
+  /* hide footer bar */
+  document.getElementById('foot-bar').style.display = 'none';
+
+  /* hide progress / step label */
+  document.querySelector('.progress-track').style.display = 'none';
+  document.getElementById('step-label').style.display = 'none';
+
+  document.getElementById('step-content').innerHTML = `
+    <div class="done-wrap" role="status" aria-live="polite">
+      <div class="done-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2 class="done-title">${c.doneTitle}</h2>
+      <p class="done-body">${c.doneBody}</p>
+      <span class="done-ref">${ref}</span>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────────────────────────────── */
+document.documentElement.lang = lang;
+document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+render();
+</script>
+</body>
+</html>

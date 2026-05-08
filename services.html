@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services — meor</title>
+<meta name="description" content="AI services for MENA businesses. WhatsApp handlers, review collection, after-hours voice agents, and customer re-engagement.">
+<link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #F9F9F8;
+  --surface:  #FFFFFF;
+  --ink:      #0F0F0F;
+  --ink-2:    #4A4A4A;
+  --ink-3:    #909090;
+  --border:   #E5E5E5;
+  --green:    #18794E;
+  --green-bg: #EDFBF1;
+  --r-sm:     8px;
+  --r-lg:     14px;
+  --font:     'Inter', system-ui, -apple-system, sans-serif;
+  --font-ar:  'Noto Sans Arabic', system-ui, sans-serif;
+  --ease:     200ms ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+html[lang="ar"] body { font-family: var(--font-ar); }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+
+/* NAV */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand { font-size: 20px; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); }
+.brand-dot { color: var(--green); }
+.lang-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: border-color var(--ease), color var(--ease);
+  min-height: 36px;
+  font-family: inherit;
+}
+.lang-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* MAIN */
+main {
+  flex: 1;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+  width: 100%;
+}
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 56px; }
+.page-tag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+}
+.page-title {
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.page-sub {
+  font-size: 17px;
+  color: var(--ink-2);
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+/* SERVICE CARDS */
+.services { display: flex; flex-direction: column; gap: 2px; }
+.svc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 28px 24px;
+  margin-bottom: 16px;
+}
+.svc-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.svc-num {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  background: var(--green-bg);
+  border-radius: 6px;
+  padding: 4px 10px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.svc-name {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.svc-value {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  padding-inline-start: 52px;
+}
+.svc-bullets {
+  list-style: none;
+  padding-inline-start: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.svc-bullets li {
+  font-size: 14px;
+  color: var(--ink-2);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+.bullet-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+/* CTA BAND */
+.cta-band {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 32px 28px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.cta-text h3 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.cta-text p { font-size: 15px; color: var(--ink-2); }
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  min-height: 44px;
+  white-space: nowrap;
+  transition: opacity var(--ease);
+  text-decoration: none;
+}
+.cta-btn:hover { opacity: 0.87; }
+.cta-btn svg { width: 15px; height: 15px; }
+
+/* FOOTER */
+footer {
+  padding: 22px 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.foot-copy { font-size: 13px; color: var(--ink-3); }
+.foot-link { font-size: 13px; color: var(--ink-3); transition: color var(--ease); }
+.foot-link:hover { color: var(--green); }
+
+@media (max-width: 580px) {
+  .nav { padding: 14px 20px; }
+  main { padding: 40px 16px 80px; }
+  .svc-value, .svc-bullets { padding-inline-start: 0; }
+  .svc-num { margin-top: 0; }
+  .cta-band { flex-direction: column; align-items: flex-start; }
+  footer { padding: 18px 20px; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <a href="/" class="brand" aria-label="Back to meor home">meor<span class="brand-dot">.</span></a>
+  <button class="lang-btn" id="lang-btn" aria-label="Switch to Arabic">العربية</button>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-tag" id="page-tag">What we build</div>
+    <h1 class="page-title" id="page-title">Four solutions, built around how MENA businesses actually work.</h1>
+    <p class="page-sub" id="page-sub">Each solution is tailored to your business — not deployed from a template. Pricing is scoped after we understand your situation.</p>
+  </div>
+
+  <div class="services" id="services-list">
+    <!-- rendered by JS -->
+  </div>
+
+  <div class="cta-band">
+    <div class="cta-text">
+      <h3 id="cta-title">Not sure which fits your situation?</h3>
+      <p id="cta-sub">Take the assessment — it takes 2 minutes and gives you a specific recommendation.</p>
+    </div>
+    <a href="/assessment.html" class="cta-btn" id="cta-btn">
+      <span id="cta-btn-text">Start assessment</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </a>
+  </div>
+</main>
+
+<footer>
+  <span class="foot-copy" id="foot-copy">&copy; 2025 meor.</span>
+  <a href="mailto:hi@meor.com" class="foot-link" id="foot-contact">hi@meor.com</a>
+</footer>
+
+<script>
+const T = {
+  en: {
+    langBtn:    'العربية',
+    pageTag:    'What we build',
+    pageTitle:  'Four solutions, built around how MENA businesses actually work.',
+    pageSub:    'Each solution is tailored to your business — not deployed from a template. Pricing is scoped after we understand your situation.',
+    ctaTitle:   'Not sure which fits your situation?',
+    ctaSub:     'Take the assessment — it takes 2 minutes and gives you a specific recommendation.',
+    ctaBtn:     'Start assessment',
+    footCopy:   '© 2025 meor.',
+    footContact:'hi@meor.com',
+    title:      'Services — meor',
+    services: [
+      {
+        num: '01',
+        name: 'WhatsApp Inquiry Handler',
+        value: 'AI handles customer messages, books appointments, and sends reminders — so your team stops drowning in DMs.',
+        bullets: [
+          'Responds to inbound WhatsApp messages in Arabic and English',
+          'Qualifies inquiries and books or redirects based on your rules',
+          'Sends appointment reminders and follow-ups automatically',
+          'Escalates complex cases to a human with full context',
+        ]
+      },
+      {
+        num: '02',
+        name: 'Google Review Collector',
+        value: 'Systematically asks every customer for a review at the right moment — building your reputation without the awkward ask.',
+        bullets: [
+          'Triggers after each completed transaction or appointment',
+          'Sends a warm, on-brand message with a direct review link',
+          'Follows up once if no response within 48 hours',
+          'Tracks review rate and flags drops for your attention',
+        ]
+      },
+      {
+        num: '03',
+        name: 'After-Hours Voice Agent',
+        value: 'Answers calls when you\'re closed, collects intent and contact info, and hands off to you in the morning.',
+        bullets: [
+          'Picks up calls outside business hours in Arabic or English',
+          'Confirms caller intent and urgency level',
+          'Books tentative appointments or takes a message',
+          'Delivers a clean summary to you each morning',
+        ]
+      },
+      {
+        num: '04',
+        name: 'Customer Re-engagement',
+        value: 'Reaches out to customers who haven\'t returned in a while — turning dormant relationships into repeat business.',
+        bullets: [
+          'Identifies customers overdue for a follow-up based on your schedule',
+          'Sends a personal-feeling WhatsApp message on your behalf',
+          'Handles replies and books return visits automatically',
+          'Reports on re-engagement rates weekly',
+        ]
+      },
+    ]
+  },
+  ar: {
+    langBtn:    'English',
+    pageTag:    'ما نبنيه',
+    pageTitle:  'أربعة حلول، مصمّمة حول طريقة عمل الأعمال في منطقة الشرق الأوسط فعلاً.',
+    pageSub:    'كل حل مخصص لنشاطك — وليس منسوخاً من قالب جاهز. يتم تحديد السعر بعد فهم وضعك.',
+    ctaTitle:   'لست متأكداً أيها يناسب وضعك؟',
+    ctaSub:     'أجرِ التقييم — يستغرق دقيقتين ويعطيك توصية محددة.',
+    ctaBtn:     'ابدأ التقييم',
+    footCopy:   '© 2025 meor.',
+    footContact:'hi@meor.com',
+    title:      'الخدمات — meor',
+    services: [
+      {
+        num: '01',
+        name: 'مساعد استفسارات الواتساب',
+        value: 'يتعامل الذكاء الاصطناعي مع رسائل العملاء ويحجز المواعيد ويرسل التذكيرات — حتى يتوقف فريقك عن الغرق في الرسائل.',
+        bullets: [
+          'يرد على رسائل واتساب الواردة بالعربية والإنجليزية',
+          'يؤهل الاستفسارات ويحجز أو يحوّل وفق قواعدك',
+          'يرسل تذكيرات المواعيد والمتابعات تلقائياً',
+          'يحوّل الحالات المعقدة لموظف مع كامل السياق',
+        ]
+      },
+      {
+        num: '02',
+        name: 'جامع تقييمات جوجل',
+        value: 'يطلب من كل عميل تقييماً في اللحظة المناسبة — لبناء سمعتك بدون حرج.',
+        bullets: [
+          'يُشغَّل بعد كل معاملة أو موعد مكتمل',
+          'يرسل رسالة دافئة بأسلوبك مع رابط مباشر للتقييم',
+          'يتابع مرة واحدة إن لم يكن هناك رد خلال 48 ساعة',
+          'يتتبع نسبة التقييم ويبلّغك عند الانخفاض',
+        ]
+      },
+      {
+        num: '03',
+        name: 'وكيل المكالمات خارج أوقات العمل',
+        value: 'يرد على المكالمات حين تكون مغلقاً، ويجمع النية والبيانات، ويسلّمها لك صباحاً.',
+        bullets: [
+          'يستقبل المكالمات خارج أوقات العمل بالعربية أو الإنجليزية',
+          'يحدد هدف المتصل ومستوى الإلحاح',
+          'يحجز مواعيد مبدئية أو يأخذ رسالة',
+          'يوصلك ملخصاً واضحاً كل صباح',
+        ]
+      },
+      {
+        num: '04',
+        name: 'إعادة تفعيل العملاء',
+        value: 'يتواصل مع العملاء الذين لم يعودوا منذ فترة — لتحويل العلاقات الخاملة إلى أعمال متكررة.',
+        bullets: [
+          'يحدد العملاء المستحقين للمتابعة بناءً على جدولك',
+          'يرسل رسالة واتساب شخصية باسمك',
+          'يتعامل مع الردود ويحجز الزيارات تلقائياً',
+          'يقدم تقريراً أسبوعياً عن نسب إعادة التفعيل',
+        ]
+      },
+    ]
+  }
+};
+
+let lang = localStorage.getItem('meor_lang') || 'en';
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('meor_lang', l);
+  document.documentElement.lang = l;
+  document.documentElement.dir  = l === 'ar' ? 'rtl' : 'ltr';
+  const c = T[l];
+  document.querySelector('title').textContent         = c.title;
+  document.getElementById('lang-btn').textContent     = c.langBtn;
+  document.getElementById('page-tag').textContent     = c.pageTag;
+  document.getElementById('page-title').textContent   = c.pageTitle;
+  document.getElementById('page-sub').textContent     = c.pageSub;
+  document.getElementById('cta-title').textContent    = c.ctaTitle;
+  document.getElementById('cta-sub').textContent      = c.ctaSub;
+  document.getElementById('cta-btn-text').textContent = c.ctaBtn;
+  document.getElementById('foot-copy').textContent    = c.footCopy;
+  document.getElementById('foot-contact').textContent = c.footContact;
+  renderServices(c.services);
+}
+
+function renderServices(services) {
+  const list = document.getElementById('services-list');
+  list.innerHTML = services.map(svc => `
+    <article class="svc-card">
+      <div class="svc-header">
+        <span class="svc-num" aria-hidden="true">${svc.num}</span>
+        <h2 class="svc-name">${svc.name}</h2>
+      </div>
+      <p class="svc-value">${svc.value}</p>
+      <ul class="svc-bullets" aria-label="Capabilities">
+        ${svc.bullets.map(b => `<li><span class="bullet-dot" aria-hidden="true"></span><span>${b}</span></li>`).join('')}
+      </ul>
+    </article>
+  `).join('');
+}
+
+document.getElementById('lang-btn').addEventListener('click', () => {
+  setLang(lang === 'en' ? 'ar' : 'en');
+});
+
+setLang(lang);
+</script>
+</body>
+</html>
