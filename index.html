@@ -13,22 +13,24 @@
 
 /* ── TOKENS ───────────────────────────────────────────────────── */
 :root {
-  --bg:       #FFFFFF;
-  --bg-2:     #F7F7F6;
-  --ink:      #0F0F0F;
-  --ink-2:    #555555;
-  --ink-3:    #999999;
-  --border:   #E5E5E3;
-  --border-2: #ECECEA;
-  --green:    #18794E;
-  --green-bg: #EDFBF1;
-  --green-bd: #C8EFD9;
-  --r-sm:     10px;
-  --r-md:     14px;
-  --r-lg:     16px;
-  --font:     'Inter', system-ui, -apple-system, sans-serif;
-  --font-ar:  'Noto Sans Arabic', system-ui, sans-serif;
-  --ease:     180ms ease;
+  --bg:         #FFFFFF;
+  --bg-2:       #F7F7F6;
+  --bg-green:   #F5FDF8;
+  --ink:        #0F0F0F;
+  --ink-2:      #555555;
+  --ink-3:      #888888;
+  --border:     #E5E5E3;
+  --border-2:   #ECECEA;
+  --green:      #18794E;
+  --green-bg:   #EDFBF1;
+  --green-bd:   #C8EFD9;
+  --green-dark: #145F3D;
+  --r-sm:       10px;
+  --r-md:       14px;
+  --r-lg:       16px;
+  --font:       'Inter', system-ui, -apple-system, sans-serif;
+  --font-ar:    'Noto Sans Arabic', system-ui, sans-serif;
+  --ease:       180ms ease;
 }
 
 /* ── BASE ─────────────────────────────────────────────────────── */
@@ -213,7 +215,12 @@ main {
   color: var(--ink);
   min-height: 36px;
 }
-.search-input::placeholder { color: #C8C8C8; }
+.search-input::placeholder { color: #A0A0A0; }
+.search-hint-text {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
 .tld-badge {
   font-size: 13px;
   font-weight: 700;
@@ -248,13 +255,16 @@ main {
 .tld-chip {
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 7px 12px;
+  min-height: 32px;
   border-radius: 100px;
   border: 1px solid var(--border);
   color: var(--ink-3);
   background: var(--bg);
   cursor: pointer;
   transition: background var(--ease), border-color var(--ease), color var(--ease);
+  display: inline-flex;
+  align-items: center;
 }
 .tld-chip.active {
   background: var(--green-bg);
@@ -286,13 +296,22 @@ main {
 
 /* ── ASSESSMENT CARD ──────────────────────────────────────────── */
 .assess-card {
-  background: var(--bg);
-  border: 1.5px solid var(--border);
+  background: var(--bg-green);
+  border: 1.5px solid var(--green-bd);
+  border-left: 4px solid var(--green);
   border-radius: var(--r-lg);
   padding: 22px;
-  transition: border-color var(--ease);
+  cursor: pointer;
+  transition: border-color var(--ease), box-shadow var(--ease);
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
-.assess-card:hover { border-color: #C0C0BE; }
+.assess-card:hover {
+  border-color: var(--green);
+  border-left-color: var(--green);
+  box-shadow: 0 4px 16px rgba(24,121,78,0.1);
+}
 
 .assess-main {
   display: flex;
@@ -326,7 +345,7 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--ink);
+  background: var(--green);
   color: #fff;
   border-radius: var(--r-sm);
   padding: 11px 20px;
@@ -335,9 +354,9 @@ main {
   min-height: 44px;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity var(--ease);
+  transition: background var(--ease);
 }
-.assess-cta:hover { opacity: 0.85; }
+.assess-card:hover .assess-cta { background: var(--green-dark); }
 .assess-cta svg { width: 13px; height: 13px; flex-shrink: 0; }
 
 .assess-chips {
@@ -428,8 +447,8 @@ footer {
   <!-- Headline -->
   <div class="headline">
     <div class="eyebrow"><span class="eyebrow-dot"></span><span id="eyebrow-text">AI for MENA businesses</span></div>
-    <h1 id="hero-title">Your business starts here</h1>
-    <p id="hero-sub">Find a domain name or get AI built for your business — both in minutes.</p>
+    <h1 id="hero-title">Find a domain. Automate your business.</h1>
+    <p id="hero-sub">Register your name and get AI that works for you — answering customers, collecting reviews, and following up leads.</p>
   </div>
 
   <div class="stack">
@@ -463,6 +482,7 @@ footer {
         <span class="tld-chip" data-tld=".co">.co</span>
         <span class="tld-chip" data-tld=".io">.io</span>
       </div>
+      <p class="search-hint-text" id="search-hint-text">Press Enter or tap Search to check availability</p>
     </div>
 
     <!-- Divider -->
@@ -474,24 +494,25 @@ footer {
       <span id="sec2-label">Tell us what your business needs</span>
     </div>
 
-    <div class="assess-card">
+    <a class="assess-card" href="/assessment" id="assess-cta">
       <div class="assess-main">
         <div class="assess-icon" aria-hidden="true">
+          <!-- spark / AI icon -->
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
           </svg>
         </div>
         <div class="assess-body">
           <div class="assess-title" id="assess-title">Free AI assessment — 5 minutes</div>
           <div class="assess-desc" id="assess-desc">Answer a few questions. We'll tell you exactly what AI can do for your business and what it costs.</div>
         </div>
-        <a class="assess-cta" href="/assessment" id="assess-cta">
-          <span id="assess-cta-text">Start</span>
+        <span class="assess-cta">
+          <span id="assess-cta-text">Start free assessment</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"/>
             <polyline points="12 5 19 12 12 19"/>
           </svg>
-        </a>
+        </span>
       </div>
       <div class="assess-chips" id="assess-chips">
         <span class="svc-chip" id="chip-1">💬 WhatsApp AI</span>
@@ -499,7 +520,7 @@ footer {
         <span class="svc-chip" id="chip-3">📞 Voice Agent</span>
         <span class="svc-chip" id="chip-4">🔁 Re-engagement</span>
       </div>
-    </div>
+    </a>
 
   </div>
 </main>
@@ -532,8 +553,8 @@ const T = {
     langBtn:      'العربية',
     langLabel:    'Switch to Arabic',
     eyebrow:      'AI for MENA businesses',
-    heroTitle:    'Your business starts here',
-    heroSub:      'Find a domain name or get AI built for your business — both in minutes.',
+    heroTitle:    'Find a domain. Automate your business.',
+    heroSub:      'Register your name and get AI that works for you — answering customers, collecting reviews, and following up leads.',
     sec1:         'Search for a domain',
     searchInput:  'yourbusiness',
     searchBtn:    'Search',
@@ -541,7 +562,8 @@ const T = {
     sec2:         'Tell us what your business needs',
     assessTitle:  'Free AI assessment — 5 minutes',
     assessDesc:   "Answer a few questions. We'll tell you exactly what AI can do for your business and what it costs.",
-    assessCta:    'Start',
+    assessCta:    'Start free assessment',
+    searchHint:   'Press Enter or tap Search to check availability',
     chip1: '💬 WhatsApp AI',
     chip2: '⭐ Review Collector',
     chip3: '📞 Voice Agent',
@@ -565,7 +587,8 @@ const T = {
     sec2:         'أخبرنا بما يحتاجه نشاطك',
     assessTitle:  'تقييم مجاني للذكاء الاصطناعي — 5 دقائق',
     assessDesc:   'أجب على أسئلة بسيطة. سنخبرك بالضبط ما يمكن للذكاء الاصطناعي فعله لنشاطك وتكلفته.',
-    assessCta:    'ابدأ',
+    assessCta:    'ابدأ التقييم المجاني',
+    searchHint:   'اضغط Enter أو انقر بحث للتحقق من التوفر',
     chip1: '💬 واتساب ذكي',
     chip2: '⭐ جمع التقييمات',
     chip3: '📞 وكيل صوتي',
@@ -604,6 +627,7 @@ function setLang(l) {
   document.getElementById('assess-title').textContent  = c.assessTitle;
   document.getElementById('assess-desc').textContent   = c.assessDesc;
   document.getElementById('assess-cta-text').textContent = c.assessCta;
+  document.getElementById('search-hint-text').textContent = c.searchHint;
   document.getElementById('chip-1').textContent        = c.chip1;
   document.getElementById('chip-2').textContent        = c.chip2;
   document.getElementById('chip-3').textContent        = c.chip3;
