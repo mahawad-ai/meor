@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
   }
 
   const {
-    type, service, email,
+    type, service, email, contactPref, hasWebsite, websiteUrl,
     industry, scale, painText, pains, volume, budget, timeline,
     name, business, whatsapp, notes, language
   } = body;
@@ -90,21 +90,32 @@ module.exports = async function handler(req, res) {
           notes:     [email ? `Email: ${email.trim()}` : null, notes?.trim() || null].filter(Boolean).join('\n\n') || null,
           language:  language || 'en',
         }
-      : {
-          ref_id:    ref,
-          industry,
-          scale:     scale || null,
-          pain_text: painText || null,
-          pains:     JSON.stringify(pains || []),
-          volume:    parseInt(volume) || 50,
-          budget,
-          timeline,
-          name:      name.trim(),
-          business:  business.trim(),
-          whatsapp:  whatsapp.trim(),
-          notes:     notes?.trim() || null,
-          language:  language || 'en',
-        };
+      : (() => {
+          /* Pack new contact/website fields into the existing notes column
+             so we don't need a schema migration. Format is grep-able. */
+          const extra = [
+            email?.trim() ? `Email: ${email.trim()}` : null,
+            contactPref ? `Preferred contact: ${contactPref}` : null,
+            hasWebsite === 'yes' ? `Website: ${websiteUrl?.trim() || '(URL not provided)'}` :
+              hasWebsite === 'no' ? 'Website: not yet (potential web upsell)' : null,
+          ].filter(Boolean).join('\n');
+          const combinedNotes = [extra, notes?.trim() || null].filter(Boolean).join('\n\n---\n\n');
+          return {
+            ref_id:    ref,
+            industry,
+            scale:     scale || null,
+            pain_text: painText || null,
+            pains:     JSON.stringify(pains || []),
+            volume:    parseInt(volume) || 50,
+            budget,
+            timeline,
+            name:      name.trim(),
+            business:  business.trim(),
+            whatsapp:  whatsapp.trim(),
+            notes:     combinedNotes || null,
+            language:  language || 'en',
+          };
+        })();
     const sbRes = await fetch(`${SUPABASE_URL}/rest/v1/assessment_submissions`, {
       method: 'POST',
       headers: {
@@ -151,8 +162,15 @@ Notes: ${notes?.trim() || '(none)'}
       const painItems = Array.isArray(pains) && pains.length > 0
         ? `\n  Selected: ${pains.map(i => `[${i}]`).join(', ')}`
         : '\n  None selected';
-      emailBody = `
-New assessment submission from meor.com
+      const upsellHeader = hasWebsite === 'no'
+        ? `🌐 POTENTIAL WEB UPSELL — this lead has no website yet.\n\n`
+        : '';
+      const websiteLine = hasWebsite === 'yes'
+        ? `Has website: Yes — ${websiteUrl?.trim() || '(URL not provided)'}`
+        : hasWebsite === 'no'
+          ? `Has website: NOT YET — potential web upsell`
+          : `Has website: (not answered)`;
+      emailBody = `${upsellHeader}New assessment submission from meor.com
 
 Ref: ${ref}
 Language: ${(language || 'en').toUpperCase()}
@@ -161,6 +179,11 @@ CONTACT
 Name:      ${name.trim()}
 Business:  ${business.trim()}
 WhatsApp:  ${whatsapp.trim()}
+Email:     ${email?.trim() || '(not provided)'}
+Preferred: ${contactPref === 'email' ? 'Email' : 'WhatsApp'}
+
+WEBSITE
+${websiteLine}
 
 PROFILE
 Industry:  ${INDUSTRY_LABELS[industry] || industry}${scale ? `\nScale:     ${SCALE_LABELS[scale] || scale}` : ''}
@@ -174,7 +197,8 @@ Checkboxes:${painItems}
 
 Notes: ${notes?.trim() || '(none)'}
 `.trim();
-      subject = `New meor lead — ${business.trim()} (${INDUSTRY_LABELS[industry] || industry}) [${ref}]`;
+      const upsellTag = hasWebsite === 'no' ? ' [WEB UPSELL]' : '';
+      subject = `New meor lead — ${business.trim()} (${INDUSTRY_LABELS[industry] || industry})${upsellTag} [${ref}]`;
     }
 
     try {

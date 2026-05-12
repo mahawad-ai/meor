@@ -586,6 +586,28 @@ html[dir="rtl"] .range-input {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
 }
+.done-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 32px auto 0;
+  background: var(--ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 14px 26px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: gap 0.2s, background 0.15s, transform 0.15s;
+  text-decoration: none;
+}
+.done-home-btn:hover { gap: 14px; background: #1a1a1a; transform: translateY(-1px); }
+.done-home-btn svg { transition: transform 0.2s; flex-shrink: 0; }
+.done-home-btn:hover svg { transform: translateX(-3px); }
+html[dir="rtl"] .done-home-btn svg { transform: scaleX(-1); }
+html[dir="rtl"] .done-home-btn:hover svg { transform: scaleX(-1) translateX(-3px); }
+.done-home-wrap { display: flex; justify-content: center; }
 
 /* ── INLINE BACK / CONTINUE (was fixed foot-bar, now inline) ─── */
 .foot-bar {
@@ -784,6 +806,10 @@ const state = {
   name: '',
   business: '',
   whatsapp: '',
+  email: '',
+  contactPref: 'whatsapp',  /* 'whatsapp' | 'email' */
+  hasWebsite: null,         /* 'yes' | 'no' | null */
+  websiteUrl: '',
   notes: ''
 };
 
@@ -924,13 +950,23 @@ const T = {
       name:      { label:'Your name', placeholder:'Your name', required:true },
       business:  { label:'Business name', placeholder:'Business name', required:true },
       whatsapp:  { label:'WhatsApp number', placeholder:'+20 10x xxx xxxx', required:true },
+      email:     { label:'Email', placeholder:'you@business.com', required:false },
       notes:     { label:'Anything else? (optional)', placeholder:'A specific situation, deadline, or anything that helps us prepare.', required:false },
     },
+    contactPrefLabel: 'Preferred contact channel',
+    contactPrefWa:    'WhatsApp',
+    contactPrefEmail: 'Email',
+    websiteLabel:     'Do you have a website?',
+    websiteYes:       'Yes, I have one',
+    websiteNo:        'Not yet',
+    websiteUrlLabel:  'Website URL',
+    websiteUrlPh:     'yourbusiness.com',
     submitErr: 'Something went wrong. Please try again.',
 
     /* Done */
     doneTitle: "Got it. We'll be in touch.",
-    doneBody: "We review every submission ourselves — no automated chatbot. Expect a personal message on WhatsApp within 24 hours, in your language.",
+    doneBody: "We review every submission ourselves — no automated chatbot. Expect a personal message on your preferred channel within 24 hours.",
+    doneBackToHome: 'Back to meor.com',
 
     indNames: {
       clinic:'clinic', ecom:'e-commerce business',
@@ -1065,12 +1101,22 @@ const T = {
       name:     { label:'اسمك', placeholder:'اسمك', required:true },
       business: { label:'اسم النشاط', placeholder:'اسم النشاط', required:true },
       whatsapp: { label:'رقم الواتساب', placeholder:'+20 10x xxx xxxx', required:true },
+      email:    { label:'البريد الإلكتروني', placeholder:'you@business.com', required:false },
       notes:    { label:'أي شيء آخر؟ (اختياري)', placeholder:'موقف معين، موعد نهائي، أو أي شيء يساعدنا في التحضير.', required:false },
     },
+    contactPrefLabel: 'القناة المفضلة للتواصل',
+    contactPrefWa:    'واتساب',
+    contactPrefEmail: 'بريد إلكتروني',
+    websiteLabel:     'هل لديك موقع إلكتروني؟',
+    websiteYes:       'نعم، لدي موقع',
+    websiteNo:        'لا، ليس بعد',
+    websiteUrlLabel:  'رابط الموقع',
+    websiteUrlPh:     'yourbusiness.com',
     submitErr: 'حدث خطأ. حاول مجدداً.',
 
     doneTitle: 'تم. سنتواصل معك.',
-    doneBody: 'نراجع كل طلب بأنفسنا — بدون روبوت تلقائي. توقع رسالة شخصية على واتساب خلال 24 ساعة، بلغتك.',
+    doneBody: 'نراجع كل طلب بأنفسنا — بدون روبوت تلقائي. توقع رسالة شخصية على القناة التي اخترتها خلال 24 ساعة.',
+    doneBackToHome: 'العودة إلى meor.com',
 
     indNames: {
       clinic:'عيادة', ecom:'متجر', restaurant:'مطعم', realestate:'مكتب عقاري', factory:'مصنع'
@@ -1100,7 +1146,11 @@ function isValid() {
     case S.PAIN:     return state.painText.trim().length > 0 || state.pains.length > 0;
     case S.VOLUME:   return true;
     case S.QUALIFY:  return !!state.budget && !!state.timeline;
-    case S.CONTACT:  return state.name.trim() && state.business.trim() && state.whatsapp.trim().length >= 6;
+    case S.CONTACT: {
+      if (!state.name.trim() || !state.business.trim() || state.whatsapp.trim().length < 6) return false;
+      if (state.contactPref === 'email' && !state.email.trim()) return false;
+      return true;
+    }
   }
   return false;
 }
@@ -1308,6 +1358,14 @@ function buildQualifyHTML(c) {
 function buildContactHTML(c) {
   const insight = buildInsight(lang);
   const f = c.fields;
+  const showUrl = state.hasWebsite === 'yes';
+  const optButton = (key, value, label, selected) => `
+    <button type="button" class="opt-card compact ${selected ? 'selected' : ''}" data-${key}="${value}" aria-pressed="${selected}">
+      <div class="opt-check" aria-hidden="true">
+        <svg class="opt-check-icon" viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 5 4 8 11 1"/></svg>
+      </div>
+      <div class="opt-body"><div class="opt-name">${label}</div></div>
+    </button>`;
   return `
     <div class="step-header">
       <h2 class="step-title">${c.insightTitle}</h2>
@@ -1329,6 +1387,28 @@ function buildContactHTML(c) {
     <div class="field-group">
       <label class="field-label" for="f-wa">${f.whatsapp.label}</label>
       <input type="tel" id="f-wa" class="field-input" placeholder="${f.whatsapp.placeholder}" autocomplete="tel" value="${esc(state.whatsapp)}">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="f-email">${f.email.label}</label>
+      <input type="email" id="f-email" class="field-input" placeholder="${f.email.placeholder}" autocomplete="email" value="${esc(state.email)}">
+    </div>
+    <div class="field-group">
+      <span class="field-label">${c.contactPrefLabel}</span>
+      <div class="options-grid" role="group" aria-label="${c.contactPrefLabel}">
+        ${optButton('pref', 'whatsapp', c.contactPrefWa, state.contactPref === 'whatsapp')}
+        ${optButton('pref', 'email', c.contactPrefEmail, state.contactPref === 'email')}
+      </div>
+    </div>
+    <div class="field-group">
+      <span class="field-label">${c.websiteLabel}</span>
+      <div class="options-grid" role="group" aria-label="${c.websiteLabel}">
+        ${optButton('website', 'yes', c.websiteYes, state.hasWebsite === 'yes')}
+        ${optButton('website', 'no', c.websiteNo, state.hasWebsite === 'no')}
+      </div>
+    </div>
+    <div class="field-group" id="website-url-group" style="${showUrl ? '' : 'display:none;'}">
+      <label class="field-label" for="f-website">${c.websiteUrlLabel}</label>
+      <input type="text" id="f-website" class="field-input" placeholder="${c.websiteUrlPh}" autocomplete="url" value="${esc(state.websiteUrl)}">
     </div>
     <div class="field-group">
       <label class="field-label" for="f-notes">${f.notes.label}</label>
@@ -1449,7 +1529,33 @@ function wireContact() {
     if (!el) return;
     el.addEventListener('input', () => { state[key] = el.value; syncContBtn(); });
   };
-  bind('f-name', 'name'); bind('f-biz', 'business'); bind('f-wa', 'whatsapp'); bind('f-notes', 'notes');
+  bind('f-name', 'name'); bind('f-biz', 'business'); bind('f-wa', 'whatsapp');
+  bind('f-email', 'email'); bind('f-website', 'websiteUrl'); bind('f-notes', 'notes');
+
+  document.querySelectorAll('[data-pref]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.contactPref = btn.dataset.pref;
+      document.querySelectorAll('[data-pref]').forEach(b => {
+        const sel = b.dataset.pref === state.contactPref;
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel);
+      });
+      syncContBtn();
+    });
+  });
+  document.querySelectorAll('[data-website]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.hasWebsite = btn.dataset.website;
+      document.querySelectorAll('[data-website]').forEach(b => {
+        const sel = b.dataset.website === state.hasWebsite;
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel);
+      });
+      const urlGroup = document.getElementById('website-url-group');
+      if (urlGroup) urlGroup.style.display = state.hasWebsite === 'yes' ? '' : 'none';
+      syncContBtn();
+    });
+  });
 }
 
 function syncContBtn() {
@@ -1586,6 +1692,14 @@ function showDone(ref) {
       <h2 class="done-title">${c.doneTitle}</h2>
       <p class="done-body">${c.doneBody}</p>
       <span class="done-ref">${ref}</span>
+      <div class="done-home-wrap">
+        <a href="/" class="done-home-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          ${c.doneBackToHome}
+        </a>
+      </div>
     </div>`;
 }
 
