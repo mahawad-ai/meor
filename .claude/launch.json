@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "meor-concept",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8765"],
+      "name": "meor-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "8765", "."],
       "port": 8765
     }
   ]

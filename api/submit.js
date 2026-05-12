@@ -49,17 +49,62 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ ok: false, error: 'Invalid JSON' });
   }
 
-  const { industry, scale, painText, pains, volume, budget, timeline, name, business, whatsapp, notes, language } = body;
+  const {
+    type, service, email,
+    industry, scale, painText, pains, volume, budget, timeline,
+    name, business, whatsapp, notes, language
+  } = body;
+  const isInquiry = type === 'inquiry';
 
-  /* basic validation */
-  if (!industry || !budget || !timeline || !name || !business || !whatsapp || whatsapp.trim().length < 6) {
-    return res.status(400).json({ ok: false, error: 'Missing required fields' });
+  /* validation — inquiries only need name/business/whatsapp + service; assessments need the full profile */
+  if (isInquiry) {
+    if (!service || !name || !business || !whatsapp || whatsapp.trim().length < 6) {
+      return res.status(400).json({ ok: false, error: 'Missing required fields' });
+    }
+  } else {
+    if (!industry || !budget || !timeline || !name || !business || !whatsapp || whatsapp.trim().length < 6) {
+      return res.status(400).json({ ok: false, error: 'Missing required fields' });
+    }
   }
 
   const ref = genRef();
 
   /* ── Save to Supabase ────────────────────────────────────────────── */
+  /* Inquiries reuse the assessment_submissions table; sentinel values keep
+     them separable: industry='inquiry', pain_text=<service name>, and the
+     contact email goes into notes (table has no email column). */
   try {
+    const payload = isInquiry
+      ? {
+          ref_id:    ref,
+          industry:  'inquiry',
+          scale:     null,
+          pain_text: service,
+          pains:     JSON.stringify([]),
+          volume:    0,
+          budget:    'inquiry',
+          timeline:  'inquiry',
+          name:      name.trim(),
+          business:  business.trim(),
+          whatsapp:  whatsapp.trim(),
+          notes:     [email ? `Email: ${email.trim()}` : null, notes?.trim() || null].filter(Boolean).join('\n\n') || null,
+          language:  language || 'en',
+        }
+      : {
+          ref_id:    ref,
+          industry,
+          scale:     scale || null,
+          pain_text: painText || null,
+          pains:     JSON.stringify(pains || []),
+          volume:    parseInt(volume) || 50,
+          budget,
+          timeline,
+          name:      name.trim(),
+          business:  business.trim(),
+          whatsapp:  whatsapp.trim(),
+          notes:     notes?.trim() || null,
+          language:  language || 'en',
+        };
     const sbRes = await fetch(`${SUPABASE_URL}/rest/v1/assessment_submissions`, {
       method: 'POST',
       headers: {
@@ -68,21 +113,7 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Prefer':        'return=minimal',
       },
-      body: JSON.stringify({
-        ref_id:    ref,
-        industry,
-        scale:     scale || null,
-        pain_text: painText || null,
-        pains:     JSON.stringify(pains || []),
-        volume:    parseInt(volume) || 50,
-        budget,
-        timeline,
-        name:      name.trim(),
-        business:  business.trim(),
-        whatsapp:  whatsapp.trim(),
-        notes:     notes?.trim() || null,
-        language:  language || 'en',
-      }),
+      body: JSON.stringify(payload),
     });
     if (!sbRes.ok) {
       const err = await sbRes.text();
@@ -96,11 +127,31 @@ module.exports = async function handler(req, res) {
 
   /* ── Send email notification ─────────────────────────────────────── */
   if (RESEND_KEY) {
-    const pct  = Math.round((parseInt(volume) / 200) * 100);
-    const painItems = Array.isArray(pains) && pains.length > 0
-      ? `\n  Selected: ${pains.map(i => `[${i}]`).join(', ')}`
-      : '\n  None selected';
-    const emailBody = `
+    let emailBody, subject;
+    if (isInquiry) {
+      emailBody = `
+New service inquiry from meor.com
+
+Ref: ${ref}
+Language: ${(language || 'en').toUpperCase()}
+
+SERVICE
+${service}
+
+CONTACT
+Name:      ${name.trim()}
+Business:  ${business.trim()}
+WhatsApp:  ${whatsapp.trim()}
+Email:     ${email?.trim() || '(not provided)'}
+
+Notes: ${notes?.trim() || '(none)'}
+`.trim();
+      subject = `New meor inquiry — ${service} — ${business.trim()} [${ref}]`;
+    } else {
+      const painItems = Array.isArray(pains) && pains.length > 0
+        ? `\n  Selected: ${pains.map(i => `[${i}]`).join(', ')}`
+        : '\n  None selected';
+      emailBody = `
 New assessment submission from meor.com
 
 Ref: ${ref}
@@ -123,6 +174,8 @@ Checkboxes:${painItems}
 
 Notes: ${notes?.trim() || '(none)'}
 `.trim();
+      subject = `New meor lead — ${business.trim()} (${INDUSTRY_LABELS[industry] || industry}) [${ref}]`;
+    }
 
     try {
       await fetch('https://api.resend.com/emails', {
@@ -134,7 +187,7 @@ Notes: ${notes?.trim() || '(none)'}
         body: JSON.stringify({
           from:    FROM_EMAIL,
           to:      [NOTIFY_EMAIL],
-          subject: `New meor lead — ${business.trim()} (${INDUSTRY_LABELS[industry] || industry}) [${ref}]`,
+          subject,
           text:    emailBody,
         }),
       });

@@ -16,3 +16,9 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+
+.vercel
+.env*.local
+
+# Design exploration drafts — internal references, not deployed
+_drafts/

@@ -3,672 +3,1470 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>meor — AI for MENA businesses</title>
-<meta name="description" content="Find a domain or get AI built around your business. meor works with clinics, shops, restaurants, real estate, and factories across the MENA region.">
+<title>meor.com — AI for MENA businesses</title>
+<meta name="description" content="Register a domain and get an AI agent built around how your MENA business actually works. WhatsApp, voice, and review automation in Arabic and English.">
 <link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="/inquiry.js" defer></script>
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
 
-/* ── TOKENS ───────────────────────────────────────────────────── */
 :root {
-  --bg:         #FFFFFF;
-  --bg-2:       #F7F7F6;
-  --bg-green:   #F5FDF8;
-  --ink:        #0F0F0F;
-  --ink-2:      #555555;
-  --ink-3:      #888888;
-  --border:     #E5E5E3;
-  --border-2:   #ECECEA;
-  --green:      #18794E;
-  --green-bg:   #EDFBF1;
-  --green-bd:   #C8EFD9;
-  --green-dark: #145F3D;
-  --r-sm:       10px;
-  --r-md:       14px;
-  --r-lg:       16px;
-  --font:       'Inter', system-ui, -apple-system, sans-serif;
-  --font-ar:    'Noto Sans Arabic', system-ui, sans-serif;
-  --ease:       180ms ease;
+  --bg:        #FAFAF8;
+  --surface:   #FFFFFF;
+  --ink:       #0A0A0A;
+  --ink-2:     #555555;
+  --ink-3:     #9A9A95;
+  --border:    #ECEAE5;
+  --border-2:  #E2DFD8;
+  --dark:      #0A0A0A;
+  --wa-bubble: #DCF8C6;
+  --r-sm:      8px;
+  --r-md:      14px;
+  --r-lg:      20px;
+  --font:      'Inter', system-ui, -apple-system, sans-serif;
+  --font-ar:   'Noto Sans Arabic', system-ui, sans-serif;
 }
 
-/* ── BASE ─────────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--ink);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 html[lang="ar"] body { font-family: var(--font-ar); }
-a { color: inherit; text-decoration: none; }
-button { cursor: pointer; font-family: inherit; border: none; background: none; }
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-}
 
-/* ── NAV ──────────────────────────────────────────────────────── */
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }
+input { font-family: inherit; font-size: inherit; color: inherit; border: none; outline: none; background: none; }
+ul { list-style: none; }
+
+/* ── NAV ─────────────────────────────────────────────────────── */
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 40px;
+  padding: 22px 56px;
+  border-bottom: 1px solid var(--border);
   background: var(--bg);
-  border-bottom: 1px solid var(--border-2);
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
 }
-.brand {
-  font-size: 20px;
+.logo {
   font-weight: 800;
-  letter-spacing: -0.05em;
+  font-size: 22px;
+  letter-spacing: -0.04em;
   color: var(--ink);
-  line-height: 1;
 }
-.brand-dot { color: var(--green); }
-
-.nav-right { display: flex; align-items: center; gap: 20px; }
+.logo .tld {
+  color: var(--ink-3);
+  font-weight: 700;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
 .nav-link {
   font-size: 14px;
   font-weight: 500;
   color: var(--ink-2);
-  transition: color var(--ease);
+  transition: color 0.15s;
 }
 .nav-link:hover { color: var(--ink); }
-.lang-btn {
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 7px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink-2);
-  background: var(--bg);
-  transition: border-color var(--ease), color var(--ease);
-  min-height: 36px;
-}
-.lang-btn:hover { border-color: var(--green); color: var(--green); }
-
-/* ── MAIN ─────────────────────────────────────────────────────── */
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 24px 96px;
-}
-
-/* ── HEADLINE ─────────────────────────────────────────────────── */
-.headline {
-  text-align: center;
-  max-width: 560px;
-  margin-bottom: 44px;
-}
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--green-bg);
-  border: 1px solid var(--green-bd);
-  border-radius: 100px;
-  padding: 5px 13px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--green);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-}
-.eyebrow-dot {
-  width: 6px; height: 6px;
-  background: var(--green);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.headline h1 {
-  font-size: clamp(28px, 4.5vw, 42px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  margin-bottom: 14px;
+.lang-pill {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
   color: var(--ink);
+  background: var(--surface);
+  transition: all 0.15s;
 }
-.headline p {
-  font-size: 16px;
+.lang-pill:hover { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* ── HERO ────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  padding: 88px 56px 120px;
+  max-width: 1440px;
+  margin: 0 auto;
+  align-items: center;
+}
+.hero-left { max-width: 560px; }
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--ink-2);
-  line-height: 1.7;
-}
-
-/* ── CONTENT STACK ────────────────────────────────────────────── */
-.stack {
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-/* Section label row */
-.section-label {
-  display: flex;
+  margin-bottom: 28px;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
 }
-.label-num {
-  width: 24px; height: 24px;
-  background: var(--ink);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
+.eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--ink-2);
+}
+.hero h1 {
+  font-size: 76px;
   font-weight: 800;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
-/* ── DOMAIN CARD ──────────────────────────────────────────────── */
-.domain-card {
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 22px 22px 18px;
-  margin-bottom: 8px;
-}
-
-.search-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-2);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 6px 6px 6px 16px;
-  margin-bottom: 12px;
-  transition: border-color var(--ease), box-shadow var(--ease);
-}
-.search-row:focus-within {
-  border-color: var(--green);
-  background: var(--bg);
-  box-shadow: 0 0 0 3px rgba(24,121,78,0.1);
-}
-.search-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 16px;
-  font-family: inherit;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
   color: var(--ink);
-  min-height: 36px;
+  margin-bottom: 28px;
 }
-.search-input::placeholder { color: #A0A0A0; }
-.search-hint-text {
-  font-size: 12px;
-  color: var(--ink-3);
-  margin-top: 8px;
-}
-.tld-badge {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--green);
-  background: var(--green-bg);
-  border: 1px solid var(--green-bd);
-  border-radius: 7px;
-  padding: 5px 11px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  cursor: default;
-}
-.search-btn {
-  background: var(--green);
-  color: #fff;
-  border-radius: var(--r-sm);
-  padding: 9px 20px;
-  font-size: 14px;
-  font-weight: 700;
-  min-height: 40px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: opacity var(--ease);
-}
-.search-btn:hover { opacity: 0.88; }
-
-.tld-chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.tld-chip {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 7px 12px;
-  min-height: 32px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  color: var(--ink-3);
-  background: var(--bg);
-  cursor: pointer;
-  transition: background var(--ease), border-color var(--ease), color var(--ease);
-  display: inline-flex;
-  align-items: center;
-}
-.tld-chip.active {
-  background: var(--green-bg);
-  border-color: var(--green-bd);
-  color: var(--green);
-}
-.tld-chip:hover:not(.active) {
-  border-color: #C8C8C8;
+.hero h1 .accent {
+  font-style: italic;
+  font-weight: 500;
   color: var(--ink-2);
 }
+html[lang="ar"] .hero h1 .accent { font-style: normal; }
+.hero-sub {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin-bottom: 36px;
+  max-width: 480px;
+}
 
-/* ── OR DIVIDER ───────────────────────────────────────────────── */
-.or-row {
+/* ── BIG SEARCH ──────────────────────────────────────────────── */
+.search-block { margin-bottom: 20px; }
+.search-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.search-label-helper {
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  font-size: 12px;
+}
+.search-card {
+  background: var(--surface);
+  border: 1.5px solid var(--ink);
+  border-radius: 16px;
+  padding: 10px 10px 10px 28px;
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 20px 0;
+  box-shadow: 0 2px 0 rgba(10,10,10,0.04), 0 24px 60px -20px rgba(0,0,0,0.18);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.search-card:focus-within {
+  box-shadow: 0 2px 0 rgba(10,10,10,0.06), 0 28px 70px -16px rgba(0,0,0,0.25);
+  transform: translateY(-1px);
+}
+.search-card input {
+  flex: 1;
+  padding: 22px 0;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  min-width: 0;
+}
+.search-card input::placeholder { color: var(--ink-3); font-weight: 500; }
+.tld-select {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 0 18px 0 0;
+  border-right: 1px solid var(--border-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.tld-select select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 18px;
+}
+.search-btn {
+  background: var(--ink);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 20px 30px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, gap 0.2s;
+  white-space: nowrap;
+}
+.search-btn:hover { background: #222; gap: 14px; }
+html[dir="rtl"] .search-btn svg { transform: scaleX(-1); }
+.search-hints {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hint-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--ink-3);
+  margin-right: 6px;
+}
+html[dir="rtl"] .hint-label { margin-right: 0; margin-left: 6px; }
+.hint-chip {
   font-size: 13px;
   font-weight: 500;
+  color: var(--ink-2);
+  padding: 6px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  background: var(--surface);
+  transition: all 0.15s;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font); /* keep Latin font for domain examples */
 }
-.or-row::before,
-.or-row::after {
-  content: '';
+.hint-chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* ── OR DIVIDER ──────────────────────────────────────────────── */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  color: var(--ink-3);
+}
+.or-divider::before, .or-divider::after {
+  content: "";
   flex: 1;
   height: 1px;
   background: var(--border-2);
 }
-
-/* ── ASSESSMENT CARD ──────────────────────────────────────────── */
-.assess-card {
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-left: 4px solid var(--green);
-  border-radius: var(--r-lg);
-  padding: 22px;
-  cursor: pointer;
-  transition: border-color var(--ease), box-shadow var(--ease);
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-.assess-card:hover {
-  border-color: #C0C0BE;
-  border-left-color: var(--green);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+.or-divider span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
-.assess-main {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.assess-icon {
-  width: 46px; height: 46px;
+/* ── ASSESSMENT CARD ─────────────────────────────────────────── */
+.assessment-card {
   background: var(--ink);
-  border-radius: 12px;
-  display: flex;
+  color: white;
+  border-radius: 16px;
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -24px rgba(0,0,0,0.3);
 }
-.assess-icon svg { width: 21px; height: 21px; color: #fff; }
-.assess-body { flex: 1; }
-.assess-title {
-  font-size: 16px;
+.assessment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 32px 70px -24px rgba(0,0,0,0.4);
+}
+.assessment-card::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 50%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.assessment-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 8px;
+}
+.assessment-title {
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 3px;
-  color: var(--ink);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 6px;
 }
-.assess-desc {
+.assessment-sub {
   font-size: 13px;
-  color: var(--ink-3);
-  line-height: 1.55;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.5;
 }
-.assess-cta {
+.assessment-btn {
+  background: white;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 14px 22px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--green);
-  color: #fff;
-  border-radius: var(--r-sm);
-  padding: 11px 20px;
-  font-size: 14px;
-  font-weight: 700;
-  min-height: 44px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: gap 0.2s, padding 0.2s;
   white-space: nowrap;
-  flex-shrink: 0;
-  transition: background var(--ease);
+  position: relative;
+  z-index: 1;
 }
-.assess-card:hover .assess-cta { background: var(--green-dark); }
-.assess-cta svg { width: 13px; height: 13px; flex-shrink: 0; }
+.assessment-card:hover .assessment-btn { gap: 12px; padding-right: 18px; }
+html[dir="rtl"] .assessment-btn svg { transform: scaleX(-1); }
 
-.assess-chips {
+/* ── BILINGUAL STRIP ─────────────────────────────────────────── */
+.bilingual-strip {
+  margin-top: 32px;
+  padding: 18px 24px;
+  border: 1px solid var(--border-2);
+  border-radius: 12px;
+  background: var(--surface);
   display: flex;
-  gap: 7px;
+  align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-2);
 }
-.svc-chip {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 11px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  color: var(--ink-2);
-  background: var(--bg-2);
-}
-
-/* ── WHATSAPP FLOAT ───────────────────────────────────────────── */
-.wa-float {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 50px; height: 50px;
-  background: #25D366;
-  border-radius: 50%;
+.bilingual-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  transition: transform var(--ease);
+  flex-shrink: 0;
 }
-.wa-float:hover { transform: scale(1.08); }
-.wa-float svg { width: 26px; height: 26px; fill: #fff; }
-html[dir="rtl"] .wa-float { right: auto; left: 24px; }
+.bilingual-text {
+  font-size: 14px;
+  color: var(--ink-2);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.bilingual-text strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+.bilingual-langs {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bilingual-langs .bar {
+  width: 1px;
+  height: 14px;
+  background: var(--border-2);
+}
+.bilingual-langs .ar {
+  font-family: 'Noto Sans Arabic', system-ui, sans-serif;
+  font-size: 16px;
+}
 
-/* ── FOOTER ───────────────────────────────────────────────────── */
-footer {
-  padding: 20px 40px;
+/* ── HERO VISUAL: phone mockup ───────────────────────────────── */
+.hero-right {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 540px;
+}
+.phone {
+  position: relative;
+  width: 320px;
+  height: 640px;
+  background: #1A1A1A;
+  border-radius: 44px;
+  padding: 12px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.1) inset,
+    0 50px 100px -20px rgba(0,0,0,0.25),
+    0 30px 60px -30px rgba(0,0,0,0.3);
+  transform: rotate(-3deg);
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: #ECE5DD;
+  border-radius: 32px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.phone-notch {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 28px;
+  background: #1A1A1A;
+  border-radius: 0 0 18px 18px;
+  z-index: 2;
+}
+.wa-header {
+  background: #075E54;
+  color: white;
+  padding: 38px 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wa-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+.wa-name { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.wa-status { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.wa-online-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #4FC3F7;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.wa-chat {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(0,0,0,0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(0,0,0,0.02) 0%, transparent 50%),
+    #ECE5DD;
+  overflow: hidden;
+  font-family: 'Noto Sans Arabic', system-ui, sans-serif;
+}
+.bubble {
+  max-width: 75%;
+  padding: 8px 12px 6px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  position: relative;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+  direction: rtl;
+  text-align: right;
+}
+.bubble-time {
+  font-size: 10px;
+  color: rgba(0,0,0,0.45);
+  margin-top: 2px;
+  display: block;
+  text-align: left;
+  direction: ltr;
+}
+.bubble-in { align-self: flex-start; background: white; border-top-left-radius: 2px; }
+.bubble-out { align-self: flex-end; background: var(--wa-bubble); border-top-right-radius: 2px; }
+.bubble-typing {
+  align-self: flex-end;
+  background: var(--wa-bubble);
+  border-top-right-radius: 2px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 4px;
+}
+.bubble-typing span {
+  width: 6px;
+  height: 6px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+}
+.bubble-typing span:nth-child(2) { opacity: 0.6; }
+.bubble-typing span:nth-child(3) { opacity: 0.85; }
+.ai-tag {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  background: var(--ink);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  direction: ltr;
+}
+
+.floating-badge {
+  position: absolute;
+  background: white;
+  border: 1px solid var(--border-2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 3;
+}
+.badge-tl { top: 40px; left: -10px; transform: rotate(-2deg); }
+.badge-br { bottom: 50px; right: -20px; transform: rotate(2deg); }
+.badge-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.badge-meta {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+.badge-text { font-weight: 600; color: var(--ink); }
+
+/* ── TICKER STRIP (infinite marquee) ─────────────────────────── */
+.ticker {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 22px 0;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 6%, black 94%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, black 6%, black 94%, transparent 100%);
+}
+.ticker-track {
+  display: inline-flex;
+  gap: 56px;
+  padding-right: 56px;
+  animation: ticker-scroll 36s linear infinite;
+  will-change: transform;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+html[dir="rtl"] .ticker-track { animation-name: ticker-scroll-rtl; }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes ticker-scroll-rtl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}
+.ticker-item {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 56px;
+  flex-shrink: 0;
+}
+.ticker-item::after {
+  content: "●";
+  color: var(--ink-3);
+  font-size: 8px;
+}
+
+/* ── BILINGUAL BAND (AR+EN fold) ─────────────────────────────── */
+.bilingual-band {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 100px 56px 64px;
+}
+.bilingual-band-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.band-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.band-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--ink-2);
+}
+.band-title {
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 18px;
+  margin-bottom: 28px;
+}
+.band-title-ar {
+  font-family: 'Noto Sans Arabic', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1em;
+  color: var(--ink);
+}
+.band-title-plus {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+html[lang="ar"] .band-title-plus { font-style: normal; }
+.band-sub {
+  font-size: 16px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  max-width: 480px;
+}
+
+.bilingual-band-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.example-card {
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 32px -16px rgba(0,0,0,0.08);
+  position: relative;
+}
+.example-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.example-text {
+  font-size: 14.5px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.55;
+}
+.example-card.example-ar {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+.example-card.example-ar .example-label { color: rgba(255,255,255,0.55); }
+.example-card.example-ar .example-text { color: white; }
+
+/* ── SERVICES (Elixir-style rows) ────────────────────────────── */
+.services-section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 80px 56px 120px;
+}
+.section-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-bottom: 80px;
+  align-items: end;
+}
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--ink-2);
+}
+.section-title {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+.section-title .accent {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+html[lang="ar"] .section-title .accent { font-style: normal; }
+.section-lede {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 460px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 60px 1fr 1.4fr auto;
+  gap: 32px;
+  align-items: center;
+  padding: 28px 0;
   border-top: 1px solid var(--border-2);
+}
+.row:last-child { border-bottom: 1px solid var(--border-2); }
+.row-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.row-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--ink);
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.row-title:hover { opacity: 0.7; }
+.row-desc {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+.row-inquire {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: white;
+  border: none;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: gap 0.2s, background 0.15s, transform 0.15s;
+  justify-self: end;
+}
+.row-inquire:hover { gap: 14px; background: #1a1a1a; transform: translateY(-1px); }
+.row-inquire svg { transition: transform 0.2s; }
+html[dir="rtl"] .row-inquire svg { transform: scaleX(-1); }
+
+/* ── DARK BLOCK ──────────────────────────────────────────────── */
+.dark-block {
+  background: var(--dark);
+  color: white;
+  border-radius: 24px;
+  padding: 96px 80px;
+  max-width: 1280px;
+  margin: 0 auto 120px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 80px;
+  align-items: end;
+  position: relative;
+  overflow: hidden;
+}
+.dark-block::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.dark-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.dark-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: rgba(255,255,255,0.5);
+}
+.dark-title {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+  margin-bottom: 24px;
+}
+.dark-title .accent {
+  font-style: italic;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+}
+html[lang="ar"] .dark-title .accent { font-style: normal; }
+.dark-sub {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.65);
+  max-width: 440px;
+}
+.dark-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 24px;
+}
+html[dir="rtl"] .dark-right { align-items: flex-start; }
+.dark-steps {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+  text-align: right;
+  line-height: 1.8;
+}
+html[dir="rtl"] .dark-steps { text-align: left; }
+.dark-steps strong {
+  color: white;
+  font-weight: 600;
+}
+.cta-pill {
+  background: white;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 18px 32px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: gap 0.2s, padding 0.2s;
+}
+.cta-pill:hover { gap: 16px; padding-right: 28px; }
+.cta-pill svg { transition: transform 0.2s; }
+html[dir="rtl"] .cta-pill svg { transform: scaleX(-1); }
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.foot-copy { font-size: 13px; color: var(--ink-3); }
-.foot-links { display: flex; gap: 20px; }
-.foot-link {
   font-size: 13px;
   color: var(--ink-3);
-  transition: color var(--ease);
+  margin-top: auto;
 }
-.foot-link:hover { color: var(--green); }
+.footer-right {
+  display: flex;
+  gap: 28px;
+}
+.footer-right a:hover { color: var(--ink); }
 
-/* ── RESPONSIVE ───────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .nav { padding: 14px 20px; }
+/* ── MOBILE ──────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .nav { padding: 18px 24px; gap: 16px; }
+  .nav-right { gap: 16px; }
   .nav-link { display: none; }
-  main { padding: 44px 16px 80px; }
-  .headline { margin-bottom: 32px; }
-  .headline h1 { font-size: 28px; }
-  .assess-main { flex-wrap: wrap; }
-  .assess-cta { width: 100%; justify-content: center; }
-  footer { padding: 18px 20px; flex-direction: column; align-items: flex-start; }
-  .wa-float { bottom: 18px; right: 18px; }
-  html[dir="rtl"] .wa-float { right: auto; left: 18px; }
+  .hero { grid-template-columns: 1fr; padding: 56px 24px 80px; gap: 56px; }
+  .hero h1 { font-size: 44px; }
+  .search-card input { font-size: 20px; padding: 18px 0; }
+  .search-card { padding: 8px 8px 8px 22px; }
+  .search-btn { font-size: 14px; padding: 16px 22px; }
+  .tld-select { font-size: 16px; padding: 0 12px 0 0; }
+  .hero-right { min-height: 480px; }
+  .phone { transform: rotate(-2deg) scale(0.9); }
+  .bilingual-strip { padding: 14px 18px; gap: 12px; }
+  .bilingual-langs { margin-inline-start: 0; }
+  .bilingual-band { padding: 64px 24px 32px; }
+  .bilingual-band-grid { grid-template-columns: 1fr; gap: 40px; }
+  .band-title { font-size: 44px; gap: 0 12px; }
+  .example-card { padding: 16px 18px; }
+  .example-text { font-size: 14px; }
+  .services-section { padding: 60px 24px 80px; }
+  .section-header { grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }
+  .section-title { font-size: 38px; }
+  .row { grid-template-columns: 40px 1fr; padding: 24px 0; gap: 8px 16px; }
+  .row-num { grid-row: 1; grid-column: 1; }
+  .row-title { grid-row: 1; grid-column: 2; font-size: 20px; }
+  .row-desc { grid-row: 2; grid-column: 2; }
+  .row-inquire { grid-row: 3; grid-column: 2; justify-self: start; margin-top: 8px; padding: 11px 18px; font-size: 12px; }
+  .dark-block { padding: 56px 32px; grid-template-columns: 1fr; gap: 40px; margin: 0 24px 80px; border-radius: 18px; }
+  .dark-title { font-size: 32px; }
+  .dark-right { align-items: flex-start; }
+  .footer { flex-direction: column; gap: 16px; padding: 32px 24px; align-items: flex-start; }
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav" role="navigation" aria-label="Main navigation">
-  <a href="/" class="brand" aria-label="meor home">meor<span class="brand-dot">.</span></a>
+<nav class="nav">
+  <a href="/" class="logo">meor<span class="tld">.com</span></a>
   <div class="nav-right">
-    <a href="/services.html" class="nav-link" id="nav-services">Services</a>
-    <button class="lang-btn" id="lang-btn" aria-label="Switch to Arabic">العربية</button>
+    <a href="/services.html" class="nav-link" data-i18n="navServices">Services</a>
+    <a href="/assessment.html" class="nav-link" data-i18n="navAssessment">Assessment</a>
+    <a href="mailto:hi@meor.com" class="nav-link" data-i18n="navContact">Contact</a>
+    <button class="lang-pill" id="lang-btn">العربية</button>
   </div>
 </nav>
 
-<!-- MAIN -->
-<main>
+<section class="hero">
+  <div class="hero-left">
+    <div class="eyebrow" data-i18n="eyebrow">AI for MENA businesses</div>
+    <h1>
+      <span data-i18n="h1Top">Your domain.</span><br>
+      <span class="accent" data-i18n="h1Bottom">Your AI agent.</span>
+    </h1>
+    <p class="hero-sub" data-i18n="heroSub">Register a name and get an AI built around how your business actually works — live in days, not months.</p>
 
-  <!-- Headline -->
-  <div class="headline">
-    <div class="eyebrow"><span class="eyebrow-dot"></span><span id="eyebrow-text">AI for MENA businesses</span></div>
-    <h1 id="hero-title">Find a domain. Automate your business.</h1>
-    <p id="hero-sub">Register your name and get AI that works for you — answering customers, collecting reviews, and following up leads.</p>
-  </div>
-
-  <div class="stack">
-
-    <!-- 1. Domain search -->
-    <div class="section-label">
-      <span class="label-num">1</span>
-      <span id="sec1-label">Search for a domain</span>
-    </div>
-
-    <div class="domain-card">
-      <div class="search-row" id="search-row">
-        <label for="domain-q" class="sr-only">Domain name</label>
-        <input
-          type="text"
-          id="domain-q"
-          class="search-input"
-          placeholder="yourbusiness"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-        >
-        <span class="tld-badge" id="tld-badge">.com</span>
-        <button class="search-btn" id="search-btn" onclick="searchDomain()">
-          <span id="search-btn-text">Search</span>
+    <!-- BIG SEARCH -->
+    <div class="search-block">
+      <div class="search-label">
+        <span data-i18n="searchLabel">Find your domain</span>
+        <span class="search-label-helper" data-i18n="searchHelper">Type your business name</span>
+      </div>
+      <div class="search-card">
+        <input type="text" id="domain-input" placeholder="yourbusiness" autocomplete="off" spellcheck="false" data-i18n-placeholder="searchPlaceholder">
+        <div class="tld-select" id="tld-display">
+          <span id="tld-text">.com</span>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 4L5 7L8 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <select id="tld-select" aria-label="Top-level domain">
+            <option value=".com">.com</option>
+            <option value=".ae">.ae</option>
+            <option value=".sa">.sa</option>
+            <option value=".net">.net</option>
+            <option value=".org">.org</option>
+            <option value=".io">.io</option>
+            <option value=".co">.co</option>
+          </select>
+        </div>
+        <button class="search-btn" id="search-btn">
+          <span data-i18n="searchBtn">Search</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
-      <div class="tld-chips" id="tld-chips">
-        <span class="tld-chip active" data-tld=".com">.com</span>
-        <span class="tld-chip" data-tld=".ae">.ae</span>
-        <span class="tld-chip" data-tld=".sa">.sa</span>
-        <span class="tld-chip" data-tld=".net">.net</span>
-        <span class="tld-chip" data-tld=".co">.co</span>
-        <span class="tld-chip" data-tld=".io">.io</span>
+      <div class="search-hints">
+        <span class="hint-label" data-i18n="hintTry">Try</span>
+        <button class="hint-chip" data-hint="cairoclinic.com">cairoclinic.com</button>
+        <button class="hint-chip" data-hint="dubaishop.ae">dubaishop.ae</button>
+        <button class="hint-chip" data-hint="riyadhcafe.sa">riyadhcafe.sa</button>
+        <button class="hint-chip" data-hint=".net">.net</button>
       </div>
-      <p class="search-hint-text" id="search-hint-text">Press Enter or tap Search to check availability</p>
     </div>
 
-    <!-- Divider -->
-    <div class="or-row"><span id="or-text">or</span></div>
-
-    <!-- 2. Assessment -->
-    <div class="section-label">
-      <span class="label-num">2</span>
-      <span id="sec2-label">Tell us what your business needs</span>
-    </div>
-
-    <a class="assess-card" href="/assessment" id="assess-cta">
-      <div class="assess-main">
-        <div class="assess-icon" aria-hidden="true">
-          <!-- spark / AI icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-          </svg>
-        </div>
-        <div class="assess-body">
-          <div class="assess-title" id="assess-title">Free AI assessment — 5 minutes</div>
-          <div class="assess-desc" id="assess-desc">Answer a few questions. We'll tell you exactly what AI can do for your business and what it costs.</div>
-        </div>
-        <span class="assess-cta">
-          <span id="assess-cta-text">Start free assessment</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="5" y1="12" x2="19" y2="12"/>
-            <polyline points="12 5 19 12 12 19"/>
-          </svg>
-        </span>
+    <!-- ASSESSMENT CARD (sells the money-maker) -->
+    <a href="/assessment.html" class="assessment-card">
+      <div>
+        <div class="assessment-eyebrow" data-i18n="assessmentEyebrow">Free 2-minute assessment</div>
+        <div class="assessment-title" data-i18n="assessmentTitle">Want to bring AI into your business?</div>
+        <div class="assessment-sub" data-i18n="assessmentSub">Don't know where to start, or how much it'll cost? Take our 2-minute assessment — we'll map it out for you.</div>
       </div>
-      <div class="assess-chips" id="assess-chips">
-        <span class="svc-chip" id="chip-1">💬 WhatsApp AI</span>
-        <span class="svc-chip" id="chip-2">⭐ Review Collector</span>
-        <span class="svc-chip" id="chip-3">📞 Voice Agent</span>
-        <span class="svc-chip" id="chip-4">🔁 Re-engagement</span>
+      <div class="assessment-btn">
+        <span data-i18n="assessmentBtn">Start</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="#0A0A0A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
     </a>
-
   </div>
-</main>
 
-<!-- WhatsApp float -->
-<a class="wa-float" id="wa-btn" href="#" target="_blank" rel="noopener noreferrer" aria-label="Contact on WhatsApp">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-</a>
+  <div class="hero-right">
+    <div class="floating-badge badge-tl">
+      <div class="badge-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14 7.5c0 3.6-3.13 6.5-7 6.5-1.16 0-2.26-.26-3.22-.72L1 14l.8-2.6C1.3 10.5 1 9.55 1 8.5 1 4.9 4.13 2 8 2s6 2.9 6 5.5z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="badge-meta" data-i18n="badgeWaMeta">WhatsApp</div>
+        <div class="badge-text" data-i18n="badgeWaText">12 inquiries handled today</div>
+      </div>
+    </div>
 
-<footer>
-  <span class="foot-copy" id="foot-copy">&copy; 2025 meor.</span>
-  <div class="foot-links">
-    <a href="/services.html" class="foot-link" id="foot-services">Services</a>
-    <a href="mailto:hi@meor.com" class="foot-link">hi@meor.com</a>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="wa-header">
+          <div class="wa-avatar">M</div>
+          <div>
+            <div class="wa-name">meor Clinic Assistant</div>
+            <div class="wa-status"><span class="wa-online-dot"></span>online</div>
+          </div>
+        </div>
+        <div class="wa-chat">
+          <div class="bubble bubble-in">
+            مرحبا، عندكم موعد بكرة الصبح؟
+            <span class="bubble-time">10:42</span>
+          </div>
+          <div class="bubble bubble-out">
+            <span class="ai-tag">AI</span>
+            أهلاً! نعم، عندنا موعدين متاحين — 9:30 أو 11:15. أيهم يناسبك؟
+            <span class="bubble-time">10:42 ✓✓</span>
+          </div>
+          <div class="bubble bubble-in">
+            9:30 تمام
+            <span class="bubble-time">10:43</span>
+          </div>
+          <div class="bubble bubble-out">
+            تم الحجز ✅<br>الاسم؟
+            <span class="bubble-time">10:43 ✓✓</span>
+          </div>
+          <div class="bubble bubble-in">
+            Sara Hadid
+            <span class="bubble-time">10:43</span>
+          </div>
+          <div class="bubble-typing">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="floating-badge badge-br">
+      <div class="badge-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l2.06 4.18 4.61.67-3.34 3.25.79 4.6L8 12.02l-4.12 2.17.79-4.6L1.33 6.35l4.61-.67L8 1.5z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="badge-meta" data-i18n="badgeGoogleMeta">Google Reviews</div>
+        <div class="badge-text" data-i18n="badgeGoogleText">+3 new this week</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BILINGUAL BAND (AR+EN fold, demonstrates the brand promise) -->
+<section class="bilingual-band">
+  <div class="bilingual-band-grid">
+    <div class="bilingual-band-text">
+      <div class="band-eyebrow" data-i18n="bandEyebrow">Bilingual by default</div>
+      <h2 class="band-title">
+        <span class="band-title-ar" lang="ar" dir="rtl">العربية</span>
+        <span class="band-title-plus accent">+ English.</span>
+      </h2>
+      <p class="band-sub" data-i18n="bandSub">Real RTL design, real Arabic copy, real cultural fit. Not a Google Translate afterthought — every workflow we ship runs natively in both languages, and your customers can switch any time.</p>
+    </div>
+    <div class="bilingual-band-examples" aria-hidden="true">
+      <div class="example-card">
+        <div class="example-label">EN</div>
+        <div class="example-text">"Hi! Yes, we have two open slots tomorrow morning — 9:30 or 11:15. Which works for you?"</div>
+      </div>
+      <div class="example-card example-ar">
+        <div class="example-label" lang="ar" dir="rtl">العربية</div>
+        <div class="example-text" lang="ar" dir="rtl">«أهلاً! نعم، عندنا موعدين متاحين بكرة الصبح — 9:30 أو 11:15. أيهم يناسبك؟»</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <!-- First half -->
+    <span class="ticker-item" data-i18n="indClinics">Clinics</span>
+    <span class="ticker-item" data-i18n="indRestaurants">Restaurants</span>
+    <span class="ticker-item" data-i18n="indEcom">E-commerce</span>
+    <span class="ticker-item" data-i18n="indRealEstate">Real estate</span>
+    <span class="ticker-item" data-i18n="indFactories">Factories</span>
+    <span class="ticker-item" data-i18n="indClinics">Clinics</span>
+    <span class="ticker-item" data-i18n="indRestaurants">Restaurants</span>
+    <span class="ticker-item" data-i18n="indEcom">E-commerce</span>
+    <span class="ticker-item" data-i18n="indRealEstate">Real estate</span>
+    <span class="ticker-item" data-i18n="indFactories">Factories</span>
+    <!-- Second half (identical, so translateX(-50%) loops seamlessly) -->
+    <span class="ticker-item" data-i18n="indClinics">Clinics</span>
+    <span class="ticker-item" data-i18n="indRestaurants">Restaurants</span>
+    <span class="ticker-item" data-i18n="indEcom">E-commerce</span>
+    <span class="ticker-item" data-i18n="indRealEstate">Real estate</span>
+    <span class="ticker-item" data-i18n="indFactories">Factories</span>
+    <span class="ticker-item" data-i18n="indClinics">Clinics</span>
+    <span class="ticker-item" data-i18n="indRestaurants">Restaurants</span>
+    <span class="ticker-item" data-i18n="indEcom">E-commerce</span>
+    <span class="ticker-item" data-i18n="indRealEstate">Real estate</span>
+    <span class="ticker-item" data-i18n="indFactories">Factories</span>
+  </div>
+</div>
+
+<section class="services-section">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow" data-i18n="servicesEyebrow">What we build</div>
+      <h2 class="section-title">
+        <span data-i18n="servicesTitleTop">Four solutions,</span><br>
+        <span class="accent" data-i18n="servicesTitleBottom">one playbook.</span>
+      </h2>
+    </div>
+    <p class="section-lede" data-i18n="servicesLede">Each one is tailored to your business — not deployed from a template. Pricing is scoped after we understand your situation.</p>
+  </div>
+
+  <div class="rows">
+    <div class="row">
+      <div class="row-num">01</div>
+      <a href="/services.html" class="row-title" data-i18n="s1Name">WhatsApp Inquiry Handler</a>
+      <div class="row-desc" data-i18n="s1Desc">AI handles customer messages, books appointments, and sends reminders — so your team stops drowning in DMs.</div>
+      <button type="button" class="row-inquire" data-inquire="WhatsApp Inquiry Handler">
+        <span data-i18n="rowInquire">Inquire</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="row">
+      <div class="row-num">02</div>
+      <a href="/services.html" class="row-title" data-i18n="s2Name">Google Review Collector</a>
+      <div class="row-desc" data-i18n="s2Desc">Asks every customer for a review at the right moment — building your reputation without the awkward ask.</div>
+      <button type="button" class="row-inquire" data-inquire="Google Review Collector">
+        <span data-i18n="rowInquire">Inquire</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="row">
+      <div class="row-num">03</div>
+      <a href="/services.html" class="row-title" data-i18n="s3Name">After-Hours Voice Agent</a>
+      <div class="row-desc" data-i18n="s3Desc">Answers calls when you're closed, collects intent and contact info, and hands off to you in the morning.</div>
+      <button type="button" class="row-inquire" data-inquire="After-Hours Voice Agent">
+        <span data-i18n="rowInquire">Inquire</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="row">
+      <div class="row-num">04</div>
+      <a href="/services.html" class="row-title" data-i18n="s4Name">Customer Re-engagement</a>
+      <div class="row-desc" data-i18n="s4Desc">Spots quiet customers and sends a warm, on-brand nudge — before they forget you exist.</div>
+      <button type="button" class="row-inquire" data-inquire="Customer Re-engagement">
+        <span data-i18n="rowInquire">Inquire</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="dark-block">
+  <div>
+    <div class="dark-eyebrow" data-i18n="darkEyebrow">Free assessment</div>
+    <h2 class="dark-title">
+      <span data-i18n="darkTitleTop">Not sure which fits?</span><br>
+      <span class="accent" data-i18n="darkTitleBottom">We'll map it for you.</span>
+    </h2>
+    <p class="dark-sub" data-i18n="darkSub">Five questions, two minutes. We'll tell you exactly what AI can do for your business, where to start, and what it costs. No sales call required.</p>
+  </div>
+  <div class="dark-right">
+    <div class="dark-steps">
+      <strong>01</strong> <span data-i18n="darkStep1">Tell us your industry</span><br>
+      <strong>02</strong> <span data-i18n="darkStep2">Describe your bottleneck</span><br>
+      <strong>03</strong> <span data-i18n="darkStep3">Get your personalized plan</span>
+    </div>
+    <a href="/assessment.html" class="cta-pill">
+      <span data-i18n="darkCta">Start the assessment</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="#0A0A0A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div data-i18n="footerCopy">© 2026 meor.com</div>
+  <div class="footer-right">
+    <a href="/services.html" data-i18n="footerServices">Services</a>
+    <a href="/assessment.html" data-i18n="footerAssessment">Assessment</a>
+    <a href="mailto:hi@meor.com">hi@meor.com</a>
   </div>
 </footer>
 
 <script>
-/* ── CONFIG ──────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────────────────────────────────── */
 const CFG = {
-  whatsapp: '+201XXXXXXXXXX',
   reseller: 'https://www.secureserver.net/products/domain-registration/find?plid=600707&domainToCheck='
 };
 
-/* ── COPY ────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────
+   TRANSLATIONS
+───────────────────────────────────────────────────────────────────── */
 const T = {
   en: {
-    langBtn:      'العربية',
-    langLabel:    'Switch to Arabic',
-    eyebrow:      'AI for MENA businesses',
-    heroTitle:    'Find a domain. Automate your business.',
-    heroSub:      'Register your name and get AI that works for you — answering customers, collecting reviews, and following up leads.',
-    sec1:         'Search for a domain',
-    searchInput:  'yourbusiness',
-    searchBtn:    'Search',
-    orText:       'or',
-    sec2:         'Tell us what your business needs',
-    assessTitle:  'Free AI assessment — 5 minutes',
-    assessDesc:   "Answer a few questions. We'll tell you exactly what AI can do for your business and what it costs.",
-    assessCta:    'Start free assessment',
-    searchHint:   'Press Enter or tap Search to check availability',
-    chip1: '💬 WhatsApp AI',
-    chip2: '⭐ Review Collector',
-    chip3: '📞 Voice Agent',
-    chip4: '🔁 Re-engagement',
-    navServices:  'Services',
-    waLabel:      'Contact on WhatsApp',
-    footCopy:     '© 2025 meor.',
-    footServices: 'Services',
-    title:        'meor — AI for MENA businesses',
+    title: 'meor.com — AI for MENA businesses',
+    langBtn: 'العربية',
+    navServices: 'Services',
+    navAssessment: 'Assessment',
+    navContact: 'Contact',
+    eyebrow: 'AI for MENA businesses',
+    h1Top: 'Your domain.',
+    h1Bottom: 'Your AI agent.',
+    heroSub: 'Register a name and get an AI built around how your business actually works — live in days, not months.',
+    searchLabel: 'Find your domain',
+    searchHelper: 'Type your business name',
+    searchPlaceholder: 'yourbusiness',
+    searchBtn: 'Search',
+    hintTry: 'Try',
+    assessmentEyebrow: 'Free 2-minute assessment',
+    assessmentTitle: 'Want to bring AI into your business?',
+    assessmentSub: "Don't know where to start, or how much it'll cost? Take our 2-minute assessment — we'll map it out for you.",
+    assessmentBtn: 'Start',
+    bandEyebrow: 'Bilingual by default',
+    bandSub: 'Real RTL design, real Arabic copy, real cultural fit. Not a Google Translate afterthought — every workflow we ship runs natively in both languages, and your customers can switch any time.',
+    badgeWaMeta: 'WhatsApp',
+    badgeWaText: '12 inquiries handled today',
+    badgeGoogleMeta: 'Google Reviews',
+    badgeGoogleText: '+3 new this week',
+    indClinics: 'Clinics',
+    indRestaurants: 'Restaurants',
+    indEcom: 'E-commerce',
+    indRealEstate: 'Real estate',
+    indFactories: 'Factories',
+    statBilingualLabel: 'Bilingual',
+    statBilingualDesc: 'Native Arabic and English, including RTL — not a Google Translate afterthought.',
+    statAssessmentLabel: 'Assessment',
+    statAssessmentNum: '2 min',
+    statAssessmentDesc: 'Five questions. We map exactly what AI can do for you, and what it costs.',
+    statIndustriesLabel: 'Industries',
+    statIndustriesDesc: 'Built around how clinics, shops, restaurants, real estate, and factories actually operate.',
+    statRegionLabel: 'Region',
+    statRegionDesc: 'Not deployed from a Silicon Valley template. Tuned for the way business runs here.',
+    servicesEyebrow: 'What we build',
+    servicesTitleTop: 'Four solutions,',
+    servicesTitleBottom: 'one playbook.',
+    servicesLede: 'Each one is tailored to your business — not deployed from a template. Pricing is scoped after we understand your situation.',
+    s1Name: 'WhatsApp Inquiry Handler',
+    s1Desc: 'AI handles customer messages, books appointments, and sends reminders — so your team stops drowning in DMs.',
+    s2Name: 'Google Review Collector',
+    s2Desc: "Asks every customer for a review at the right moment — building your reputation without the awkward ask.",
+    s3Name: 'After-Hours Voice Agent',
+    s3Desc: "Answers calls when you're closed, collects intent and contact info, and hands off to you in the morning.",
+    s4Name: 'Customer Re-engagement',
+    s4Desc: 'Spots quiet customers and sends a warm, on-brand nudge — before they forget you exist.',
+    rowInquire: 'Inquire',
+    darkEyebrow: 'Free assessment',
+    darkTitleTop: 'Not sure which fits?',
+    darkTitleBottom: "We'll map it for you.",
+    darkSub: "Five questions, two minutes. We'll tell you exactly what AI can do for your business, where to start, and what it costs. No sales call required.",
+    darkStep1: 'Tell us your industry',
+    darkStep2: 'Describe your bottleneck',
+    darkStep3: 'Get your personalized plan',
+    darkCta: 'Start the assessment',
+    footerCopy: '© 2026 meor.com',
+    footerServices: 'Services',
+    footerAssessment: 'Assessment',
   },
   ar: {
-    langBtn:      'English',
-    langLabel:    'Switch to English',
-    eyebrow:      'ذكاء اصطناعي للأعمال في منطقة الشرق الأوسط',
-    heroTitle:    'نشاطك يبدأ من هنا',
-    heroSub:      'ابحث عن دومين أو احصل على ذكاء اصطناعي مبني لنشاطك — كلاهما في دقائق.',
-    sec1:         'ابحث عن دومين',
-    searchInput:  'اسم نشاطك',
-    searchBtn:    'بحث',
-    orText:       'أو',
-    sec2:         'أخبرنا بما يحتاجه نشاطك',
-    assessTitle:  'تقييم مجاني للذكاء الاصطناعي — 5 دقائق',
-    assessDesc:   'أجب على أسئلة بسيطة. سنخبرك بالضبط ما يمكن للذكاء الاصطناعي فعله لنشاطك وتكلفته.',
-    assessCta:    'ابدأ التقييم المجاني',
-    searchHint:   'اضغط Enter أو انقر بحث للتحقق من التوفر',
-    chip1: '💬 واتساب ذكي',
-    chip2: '⭐ جمع التقييمات',
-    chip3: '📞 وكيل صوتي',
-    chip4: '🔁 إعادة التفاعل',
-    navServices:  'خدماتنا',
-    waLabel:      'تواصل عبر واتساب',
-    footCopy:     '© 2025 meor.',
-    footServices: 'خدماتنا',
-    title:        'meor — ذكاء اصطناعي للأعمال في الشرق الأوسط',
+    title: 'meor.com — الذكاء الاصطناعي لأعمال المنطقة',
+    langBtn: 'English',
+    navServices: 'الخدمات',
+    navAssessment: 'التقييم',
+    navContact: 'تواصل',
+    eyebrow: 'الذكاء الاصطناعي لأعمال المنطقة',
+    h1Top: 'نطاقك.',
+    h1Bottom: 'وكيلك الذكي.',
+    heroSub: 'سجّل اسم نطاق واحصل على وكيل ذكاء اصطناعي مبني حول طريقة عمل نشاطك فعلاً — يعمل خلال أيام، لا شهور.',
+    searchLabel: 'اعثر على نطاقك',
+    searchHelper: 'اكتب اسم نشاطك',
+    searchPlaceholder: 'yourbusiness',
+    searchBtn: 'بحث',
+    hintTry: 'جرّب',
+    assessmentEyebrow: 'تقييم مجاني — دقيقتان',
+    assessmentTitle: 'هل تريد إدخال الذكاء الاصطناعي في نشاطك؟',
+    assessmentSub: 'لا تعرف من أين تبدأ أو ما التكلفة؟ خذ تقييمنا المختصر — دقيقتان — وسنرسم لك الخطة.',
+    assessmentBtn: 'ابدأ',
+    bandEyebrow: 'ثنائي اللغة بشكل افتراضي',
+    bandSub: 'تصميم RTL حقيقي، نسخة عربية حقيقية، تكيّف ثقافي حقيقي. ليس ترجمة جوجل لاحقة — كل تدفق نشحنه يعمل أصلياً بالعربية والإنجليزية، وعملاؤك يستطيعون التبديل في أي وقت.',
+    badgeWaMeta: 'واتساب',
+    badgeWaText: 'تم التعامل مع 12 استفساراً اليوم',
+    badgeGoogleMeta: 'تقييمات جوجل',
+    badgeGoogleText: '+3 جديدة هذا الأسبوع',
+    indClinics: 'عيادات',
+    indRestaurants: 'مطاعم',
+    indEcom: 'تجارة إلكترونية',
+    indRealEstate: 'عقارات',
+    indFactories: 'مصانع',
+    statBilingualLabel: 'ثنائي اللغة',
+    statBilingualDesc: 'عربية وإنجليزية أصلية، مع دعم RTL — وليس ترجمة لاحقة.',
+    statAssessmentLabel: 'التقييم',
+    statAssessmentNum: 'دقيقتان',
+    statAssessmentDesc: 'خمسة أسئلة. نحدد بالضبط ما يمكن للذكاء الاصطناعي فعله، والتكلفة.',
+    statIndustriesLabel: 'القطاعات',
+    statIndustriesDesc: 'مبني حول طريقة عمل العيادات والمتاجر والمطاعم والعقارات والمصانع فعلاً.',
+    statRegionLabel: 'المنطقة',
+    statRegionDesc: 'ليس قالباً جاهزاً من وادي السيليكون. مصمم لطريقة عمل الأعمال هنا.',
+    servicesEyebrow: 'ما نبنيه',
+    servicesTitleTop: 'أربعة حلول،',
+    servicesTitleBottom: 'منهج واحد.',
+    servicesLede: 'كل حل مخصص لنشاطك — وليس منسوخاً من قالب. يتم تحديد السعر بعد فهم وضعك.',
+    s1Name: 'مساعد استفسارات الواتساب',
+    s1Desc: 'يتعامل الذكاء الاصطناعي مع رسائل العملاء ويحجز المواعيد ويرسل التذكيرات — حتى يتوقف فريقك عن الغرق في الرسائل.',
+    s2Name: 'جامع تقييمات جوجل',
+    s2Desc: 'يطلب من كل عميل تقييماً في اللحظة المناسبة — لبناء سمعتك بدون حرج.',
+    s3Name: 'وكيل المكالمات خارج أوقات العمل',
+    s3Desc: 'يرد على المكالمات حين تكون مغلقاً، ويجمع النية والبيانات، ويسلّمها لك صباحاً.',
+    s4Name: 'إعادة تفعيل العملاء',
+    s4Desc: 'يرصد العملاء الهادئين ويرسل رسالة دافئة بأسلوبك — قبل أن ينسوك.',
+    rowInquire: 'استفسر',
+    darkEyebrow: 'تقييم مجاني',
+    darkTitleTop: 'لا تعرف أي حل يناسبك؟',
+    darkTitleBottom: 'سنحدده لك.',
+    darkSub: 'خمسة أسئلة، دقيقتان. سنخبرك بالضبط ما يمكن للذكاء الاصطناعي فعله لنشاطك، من أين تبدأ، والتكلفة. بدون مكالمة مبيعات.',
+    darkStep1: 'أخبرنا عن قطاعك',
+    darkStep2: 'صف نقطة الاختناق',
+    darkStep3: 'احصل على خطتك الشخصية',
+    darkCta: 'ابدأ التقييم',
+    footerCopy: '© 2026 meor.com',
+    footerServices: 'الخدمات',
+    footerAssessment: 'التقييم',
   }
 };
 
-/* ── STATE ───────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────
+   LANGUAGE
+───────────────────────────────────────────────────────────────────── */
 let lang = localStorage.getItem('meor_lang') || 'en';
-let activeTld = '.com';
 
-/* ── LANGUAGE ────────────────────────────────────────────────── */
-function setLang(l) {
-  lang = l;
-  localStorage.setItem('meor_lang', l);
-  const html = document.documentElement;
-  html.lang = l;
-  html.dir  = l === 'ar' ? 'rtl' : 'ltr';
+function applyLang(l) {
   const c = T[l];
+  if (!c) return;
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
   document.title = c.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (c[key] !== undefined) el.textContent = c[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (c[key] !== undefined) el.placeholder = c[key];
+  });
   document.getElementById('lang-btn').textContent = c.langBtn;
-  document.getElementById('lang-btn').setAttribute('aria-label', c.langLabel);
-  document.getElementById('eyebrow-text').textContent  = c.eyebrow;
-  document.getElementById('hero-title').textContent    = c.heroTitle;
-  document.getElementById('hero-sub').textContent      = c.heroSub;
-  document.getElementById('sec1-label').textContent    = c.sec1;
-  document.getElementById('domain-q').placeholder      = c.searchInput;
-  document.getElementById('search-btn-text').textContent = c.searchBtn;
-  document.getElementById('or-text').textContent       = c.orText;
-  document.getElementById('sec2-label').textContent    = c.sec2;
-  document.getElementById('assess-title').textContent  = c.assessTitle;
-  document.getElementById('assess-desc').textContent   = c.assessDesc;
-  document.getElementById('assess-cta-text').textContent = c.assessCta;
-  document.getElementById('search-hint-text').textContent = c.searchHint;
-  document.getElementById('chip-1').textContent        = c.chip1;
-  document.getElementById('chip-2').textContent        = c.chip2;
-  document.getElementById('chip-3').textContent        = c.chip3;
-  document.getElementById('chip-4').textContent        = c.chip4;
-  document.getElementById('nav-services').textContent  = c.navServices;
-  document.getElementById('wa-btn').setAttribute('aria-label', c.waLabel);
-  document.getElementById('foot-copy').textContent     = c.footCopy;
-  document.getElementById('foot-services').textContent = c.footServices;
 }
 
 document.getElementById('lang-btn').addEventListener('click', () => {
-  setLang(lang === 'en' ? 'ar' : 'en');
+  lang = lang === 'en' ? 'ar' : 'en';
+  localStorage.setItem('meor_lang', lang);
+  applyLang(lang);
 });
 
-/* ── TLD CHIPS ───────────────────────────────────────────────── */
-document.getElementById('tld-chips').addEventListener('click', e => {
-  const chip = e.target.closest('.tld-chip');
-  if (!chip) return;
-  document.querySelectorAll('.tld-chip').forEach(c => c.classList.remove('active'));
-  chip.classList.add('active');
-  activeTld = chip.dataset.tld;
-  document.getElementById('tld-badge').textContent = activeTld;
+/* ─────────────────────────────────────────────────────────────────────
+   DOMAIN SEARCH
+───────────────────────────────────────────────────────────────────── */
+const input = document.getElementById('domain-input');
+const tldSelect = document.getElementById('tld-select');
+const tldText = document.getElementById('tld-text');
+
+tldSelect.addEventListener('change', () => {
+  tldText.textContent = tldSelect.value;
 });
 
-/* ── DOMAIN SEARCH ───────────────────────────────────────────── */
-function searchDomain() {
-  const raw = document.getElementById('domain-q').value.trim();
-  if (!raw) { document.getElementById('domain-q').focus(); return; }
-  const query = raw.includes('.') ? raw : raw + activeTld;
-  window.open(CFG.reseller + encodeURIComponent(query), '_blank', 'noopener,noreferrer');
+function doSearch() {
+  let q = input.value.trim();
+  if (!q) { input.focus(); return; }
+  // If user already typed a full domain (with dot), use as-is. Otherwise append TLD.
+  if (!q.includes('.')) q += tldSelect.value;
+  window.open(CFG.reseller + encodeURIComponent(q), '_blank', 'noopener,noreferrer');
 }
 
-document.getElementById('domain-q').addEventListener('keydown', e => {
-  if (e.key === 'Enter') searchDomain();
+document.getElementById('search-btn').addEventListener('click', doSearch);
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
 });
 
-/* ── WHATSAPP ────────────────────────────────────────────────── */
-document.getElementById('wa-btn').href = 'https://wa.me/' + CFG.whatsapp.replace(/\D/g, '');
+/* ─────────────────────────────────────────────────────────────────────
+   HINT CHIPS
+───────────────────────────────────────────────────────────────────── */
+document.querySelectorAll('.hint-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const hint = chip.dataset.hint || chip.textContent.trim();
+    if (hint.startsWith('.')) {
+      // TLD-only hint — update the select
+      const opt = Array.from(tldSelect.options).find(o => o.value === hint);
+      if (opt) {
+        tldSelect.value = hint;
+        tldText.textContent = hint;
+      }
+      input.focus();
+    } else {
+      input.value = hint;
+      // Sync TLD if the hint already includes one
+      const dotIdx = hint.lastIndexOf('.');
+      if (dotIdx > 0) {
+        const tld = hint.slice(dotIdx);
+        const opt = Array.from(tldSelect.options).find(o => o.value === tld);
+        if (opt) { tldSelect.value = tld; tldText.textContent = tld; }
+        input.value = hint.slice(0, dotIdx);
+      }
+      input.focus();
+    }
+  });
+});
 
-/* ── INIT ────────────────────────────────────────────────────── */
-setLang(lang);
+/* ─────────────────────────────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────────────────────────────── */
+applyLang(lang);
 </script>
+
 </body>
 </html>

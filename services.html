@@ -3,243 +3,398 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Services — meor</title>
+<title>Services — meor.com</title>
 <meta name="description" content="AI services for MENA businesses. WhatsApp handlers, review collection, after-hours voice agents, and customer re-engagement.">
 <link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/inquiry.js" defer></script>
 <style>
+/* ── TOKENS ──────────────────────────────────────────────────── */
 :root {
-  --bg:       #F9F9F8;
-  --surface:  #FFFFFF;
-  --ink:      #0F0F0F;
-  --ink-2:    #4A4A4A;
-  --ink-3:    #909090;
-  --border:   #E5E5E5;
-  --green:    #18794E;
-  --green-bg: #EDFBF1;
-  --r-sm:     8px;
-  --r-lg:     14px;
-  --font:     'Inter', system-ui, -apple-system, sans-serif;
-  --font-ar:  'Noto Sans Arabic', system-ui, sans-serif;
-  --ease:     200ms ease;
+  --bg:        #FAFAF8;
+  --surface:   #FFFFFF;
+  --ink:       #0A0A0A;
+  --ink-2:     #555555;
+  --ink-3:     #9A9A95;
+  --border:    #ECEAE5;
+  --border-2:  #E2DFD8;
+  --r-md:      14px;
+  --r-lg:      20px;
+  --font:      'Inter', system-ui, -apple-system, sans-serif;
+  --font-ar:   'Noto Sans Arabic', system-ui, sans-serif;
+  --ease:      200ms ease;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--ink);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
-  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11";
 }
 html[lang="ar"] body { font-family: var(--font-ar); }
 a { color: inherit; text-decoration: none; }
-button { cursor: pointer; font-family: inherit; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
 
-/* NAV */
+/* ── NAV ─────────────────────────────────────────────────────── */
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 32px;
-  background: var(--surface);
+  padding: 22px 56px;
   border-bottom: 1px solid var(--border);
+  background: var(--bg);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 30;
 }
-.brand { font-size: 20px; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); }
-.brand-dot { color: var(--green); }
-.lang-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 7px 14px;
-  font-size: 14px;
+.brand {
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: baseline;
+}
+.brand-dot {
+  color: var(--ink-3);
+  font-weight: 700;
+}
+.nav-right { display: flex; align-items: center; gap: 28px; }
+.nav-link {
+  font-size: 13px;
   font-weight: 500;
   color: var(--ink-2);
-  transition: border-color var(--ease), color var(--ease);
-  min-height: 36px;
-  font-family: inherit;
+  transition: color var(--ease);
 }
-.lang-btn:hover { border-color: var(--green); color: var(--green); }
+.nav-link:hover { color: var(--ink); }
+.lang-btn {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--surface);
+  transition: all var(--ease);
+}
+.lang-btn:hover { background: var(--ink); color: white; border-color: var(--ink); }
 
-/* MAIN */
+/* ── MAIN ────────────────────────────────────────────────────── */
 main {
   flex: 1;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 64px 24px 96px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 56px 120px;
 }
 
-/* PAGE HEADER */
-.page-header { margin-bottom: 56px; }
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
+.page-header {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 80px;
+  margin-bottom: 96px;
+  align-items: end;
+}
 .page-tag {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--green);
-  margin-bottom: 14px;
+  color: var(--ink-2);
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-tag::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--ink-2);
 }
 .page-title {
-  font-size: clamp(26px, 4vw, 36px);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-  margin-bottom: 14px;
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  color: var(--ink);
 }
 .page-sub {
   font-size: 17px;
   color: var(--ink-2);
-  line-height: 1.7;
-  max-width: 540px;
+  line-height: 1.6;
+  max-width: 460px;
 }
 
-/* SERVICE CARDS */
-.services { display: flex; flex-direction: column; gap: 2px; }
-.svc-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 28px 28px 24px;
-  margin-bottom: 16px;
-}
-.svc-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 10px;
-}
-.svc-num {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--green);
-  background: var(--green-bg);
-  border-radius: 6px;
-  padding: 4px 10px;
-  flex-shrink: 0;
-  margin-top: 3px;
-  font-variant-numeric: tabular-nums;
-}
-.svc-name {
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-}
-.svc-value {
-  font-size: 15px;
-  color: var(--ink-2);
-  line-height: 1.65;
-  margin-bottom: 18px;
-  padding-inline-start: 52px;
-}
-.svc-bullets {
-  list-style: none;
-  padding-inline-start: 52px;
+/* ── SERVICE ROWS (alternating editorial blocks) ─────────────── */
+.services {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+}
+.svc-card {
+  display: grid;
+  grid-template-columns: 80px 1.1fr 1fr;
+  gap: 48px;
+  padding: 72px 0;
+  border-top: 1px solid var(--border-2);
+  align-items: start;
+}
+.svc-card:last-child {
+  border-bottom: 1px solid var(--border-2);
+}
+.svc-header {
+  grid-column: 1 / 3;
+  display: contents;
+}
+.svc-num {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  padding-top: 14px;
+  border-top: 1px solid var(--ink);
+  width: fit-content;
+  min-width: 36px;
+}
+.svc-name {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.svc-value {
+  grid-column: 2;
+  font-size: 16px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  margin-top: 20px;
+}
+.svc-bullets {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
 }
 .svc-bullets li {
   font-size: 14px;
-  color: var(--ink-2);
+  font-weight: 500;
+  color: var(--ink);
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   line-height: 1.5;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
 }
-.bullet-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--green);
-  flex-shrink: 0;
-  margin-top: 7px;
-}
+.svc-bullets li:last-child { border-bottom: none; }
 
-/* CTA BAND */
-.cta-band {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 32px 28px;
-  margin-top: 40px;
+/* ── INQUIRE BUTTON (per service) ────────────────────────────── */
+.svc-cta {
+  grid-column: 1 / -1;
+  margin-top: 28px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
 }
-.cta-text h3 {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin-bottom: 6px;
-}
-.cta-text p { font-size: 15px; color: var(--ink-2); }
-.cta-btn {
+.svc-inquire {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 22px;
-  background: var(--green);
-  color: #fff;
+  gap: 10px;
+  background: var(--ink);
+  color: white;
   border: none;
-  border-radius: var(--r-sm);
-  font-size: 15px;
-  font-weight: 500;
   font-family: inherit;
-  min-height: 44px;
-  white-space: nowrap;
-  transition: opacity var(--ease);
-  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: gap 0.2s, background 0.15s, transform 0.15s;
 }
-.cta-btn:hover { opacity: 0.87; }
-.cta-btn svg { width: 15px; height: 15px; }
+.svc-inquire:hover { gap: 14px; background: #1a1a1a; transform: translateY(-1px); }
+.svc-inquire svg { transition: transform 0.2s; }
+html[dir="rtl"] .svc-inquire svg { transform: scaleX(-1); }
+.svc-cta-helper {
+  font-size: 13px;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.bullet-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+}
+.bullet-dot::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='1 5 4 8 11 1'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
 
-/* FOOTER */
+/* ── CTA BAND (dark editorial card matching homepage assessment-card) ── */
+.cta-band {
+  background: var(--ink);
+  color: white;
+  border-radius: 24px;
+  padding: 64px 64px;
+  margin-top: 96px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 64px;
+  align-items: end;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 32px 80px -28px rgba(0,0,0,0.3);
+}
+.cta-band::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 50%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.cta-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: rgba(255,255,255,0.5);
+}
+.cta-band h3 {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  margin-bottom: 18px;
+}
+.cta-band p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+  max-width: 420px;
+}
+.cta-band-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.cta-btn {
+  background: white;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 18px 32px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: gap var(--ease), padding var(--ease);
+  position: relative;
+  z-index: 1;
+}
+.cta-btn:hover { gap: 14px; padding-right: 28px; }
+.cta-btn svg { transition: transform var(--ease); }
+html[dir="rtl"] .cta-btn svg { transform: scaleX(-1); }
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
 footer {
-  padding: 22px 32px;
   border-top: 1px solid var(--border);
+  padding: 36px 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 .foot-copy { font-size: 13px; color: var(--ink-3); }
-.foot-link { font-size: 13px; color: var(--ink-3); transition: color var(--ease); }
-.foot-link:hover { color: var(--green); }
+.foot-right { display: flex; gap: 28px; }
+.foot-link {
+  font-size: 13px;
+  color: var(--ink-3);
+  transition: color var(--ease);
+}
+.foot-link:hover { color: var(--ink); }
 
-@media (max-width: 580px) {
-  .nav { padding: 14px 20px; }
-  main { padding: 40px 16px 80px; }
-  .svc-value, .svc-bullets { padding-inline-start: 0; }
-  .svc-num { margin-top: 0; }
-  .cta-band { flex-direction: column; align-items: flex-start; }
-  footer { padding: 18px 20px; flex-direction: column; align-items: flex-start; }
+/* ── MOBILE ──────────────────────────────────────────────────── */
+@media (max-width: 880px) {
+  .nav { padding: 18px 24px; }
+  main { padding: 56px 24px 80px; }
+  .page-header { grid-template-columns: 1fr; gap: 24px; margin-bottom: 56px; align-items: start; }
+  .page-title { font-size: 40px; }
+  .svc-card {
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    padding: 48px 0;
+  }
+  .svc-header { display: contents; }
+  .svc-name { font-size: 26px; grid-column: 2; }
+  .svc-value { grid-column: 1 / 3; margin-top: 8px; font-size: 15px; }
+  .svc-bullets { grid-column: 1 / 3; grid-row: auto; padding-top: 8px; }
+  .cta-band { padding: 40px 28px; grid-template-columns: 1fr; gap: 32px; margin-top: 64px; }
+  .cta-band h3 { font-size: 26px; }
+  .cta-band-right { align-items: flex-start; }
+  footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
 }
 </style>
 </head>
 <body>
 
 <nav class="nav" role="navigation" aria-label="Main navigation">
-  <a href="/" class="brand" aria-label="Back to meor home">meor<span class="brand-dot">.</span></a>
-  <button class="lang-btn" id="lang-btn" aria-label="Switch to Arabic">العربية</button>
+  <a href="/" class="brand" aria-label="Back to meor.com home">meor<span class="brand-dot">.com</span></a>
+  <div class="nav-right">
+    <a href="/" class="nav-link" id="nav-home">Home</a>
+    <a href="/assessment.html" class="nav-link" id="nav-assessment">Assessment</a>
+    <button class="lang-btn" id="lang-btn" aria-label="Switch language">العربية</button>
+  </div>
 </nav>
 
 <main>
   <div class="page-header">
-    <div class="page-tag" id="page-tag">What we build</div>
-    <h1 class="page-title" id="page-title">Four solutions, built around how MENA businesses actually work.</h1>
+    <div>
+      <div class="page-tag" id="page-tag">What we build</div>
+      <h1 class="page-title" id="page-title">Four solutions, built around how MENA businesses actually work.</h1>
+    </div>
     <p class="page-sub" id="page-sub">Each solution is tailored to your business — not deployed from a template. Pricing is scoped after we understand your situation.</p>
   </div>
 
@@ -248,22 +403,29 @@ footer {
   </div>
 
   <div class="cta-band">
-    <div class="cta-text">
+    <div>
+      <div class="cta-eyebrow">Free assessment</div>
       <h3 id="cta-title">Not sure which fits your situation?</h3>
       <p id="cta-sub">Take the assessment — it takes 2 minutes and gives you a specific recommendation.</p>
     </div>
-    <a href="/assessment.html" class="cta-btn" id="cta-btn">
-      <span id="cta-btn-text">Start assessment</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-      </svg>
-    </a>
+    <div class="cta-band-right">
+      <a href="/assessment.html" class="cta-btn" id="cta-btn">
+        <span id="cta-btn-text">Start assessment</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
   </div>
 </main>
 
 <footer>
-  <span class="foot-copy" id="foot-copy">&copy; 2025 meor.</span>
-  <a href="mailto:hi@meor.com" class="foot-link" id="foot-contact">hi@meor.com</a>
+  <span class="foot-copy" id="foot-copy">© 2026 meor.com</span>
+  <div class="foot-right">
+    <a href="/" class="foot-link" id="foot-home">Home</a>
+    <a href="/assessment.html" class="foot-link" id="foot-assessment">Assessment</a>
+    <a href="mailto:hi@meor.com" class="foot-link" id="foot-contact">hi@meor.com</a>
+  </div>
 </footer>
 
 <script>
@@ -276,9 +438,13 @@ const T = {
     ctaTitle:   'Not sure which fits your situation?',
     ctaSub:     'Take the assessment — it takes 2 minutes and gives you a specific recommendation.',
     ctaBtn:     'Start assessment',
-    footCopy:   '© 2025 meor.',
+    footCopy:   '© 2026 meor.com',
     footContact:'hi@meor.com',
-    title:      'Services — meor',
+    title:      'Services — meor.com',
+    navHome:    'Home',
+    navAssessment: 'Assessment',
+    inquireBtn: 'Get this set up',
+    ctaHelper:  'Or take the assessment if you\'re not sure which fits.',
     services: [
       {
         num: '01',
@@ -334,9 +500,13 @@ const T = {
     ctaTitle:   'لست متأكداً أيها يناسب وضعك؟',
     ctaSub:     'أجرِ التقييم — يستغرق دقيقتين ويعطيك توصية محددة.',
     ctaBtn:     'ابدأ التقييم',
-    footCopy:   '© 2025 meor.',
+    footCopy:   '© 2026 meor.com',
     footContact:'hi@meor.com',
-    title:      'الخدمات — meor',
+    title:      'الخدمات — meor.com',
+    navHome:    'الرئيسية',
+    navAssessment: 'التقييم',
+    inquireBtn: 'احصل على هذا الحل',
+    ctaHelper:  'أو خذ التقييم إذا لم تكن متأكداً أيها يناسبك.',
     services: [
       {
         num: '01',
@@ -404,21 +574,33 @@ function setLang(l) {
   document.getElementById('cta-btn-text').textContent = c.ctaBtn;
   document.getElementById('foot-copy').textContent    = c.footCopy;
   document.getElementById('foot-contact').textContent = c.footContact;
+  document.getElementById('nav-home').textContent     = c.navHome;
+  document.getElementById('nav-assessment').textContent = c.navAssessment;
+  document.getElementById('foot-home').textContent    = c.navHome;
+  document.getElementById('foot-assessment').textContent = c.navAssessment;
   renderServices(c.services);
 }
 
 function renderServices(services) {
+  const c = T[lang];
   const list = document.getElementById('services-list');
   list.innerHTML = services.map(svc => `
     <article class="svc-card">
-      <div class="svc-header">
-        <span class="svc-num" aria-hidden="true">${svc.num}</span>
-        <h2 class="svc-name">${svc.name}</h2>
-      </div>
+      <span class="svc-num" aria-hidden="true">${svc.num}</span>
+      <h2 class="svc-name">${svc.name}</h2>
       <p class="svc-value">${svc.value}</p>
       <ul class="svc-bullets" aria-label="Capabilities">
         ${svc.bullets.map(b => `<li><span class="bullet-dot" aria-hidden="true"></span><span>${b}</span></li>`).join('')}
       </ul>
+      <div class="svc-cta">
+        <button type="button" class="svc-inquire" data-inquire="${svc.name.replace(/"/g, '&quot;')}">
+          ${c.inquireBtn}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="svc-cta-helper">${c.ctaHelper}</span>
+      </div>
     </article>
   `).join('');
 }
