@@ -39,7 +39,14 @@ module.exports = async function handler(req, res) {
   const FROM_EMAIL    = process.env.FROM_EMAIL     || 'leads@meor.com';
 
   if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.error('Missing env vars:', { hasUrl: !!SUPABASE_URL, hasKey: !!SUPABASE_KEY });
     return res.status(500).json({ ok: false, error: 'Server not configured' });
+  }
+  /* Sanity-check SUPABASE_URL is a real URL — if someone set it without https://
+     the later fetch will throw a TypeError before we have a chance to log the URL. */
+  if (!/^https?:\/\//i.test(SUPABASE_URL)) {
+    console.error('SUPABASE_URL is malformed (missing protocol):', JSON.stringify(SUPABASE_URL).slice(0, 80));
+    return res.status(500).json({ ok: false, error: 'Server misconfigured (URL)' });
   }
 
   let body;
@@ -127,13 +134,19 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify(payload),
     });
     if (!sbRes.ok) {
-      const err = await sbRes.text();
-      console.error('Supabase error:', err);
-      return res.status(500).json({ ok: false, error: 'Database write failed' });
+      const errText = await sbRes.text();
+      console.error('Supabase non-OK response:', sbRes.status, errText);
+      return res.status(500).json({ ok: false, error: 'Database write failed', detail: errText.slice(0, 200) });
     }
   } catch (err) {
-    console.error('Supabase fetch error:', err);
-    return res.status(500).json({ ok: false, error: 'Database unreachable' });
+    /* Log every piece of err separately so Vercel's log truncation doesn't hide
+       the real cause. Past truncation hid which line threw. */
+    console.error('Supabase fetch threw — name:', err?.name);
+    console.error('Supabase fetch threw — message:', err?.message);
+    console.error('Supabase fetch threw — code:', err?.code);
+    console.error('Supabase fetch threw — cause:', err?.cause?.message || err?.cause);
+    console.error('Supabase fetch threw — stack:', err?.stack);
+    return res.status(500).json({ ok: false, error: 'Database unreachable', detail: err?.message || String(err) });
   }
 
   /* ── Send email notification ─────────────────────────────────────── */
