@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>meor watch — coming soon</title>
+<meta name="description" content="meor watch — quiet reputation monitoring for MENA businesses. Watches your reviews, competitors, and mentions, and only pings you when something needs you. Coming soon.">
+<link rel="icon" type="image/svg+xml" href="/meor-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/inquiry.js" defer></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+:root {
+  --bg:        #FAFAF8;
+  --surface:   #FFFFFF;
+  --ink:       #0A0A0A;
+  --ink-2:     #555555;
+  --ink-3:     #9A9A95;
+  --border:    #ECEAE5;
+  --border-2:  #E2DFD8;
+  --font:      'Inter', system-ui, -apple-system, sans-serif;
+  --font-ar:   'Noto Sans Arabic', system-ui, sans-serif;
+}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+html[lang="ar"] body { font-family: var(--font-ar); }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }
+
+/* NAV */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 56px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.logo { font-weight: 800; font-size: 22px; letter-spacing: -0.04em; color: var(--ink); }
+.logo .tld { color: var(--ink-3); font-weight: 700; }
+.nav-right { display: flex; align-items: center; gap: 28px; }
+.nav-link { font-size: 14px; font-weight: 500; color: var(--ink-2); transition: color 0.15s; }
+.nav-link:hover { color: var(--ink); }
+.lang-pill {
+  font-size: 13px; font-weight: 500; padding: 8px 14px;
+  border: 1px solid var(--border-2); border-radius: 999px;
+  color: var(--ink); background: var(--surface); transition: all 0.15s;
+}
+.lang-pill:hover { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* HERO */
+main { flex: 1; }
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 88px 24px 64px;
+  text-align: center;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 7px 16px;
+  margin-bottom: 28px;
+}
+.badge .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ink); display: inline-block;
+}
+.hero h1 {
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin-bottom: 22px;
+}
+.hero h1 .tld { color: var(--ink-3); }
+.hero-sub {
+  font-size: 19px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto 36px;
+}
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 17px 32px;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  transition: gap 0.2s, background 0.15s, transform 0.15s;
+}
+.cta-btn:hover { gap: 14px; background: #1a1a1a; transform: translateY(-1px); }
+html[dir="rtl"] .cta-btn svg { transform: scaleX(-1); }
+.cta-note { margin-top: 14px; font-size: 13px; color: var(--ink-3); }
+
+/* WHAT IT WATCHES */
+.points {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 24px 96px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.point {
+  border: 1px solid var(--border-2);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 28px 24px;
+}
+.point-num {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink);
+  width: fit-content;
+  margin-bottom: 16px;
+}
+.point-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+.point-body { font-size: 14px; color: var(--ink-2); line-height: 1.6; }
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 36px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--ink-3);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-right { display: flex; gap: 28px; }
+.footer-right a:hover { color: var(--ink); }
+
+@media (max-width: 760px) {
+  .nav { padding: 18px 24px; }
+  .nav-link { display: none; }
+  .hero { padding: 56px 24px 48px; }
+  .hero h1 { font-size: 42px; }
+  .points { grid-template-columns: 1fr; padding: 16px 24px 64px; }
+  .footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">meor<span class="tld">.com</span></a>
+  <div class="nav-right">
+    <a href="/" class="nav-link" data-i18n="navHome">Home</a>
+    <a href="/services.html" class="nav-link" data-i18n="navServices">Services</a>
+    <a href="/assessment.html" class="nav-link" data-i18n="navAssessment">Assessment</a>
+    <button class="lang-pill" id="lang-btn">العربية</button>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="badge"><span class="dot"></span><span data-i18n="badge">Coming soon</span></div>
+    <h1>meor <span class="tld">watch</span></h1>
+    <p class="hero-sub" data-i18n="sub">Quiet reputation monitoring for your business. It watches your reviews, your competitors, and your mentions across every platform — and only pings you when something genuinely needs you. Most days, you hear nothing.</p>
+    <button type="button" class="cta-btn" data-inquire="meor watch — register interest">
+      <span data-i18n="cta">Register your interest</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p class="cta-note" data-i18n="ctaNote">We will tell you the moment it is ready. Early registrants get priority.</p>
+  </section>
+
+  <section class="points">
+    <div class="point">
+      <div class="point-num">01</div>
+      <div class="point-title" data-i18n="p1Title">Your reviews</div>
+      <div class="point-body" data-i18n="p1Body">Every new review on Google and Facebook — so a complaint reaches you in minutes, not on your next manual check.</div>
+    </div>
+    <div class="point">
+      <div class="point-num">02</div>
+      <div class="point-title" data-i18n="p2Title">Your competitors</div>
+      <div class="point-body" data-i18n="p2Body">Up to five competitors watched for promos, price changes, and posts that take off — so you are never the last to know.</div>
+    </div>
+    <div class="point">
+      <div class="point-num">03</div>
+      <div class="point-title" data-i18n="p3Title">Your mentions</div>
+      <div class="point-body" data-i18n="p3Body">When someone talks about your business across Instagram, Facebook, and the open web — including the accounts with real reach.</div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div data-i18n="footerCopy">© 2026 meor.com</div>
+  <div class="footer-right">
+    <a href="/" data-i18n="navHome">Home</a>
+    <a href="/services.html" data-i18n="navServices">Services</a>
+    <a href="mailto:hi@meor.com">hi@meor.com</a>
+  </div>
+</footer>
+
+<script>
+const T = {
+  en: {
+    title: 'meor watch — coming soon',
+    langBtn: 'العربية',
+    navHome: 'Home',
+    navServices: 'Services',
+    navAssessment: 'Assessment',
+    badge: 'Coming soon',
+    sub: 'Quiet reputation monitoring for your business. It watches your reviews, your competitors, and your mentions across every platform — and only pings you when something genuinely needs you. Most days, you hear nothing.',
+    cta: 'Register your interest',
+    ctaNote: 'We will tell you the moment it is ready. Early registrants get priority.',
+    p1Title: 'Your reviews',
+    p1Body: 'Every new review on Google and Facebook — so a complaint reaches you in minutes, not on your next manual check.',
+    p2Title: 'Your competitors',
+    p2Body: 'Up to five competitors watched for promos, price changes, and posts that take off — so you are never the last to know.',
+    p3Title: 'Your mentions',
+    p3Body: 'When someone talks about your business across Instagram, Facebook, and the open web — including the accounts with real reach.',
+    footerCopy: '© 2026 meor.com',
+  },
+  ar: {
+    title: 'meor watch — قريباً',
+    langBtn: 'English',
+    navHome: 'الرئيسية',
+    navServices: 'الخدمات',
+    navAssessment: 'التقييم',
+    badge: 'قريباً',
+    sub: 'مراقبة هادئة لسمعة عملك. يراقب تقييماتك ومنافسيك والإشارات إليك عبر كل منصة — ولا ينبّهك إلا حين يحتاج الأمر إليك فعلاً. معظم الأيام لن تسمع شيئاً.',
+    cta: 'سجّل اهتمامك',
+    ctaNote: 'سنخبرك فور أن يصبح جاهزاً. المسجّلون مبكراً لهم الأولوية.',
+    p1Title: 'تقييماتك',
+    p1Body: 'كل تقييم جديد على Google وFacebook — حتى يصلك أي شكوى خلال دقائق، لا عند تفقّدك اليدوي التالي.',
+    p2Title: 'منافسوك',
+    p2Body: 'نراقب حتى خمسة منافسين بحثاً عن العروض وتغيّرات الأسعار والمنشورات التي تنتشر — حتى لا تكون آخر من يعلم.',
+    p3Title: 'الإشارات إليك',
+    p3Body: 'حين يتحدث أحد عن عملك عبر Instagram وFacebook والويب — بما في ذلك الحسابات ذات التأثير الحقيقي.',
+    footerCopy: '© 2026 meor.com',
+  },
+};
+
+let lang = localStorage.getItem('meor_lang') || 'en';
+
+function applyLang(l) {
+  const c = T[l];
+  if (!c) return;
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  document.title = c.title;
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.dataset.i18n;
+    if (c[key] !== undefined) el.textContent = c[key];
+  });
+  document.getElementById('lang-btn').textContent = c.langBtn;
+}
+
+document.getElementById('lang-btn').addEventListener('click', () => {
+  lang = lang === 'en' ? 'ar' : 'en';
+  localStorage.setItem('meor_lang', lang);
+  applyLang(lang);
+});
+
+applyLang(lang);
+</script>
+
+</body>
+</html>

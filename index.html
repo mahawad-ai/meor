@@ -936,6 +936,74 @@ html[dir="rtl"] .dark-steps { text-align: left; }
 .cta-pill svg { transition: transform 0.2s; }
 html[dir="rtl"] .cta-pill svg { transform: scaleX(-1); }
 
+/* ── WATCH BAND (coming soon) ─────────────────────────────────── */
+.watch-band {
+  max-width: 1280px;
+  margin: 0 auto 96px;
+  padding: 0 56px;
+}
+.watch-band-inner {
+  border: 1px solid var(--border-2);
+  border-radius: 20px;
+  background: var(--surface);
+  padding: 40px 44px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+.watch-band-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+.watch-band-badge .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: inline-block;
+}
+.watch-band-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.watch-band-body {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.55;
+  max-width: 540px;
+}
+.watch-band-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 16px 28px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: gap 0.2s, background 0.15s, transform 0.15s;
+}
+.watch-band-btn:hover { gap: 14px; background: #1a1a1a; transform: translateY(-1px); }
+html[dir="rtl"] .watch-band-btn svg { transform: scaleX(-1); }
+@media (max-width: 760px) {
+  .watch-band { padding: 0 24px; margin-bottom: 64px; }
+  .watch-band-inner { grid-template-columns: 1fr; padding: 28px 24px; gap: 20px; }
+  .watch-band-title { font-size: 22px; }
+}
+
 /* ── FOOTER ──────────────────────────────────────────────────── */
 .footer {
   border-top: 1px solid var(--border);
@@ -993,6 +1061,7 @@ html[dir="rtl"] .cta-pill svg { transform: scaleX(-1); }
 <nav class="nav">
   <a href="/" class="logo">meor<span class="tld">.com</span></a>
   <div class="nav-right">
+    <a href="/watch" class="nav-link" data-i18n="navWatch">meor watch</a>
     <a href="/services.html" class="nav-link" data-i18n="navServices">Services</a>
     <a href="/assessment.html" class="nav-link" data-i18n="navAssessment">Assessment</a>
     <a href="mailto:hi@meor.com" class="nav-link" data-i18n="navContact">Contact</a>
@@ -1255,6 +1324,20 @@ html[dir="rtl"] .cta-pill svg { transform: scaleX(-1); }
   </div>
 </section>
 
+<section class="watch-band">
+  <div class="watch-band-inner">
+    <div>
+      <div class="watch-band-badge"><span class="dot"></span><span data-i18n="watchBandBadge">Coming soon</span></div>
+      <h2 class="watch-band-title" data-i18n="watchBandTitle">Something new — meor watch</h2>
+      <p class="watch-band-body" data-i18n="watchBandBody">Quiet reputation monitoring that watches your reviews, competitors, and mentions — and only pings you when something needs you.</p>
+    </div>
+    <a href="/watch" class="watch-band-btn">
+      <span data-i18n="watchBandCta">Register interest</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
 <footer class="footer">
   <div data-i18n="footerCopy">© 2026 meor.com</div>
   <div class="footer-right">
@@ -1279,9 +1362,14 @@ const T = {
   en: {
     title: 'meor.com — AI for MENA businesses',
     langBtn: 'العربية',
+    navWatch: 'meor watch',
     navServices: 'Services',
     navAssessment: 'Assessment',
     navContact: 'Contact',
+    watchBandBadge: 'Coming soon',
+    watchBandTitle: 'Something new — meor watch',
+    watchBandBody: 'Quiet reputation monitoring that watches your reviews, competitors, and mentions — and only pings you when something needs you.',
+    watchBandCta: 'Register interest',
     eyebrow: 'AI for MENA businesses',
     h1Top: 'Your domain.',
     h1Bottom: 'Your AI agent.',
@@ -1345,9 +1433,14 @@ const T = {
   ar: {
     title: 'meor.com — الذكاء الاصطناعي لأعمال المنطقة',
     langBtn: 'English',
+    navWatch: 'meor watch',
     navServices: 'الخدمات',
     navAssessment: 'التقييم',
     navContact: 'تواصل',
+    watchBandBadge: 'قريباً',
+    watchBandTitle: 'جديد — meor watch',
+    watchBandBody: 'مراقبة هادئة لسمعتك ترصد تقييماتك ومنافسيك والإشارات إليك — ولا تنبّهك إلا حين يحتاج الأمر إليك.',
+    watchBandCta: 'سجّل اهتمامك',
     eyebrow: 'الذكاء الاصطناعي لأعمال المنطقة',
     h1Top: 'نطاقك.',
     h1Bottom: 'وكيلك الذكي.',
