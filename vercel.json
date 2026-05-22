@@ -1,8 +1,11 @@
 {
   "rewrites": [
     { "source": "/assessment", "destination": "/assessment.html" },
-    { "source": "/services",   "destination": "/services.html" },
-    { "source": "/watch",      "destination": "/watch.html" }
+    { "source": "/services",   "destination": "/services.html" }
+  ],
+  "redirects": [
+    { "source": "/watch",      "destination": "https://watch.meor.com", "permanent": true },
+    { "source": "/watch.html", "destination": "https://watch.meor.com", "permanent": true }
   ],
   "headers": [
     {
