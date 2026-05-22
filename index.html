@@ -943,14 +943,28 @@ html[dir="rtl"] .cta-pill svg { transform: scaleX(-1); }
   padding: 0 56px;
 }
 .watch-band-inner {
-  border: 1px solid var(--border-2);
+  border: 1px solid var(--ink);
   border-radius: 20px;
-  background: var(--surface);
+  background: var(--ink);
+  color: white;
   padding: 40px 44px;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 32px;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 64px -28px rgba(0,0,0,0.45);
+}
+.watch-band-inner::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  right: -8%;
+  width: 48%;
+  height: 220%;
+  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 62%);
+  pointer-events: none;
 }
 .watch-band-badge {
   display: inline-flex;
@@ -960,43 +974,48 @@ html[dir="rtl"] .cta-pill svg { transform: scaleX(-1); }
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink-2);
+  color: rgba(255,255,255,0.6);
   margin-bottom: 14px;
+  position: relative;
 }
 .watch-band-badge .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--ink);
+  background: #25D366;
   display: inline-block;
+  box-shadow: 0 0 0 4px rgba(37,211,102,0.18);
 }
 .watch-band-title {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
   margin-bottom: 8px;
+  position: relative;
 }
 .watch-band-body {
   font-size: 15px;
-  color: var(--ink-2);
+  color: rgba(255,255,255,0.65);
   line-height: 1.55;
   max-width: 540px;
+  position: relative;
 }
 .watch-band-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: var(--ink);
-  color: white;
+  background: white;
+  color: var(--ink);
   font-size: 14px;
   font-weight: 700;
   padding: 16px 28px;
   border-radius: 999px;
   white-space: nowrap;
-  transition: gap 0.2s, background 0.15s, transform 0.15s;
+  transition: gap 0.2s, transform 0.15s;
+  position: relative;
 }
-.watch-band-btn:hover { gap: 14px; background: #1a1a1a; transform: translateY(-1px); }
+.watch-band-btn:hover { gap: 14px; transform: translateY(-1px); }
 html[dir="rtl"] .watch-band-btn svg { transform: scaleX(-1); }
 @media (max-width: 760px) {
   .watch-band { padding: 0 24px; margin-bottom: 64px; }
@@ -1061,7 +1080,7 @@ html[dir="rtl"] .watch-band-btn svg { transform: scaleX(-1); }
 <nav class="nav">
   <a href="/" class="logo">meor<span class="tld">.com</span></a>
   <div class="nav-right">
-    <a href="/watch" class="nav-link" data-i18n="navWatch">meor watch</a>
+    <a href="https://watch.meor.com" class="nav-link" data-i18n="navWatch">meor watch</a>
     <a href="/services.html" class="nav-link" data-i18n="navServices">Services</a>
     <a href="/assessment.html" class="nav-link" data-i18n="navAssessment">Assessment</a>
     <a href="mailto:hi@meor.com" class="nav-link" data-i18n="navContact">Contact</a>
@@ -1187,6 +1206,21 @@ html[dir="rtl"] .watch-band-btn svg { transform: scaleX(-1); }
         <div class="badge-text" data-i18n="badgeGoogleText">+3 new this week</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- MEOR WATCH — live; moved up to be the focal element under the hero -->
+<section class="watch-band">
+  <div class="watch-band-inner">
+    <div>
+      <div class="watch-band-badge"><span class="dot"></span><span data-i18n="watchBandBadge">Now live</span></div>
+      <h2 class="watch-band-title" data-i18n="watchBandTitle">meor watch is live</h2>
+      <p class="watch-band-body" data-i18n="watchBandBody">Quiet reputation monitoring that watches your reviews, competitors, and mentions — and only pings you when something needs you.</p>
+    </div>
+    <a href="https://watch.meor.com" class="watch-band-btn">
+      <span data-i18n="watchBandCta">Open meor watch</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="#0A0A0A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   </div>
 </section>
 
@@ -1324,20 +1358,6 @@ html[dir="rtl"] .watch-band-btn svg { transform: scaleX(-1); }
   </div>
 </section>
 
-<section class="watch-band">
-  <div class="watch-band-inner">
-    <div>
-      <div class="watch-band-badge"><span class="dot"></span><span data-i18n="watchBandBadge">Coming soon</span></div>
-      <h2 class="watch-band-title" data-i18n="watchBandTitle">Something new — meor watch</h2>
-      <p class="watch-band-body" data-i18n="watchBandBody">Quiet reputation monitoring that watches your reviews, competitors, and mentions — and only pings you when something needs you.</p>
-    </div>
-    <a href="/watch" class="watch-band-btn">
-      <span data-i18n="watchBandCta">Register interest</span>
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </a>
-  </div>
-</section>
-
 <footer class="footer">
   <div data-i18n="footerCopy">© 2026 meor.com</div>
   <div class="footer-right">
@@ -1366,10 +1386,10 @@ const T = {
     navServices: 'Services',
     navAssessment: 'Assessment',
     navContact: 'Contact',
-    watchBandBadge: 'Coming soon',
-    watchBandTitle: 'Something new — meor watch',
+    watchBandBadge: 'Now live',
+    watchBandTitle: 'meor watch is live',
     watchBandBody: 'Quiet reputation monitoring that watches your reviews, competitors, and mentions — and only pings you when something needs you.',
-    watchBandCta: 'Register interest',
+    watchBandCta: 'Open meor watch',
     eyebrow: 'AI for MENA businesses',
     h1Top: 'Your domain.',
     h1Bottom: 'Your AI agent.',
@@ -1437,10 +1457,10 @@ const T = {
     navServices: 'الخدمات',
     navAssessment: 'التقييم',
     navContact: 'تواصل',
-    watchBandBadge: 'قريباً',
-    watchBandTitle: 'جديد — meor watch',
+    watchBandBadge: 'متاح الآن',
+    watchBandTitle: 'meor watch متاح الآن',
     watchBandBody: 'مراقبة هادئة لسمعتك ترصد تقييماتك ومنافسيك والإشارات إليك — ولا تنبّهك إلا حين يحتاج الأمر إليك.',
-    watchBandCta: 'سجّل اهتمامك',
+    watchBandCta: 'افتح meor watch',
     eyebrow: 'الذكاء الاصطناعي لأعمال المنطقة',
     h1Top: 'نطاقك.',
     h1Bottom: 'وكيلك الذكي.',
